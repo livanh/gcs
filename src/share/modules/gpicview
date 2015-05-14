@@ -1,0 +1,8 @@
+#!/bin/sh
+GPICVIEW_CONFIG_FILE="$HOME/.config/gpicview/gpicview.conf"
+if [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
+    echo "* setting colors for gpicview..."
+    sed -i "s/bg=.*/bg=${base_color}/" "${GPICVIEW_CONFIG_FILE}"
+    sed -i "s/bg_full=.*/bg_full=${base_color}/" "${GPICVIEW_CONFIG_FILE}"
+    echo "  Done."
+fi

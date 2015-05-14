@@ -1,0 +1,12 @@
+To install gcs, simply run
+
+    $ make install
+
+from the source directory. At the moment, gcs can only be installed under your $HOME directory because some
+paths are hard-coded. This will probably change in the future.
+You may need to add $HOME/bin to your $PATH. The easiest way is to add the following code at the end of
+your .bashrc file, then open a new shell:
+
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi 

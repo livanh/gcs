@@ -1,0 +1,3 @@
+#!/bin/bash
+CONKY_CONFIG_FILES=("$HOME/.conkyrc")
+conky_color0=${selected_bg_color}

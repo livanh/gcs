@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# TODO: document how to make it work
+
+echo "* setting colors for GTK+ 3..."
+
+GTK3_COLORS_FILE="$HOME/.config/gtk-3.0/colors.css"
+
+if [ -f "${GTK3_COLORS_FILE}" ]; then
+    sed -i "s/theme_base_color.*/theme_base_color ${base_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_bg_color.*/theme_bg_color ${bg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_fg_color.*/theme_fg_color ${fg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_tooltip_fg_color.*/theme_tooltip_fg_color ${tooltip_fg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_selected_bg_color.*/theme_selected_bg_color ${selected_bg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_selected_fg_color.*/theme_selected_fg_color ${selected_fg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_text_color.*/theme_text_color ${text_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/theme_tooltip_bg_color.*/theme_tooltip_bg_color ${tooltip_bg_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/link_color.*/link_color ${link_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/visited_link_color.*/visited_link_color ${visited_link_color};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/core_color_a.*/core_color_a ${core_color_a};/" "${GTK3_COLORS_FILE}"
+    sed -i "s/core_color_b.*/core_color_b ${core_color_b};/" "${GTK3_COLORS_FILE}"
+    echo "  Done."
+else
+    echo "  ${GTK3_COLORS_FILE} not found!"
+fi

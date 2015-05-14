@@ -1,0 +1,31 @@
+# gtk color theme
+base_color=#853F10
+text_color=#FFF285
+bg_color=#542303
+fg_color=#FFF285
+selected_bg_color=#4C942D
+selected_fg_color=#FFFFFF
+tooltip_bg_color=#A35D39
+tooltip_fg_color=#000000
+link_color=#4a90d9
+visited_link_color=#551a8b
+
+# error/warning
+error_color=#cc0000
+warning_bg_color=#faad3d
+
+# gtk3 core colors
+core_color_a=$selected_bg_color
+core_color_b=$bg_color
+
+# i3 colors
+urgent_color=#BA0000
+unfocused_color=#2B5618
+
+# icon theme
+icon_theme=gnome-wise
+
+# background
+wallpaper_image=background.png
+wallpaper_mode=center
+wallpaper_bg_color=#542303

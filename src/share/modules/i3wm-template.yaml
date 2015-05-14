@@ -1,0 +1,52 @@
+# vim: filetype=yaml
+---
+meta:
+  description: 'set-color-theme template'
+colors:
+  selected_bg_color:  '$selected_bg_color'
+  selected_fg_color:  '$selected_fg_color'
+  text_color:         '$text_color'
+  urgent_color:       '$urgent_color'
+  bg_color:           '$bg_color'
+  unfocused_color:    '$unfocused_color'
+window_colors:
+  focused:
+    border:           'selected_bg_color'
+    background:       'selected_bg_color'
+    text:             'selected_fg_color'
+    indicator:        'selected_bg_color'
+  focused_inactive:
+    border:           'unfocused_color'
+    background:       'unfocused_color'
+    text:             '#aaaaaa'
+    indicator:        '#0000FF'
+  unfocused:
+    border:           'unfocused_color'
+    background:       'unfocused_color'
+    text:             '#aaaaaa'
+    indicator:        '#0000FF'
+  urgent:
+    border:           'urgent_color'
+    background:       'urgent_color'
+    text:             'selected_fg_color'
+    indicator:        '#900000'
+bar_colors:
+  separator:          'selected_bg_color'
+  background:         'bg_color'
+  statusline:         'text_color'
+  focused_workspace:
+    border:           'selected_bg_color'
+    background:       'selected_bg_color'
+    text:             'selected_fg_color'
+  active_workspace:
+    border:           'bg_color'
+    background:       'bg_color'
+    text:             'text_color'
+  inactive_workspace:
+    border:           'bg_color'
+    background:       'bg_color'
+    text:             'text_color'
+  urgent_workspace:
+    border:           'urgent_color'
+    background:       'urgent_color'
+    text:             'selected_fg_color'

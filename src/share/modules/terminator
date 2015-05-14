@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# TODO: handle profiles
+# TODO: set color palette
+
+TERMINATOR_CONFIG_FILE="$HOME/.config/terminator/config"
+if [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
+    echo "* setting colors for terminator..."
+    sed -i "s/background_color =.*/background_color = \"${base_color}\"/" "${TERMINATOR_CONFIG_FILE}"
+    sed -i "s/cursor_color =.*/cursor_color = \"${text_color}\"/" "${TERMINATOR_CONFIG_FILE}"
+    sed -i "s/foreground_color =.*/foreground_color = \"${text_color}\"/" "${TERMINATOR_CONFIG_FILE}"
+    echo "  Done."
+fi

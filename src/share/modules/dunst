@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# TODO: find out how to handle keys with same name under different [..] blocks 
+
+DUNST_CONFIG_FILE="$HOME/.config/dunst/dunstrc"
+#if [ -f "${DUNST_CONFIG_FILE}" ]; then
+#    echo "* setting colors for dunst..."
+
+#    echo "  Done."
+#fi
