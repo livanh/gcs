@@ -10,6 +10,10 @@ tooltip_fg_color=#ffffff
 link_color=#4a90d9
 visited_link_color=#551a8b
 
+# icon and cursor theme
+icon_theme_name=gnome-brave
+cursor_theme_name=crystalblue
+
 # error/warning
 error_color=#cc0000
 warning_bg_color=#faad3d
@@ -21,9 +25,6 @@ core_color_b=$bg_color
 # i3 colors
 urgent_color=#BA0000
 unfocused_color=#001644
-
-# icon theme
-icon_theme=gnome-brave
 
 # background
 wallpaper_image=background.png

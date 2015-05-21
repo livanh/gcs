@@ -1,16 +1,17 @@
-Global Color Scheme (GCS) is a tool to change the color scheme of your Linux desktop.
-It can take care of general purpose toolkits (like GTK) as well as specific applications
-which have their own color settings. The purpose of GCS is to configure every configurable
-color in your desktop in a consistent manner and with a single command.
+Global Color Scheme (GCS) is a tool to change the color scheme of your Linux
+desktop. It can take care of general purpose toolkits (like GTK) as well as
+specific applications which have their own color settings. The purpose of GCS
+is to configure every configurable color in your desktop in a consistent
+manner and with a single command.
 
-GCS is easily extensible, so if some program you use is not supported, you can easily
-create a module for it (and if you send it to me, I'll consider adding it to
-the codebase).
+GCS is easily extensible, so if some program you use is not supported, you
+can easily create a module for it (and if you send it to me, I'll consider
+adding it to the codebase).
 
 
 *** ALPHA STAGE WARNING!!! ***
-CURRENTLY THIS PROGRAM IS IN A VERY EARLY DEVELOPMENT STAGE! EXPECT IT TO BREAK SOMETHING
-UNLESS YOU KNOW HOW IT WORKS! I'M NOT KIDDING!
+CURRENTLY THIS PROGRAM IS IN A VERY EARLY DEVELOPMENT STAGE! EXPECT IT TO BREAK
+SOMETHING UNLESS YOU KNOW HOW IT WORKS! I'M NOT KIDDING!
 
 BEFORE ATTEMPTING TO DO ANY EXPERIMENT, BACKUP THE FOLLOWING FILES:
     $HOME/.xsettingsd
@@ -21,3 +22,5 @@ BEFORE ATTEMPTING TO DO ANY EXPERIMENT, BACKUP THE FOLLOWING FILES:
     $HOME/.config/geany/geany.conf
     $HOME/.config/cherrytree/config.cfg
     $HOME/.config/nitrogen/bg-saved.cfg
+    $HOME/.config/.conkyrc
+    
