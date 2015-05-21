@@ -27,5 +27,5 @@ icon_theme=gnome-brave
 
 # background
 wallpaper_image=background.png
-wallpaper_mode=center
+wallpaper_mode=centered
 wallpaper_bg_color=#000000
