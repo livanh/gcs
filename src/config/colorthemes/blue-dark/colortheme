@@ -30,3 +30,7 @@ unfocused_color=#001644
 wallpaper_image=background.png
 wallpaper_mode=centered
 wallpaper_bg_color=#000000
+
+# terminal
+terminal_bg_color=$base_color
+terminal_fg_color=$text_color

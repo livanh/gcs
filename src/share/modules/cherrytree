@@ -5,9 +5,9 @@
 CHERRYTREE_CONFIG_FILE="$HOME/.config/cherrytree/config.cfg"
 if [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
     echo "* setting colors for cherrytree..."
-    sed -i "s/rt_def_fg =.*/rt_def_fg = ${text_color}/" "${CHERRYTREE_CONFIG_FILE}"
-    sed -i "s/rt_def_bg =.*/rt_def_bg = ${base_color}/" "${CHERRYTREE_CONFIG_FILE}"
-    sed -i "s/tt_def_fg =.*/tt_def_fg = ${text_color}/" "${CHERRYTREE_CONFIG_FILE}"
-    sed -i "s/tt_def_bg =.*/tt_def_bg = ${base_color}/" "${CHERRYTREE_CONFIG_FILE}"
+    set_value "rt_def_fg" " = " "${text_color}" "${CHERRYTREE_CONFIG_FILE}"
+    set_value "rt_def_bg" " = " "${base_color}" "${CHERRYTREE_CONFIG_FILE}"
+    set_value "tt_def_fg" " = " "${text_color}" "${CHERRYTREE_CONFIG_FILE}"
+    set_value "tt_def_bg" " = " "${base_color}" "${CHERRYTREE_CONFIG_FILE}"
     echo "  Done."
 fi

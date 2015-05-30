@@ -11,15 +11,20 @@ if [ -f "${GEANY_CONFIG_FILE}" ]; then
     if [ -f "${MODULES_DIR}/geany-template.conf" ]; then
 	destfile="$HOME/.config/geany/colorschemes/gcs.conf"
 	cp "${MODULES_DIR}/geany-template.conf" "${destfile}"
-	sed -i "s/\$base_color/$base_color/" "${destfile}"
-	sed -i "s/\$fg_color/$fg_color/" "${destfile}"
-	sed -i "s/\$selected_bg_color/$selected_bg_color/" "${destfile}"
-	sed -i "s/\$selected_fg_color/$selected_fg_color/" "${destfile}"
-	sed -i "s/\$text_color/$text_color/" "${destfile}"
-	sed -i "s/\$bg_color/$bg_color/" "${destfile}"
-	sed -i "s/\$tooltip_fg_color/$tooltip_fg_color/" "${destfile}"
-	sed -i "s/\$tooltip_bg_color/$tooltip_bg_color/" "${destfile}"
-	sed -i "s/color_scheme=.*/color_scheme=gcs.conf/" "${GEANY_CONFIG_FILE}"
+	
+	set_value "base_color"        "=" "$base_color"        "${destfile}"
+	set_value "fg_color"          "=" "$fg_color"          "${destfile}"
+	set_value "selected_bg_color" "=" "$selected_bg_color" "${destfile}"
+	set_value "selected_fg_color" "=" "$selected_fg_color" "${destfile}"
+	set_value "text_color"        "=" "$text_color"        "${destfile}"
+	set_value "bg_color"          "=" "$bg_color"          "${destfile}"
+	set_value "tooltip_fg_color"  "=" "$tooltip_fg_color"  "${destfile}"
+	set_value "tooltip_bg_color"  "=" "$tooltip_bg_color"  "${destfile}"
+	
+	set_value "color_scheme" "=" "gcs.conf"             "${GEANY_CONFIG_FILE}"
+	set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
+	set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
+	
 	echo "  Done." 
     else
 	echo "  Error: template not found!"

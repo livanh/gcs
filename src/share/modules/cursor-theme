@@ -6,7 +6,7 @@
 
 if [[ $cursor_theme_name ]]; then
     echo "* Setting cursor theme: ${cursor_theme_name}..."
-    sed -i "s/Inherits=.*/Inherits=${cursor_theme_name}/" "$HOME/.icons/default/index.theme"
+    set_value "Inherits" "=" "${cursor_theme_name}" "$HOME/.icons/default/index.theme"
     rm "$HOME/.icons/default/cursors"
     ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "$HOME/.icons/default/cursors"
     echo "  Done."
