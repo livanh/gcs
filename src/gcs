@@ -47,14 +47,12 @@ set_value() {
     SEPARATOR=$2
     VALUE=$3
     FILE=$4
-    if grep "^[[:space:]]*${KEY}${SEPARATOR}.*" "${FILE}" >/dev/null; then
-	sed -i "s/^[[:space:]]*${KEY}${SEPARATOR}.*/${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
+    if grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*" "${FILE}" >/dev/null; then
+	sed -r -i "s/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
     else
 	echo "${KEY}${SEPARATOR}${VALUE}" >>"${FILE}"
     fi
 }
-
-
 
 if [ -f "${THEMES_DIR}/${COLOR_THEME}/colortheme" ]; then
     echo "Applying color theme ${COLOR_THEME}"
