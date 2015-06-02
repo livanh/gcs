@@ -23,4 +23,6 @@ BEFORE ATTEMPTING TO DO ANY EXPERIMENT, BACKUP THE FOLLOWING FILES:
     $HOME/.config/cherrytree/config.cfg
     $HOME/.config/nitrogen/bg-saved.cfg
     $HOME/.config/.conkyrc
-    
+    $HOME/.config/dunst/dunstrc
+    $HOME/.config/lxterminal/lxterminal.conf
+    $HOME/.icons/default/index.theme

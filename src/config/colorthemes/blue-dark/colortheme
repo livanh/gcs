@@ -25,6 +25,7 @@ core_color_b=$bg_color
 # i3 colors
 urgent_color=#BA0000
 unfocused_color=#001644
+unfocused_text_color=#AAAAAA
 
 # background
 wallpaper_image=background.png

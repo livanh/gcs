@@ -1,24 +1,23 @@
 #!/bin/sh
 
-# TODO: remove dependency on i3-style if possible
-
 I3_CONFIG_FILE="$HOME/.config/i3/config"
 if [ -f "${I3_CONFIG_FILE}" ]; then
     echo "* setting colors for i3 window manager..."
     
-    if [ -f "${MODULES_DIR}/i3wm-template.yaml" ]; then
-	tmpfile="$(mktemp --suffix .yaml)"
-	cp "${MODULES_DIR}/i3wm-template.yaml" "${tmpfile}"
-	sed -i "s/\$selected_bg_color/$selected_bg_color/" "${tmpfile}"
-	sed -i "s/\$selected_fg_color/$selected_fg_color/" "${tmpfile}"
-	sed -i "s/\$text_color/$text_color/" "${tmpfile}"
-	sed -i "s/\$urgent_color/$urgent_color/" "${tmpfile}"
-	sed -i "s/\$bg_color/$bg_color/" "${tmpfile}"
-	sed -i "s/\$unfocused_color/$unfocused_color/" "${tmpfile}"
-	i3-style "${tmpfile}" -o "${I3_CONFIG_FILE}" -r
-	rm "${tmpfile}"
-    else
-	echo "  Error: template not found!"
-    fi
+    set_value "client\.focused"          " " "${selected_bg_color} ${selected_bg_color} ${selected_fg_color} ${selected_bg_color}" "${I3_CONFIG_FILE}"
+    set_value "client\.focused_inactive" " " "${unfocused_color} ${unfocused_color} ${unfocused_text_color} ${selected_bg_color}" "${I3_CONFIG_FILE}"
+    set_value "client\.unfocused"        " " "${unfocused_color} ${unfocused_color} ${unfocused_text_color} ${selected_bg_color}" "${I3_CONFIG_FILE}"
+    set_value "client\.urgent"           " " "${urgent_color} ${urgent_color} ${selected_fg_color} ${urgent_color}" "${I3_CONFIG_FILE}"
     
+    set_value "separator"  " " " ${selected_bg_color}"  "${I3_CONFIG_FILE}"
+    set_value "background" " " " ${bg_color}"           "${I3_CONFIG_FILE}"
+    set_value "statusline" " " " ${fg_color}"           "${I3_CONFIG_FILE}"
+    
+    set_value "focused_workspace"  " " "${selected_bg_color} ${selected_bg_color} ${selected_fg_color}" "${I3_CONFIG_FILE}"
+    set_value "active_workspace"   " " "${unfocused_color} ${unfocused_color} ${unfocused_text_color}" "${I3_CONFIG_FILE}"
+    set_value "inactive_workspace" " " "${bg_color} ${bg_color} ${fg_color}" "${I3_CONFIG_FILE}"
+    set_value "urgent_workspace"   " " "${urgent_color} ${urgent_color} ${selected_fg_color}" "${I3_CONFIG_FILE}"
+    
+    i3-msg reload >/dev/null
+    echo "  Done."
 fi
