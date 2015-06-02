@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# dmenu does not have a configuration file, so I can't write
+# a universal module. This one Works For Me(TM).
+#
+# I run dmenu through i3-dmenu-desktop with the following section
+# of the i3 config:
+#
+#   set $dmenu_normal_bg #542303
+#   set $dmenu_normal_fg #FFF285
+#   set $dmenu_selected_bg #4e9c2c
+#   set $dmenu_selected_fg #ffffff
+#   bindsym Mod4+F1 exec --no-startup-id i3-dmenu-desktop --dmenu="dmenu.xft -i -nb \
+#     $dmenu_normal_bg -nf $dmenu_normal_fg -sb $dmenu_selected_bg -sf $dmenu_selected_fg -fn DejaVu-11 -b"
+#
+# therefore I'm settings colors there
+
+I3_CONFIG_FILE="$HOME/.config/i3/config"
+if [ -f "${I3_CONFIG_FILE}" ]; then
+    echo "* Settig colors for dmenu..."
+    set_value 'set \$dmenu_normal_bg'   " " "${bg_color}"          "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_normal_fg'   " " "${fg_color}"          "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_selected_bg' " " "${selected_bg_color}" "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_selected_fg' " " "${selected_fg_color}" "${I3_CONFIG_FILE}"
+    i3-msg reload >/dev/null
+    echo "  Done."
+fi

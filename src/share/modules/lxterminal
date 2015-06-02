@@ -1,0 +1,9 @@
+#!/bin/bash
+
+LXTERMINAL_CONFIG_FILE="$HOME/config/lxterminal/lxterminal.conf"
+if [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
+    echo "* Setting colors for LXTerminal..."
+    set_value "bgcolor" "=" "${terminal_bg_color}" "${LXTERMINAL_CONFIG_FILE}"
+    set_value "fgcolor" "=" "${terminal_fg_color}" "${LXTERMINAL_CONFIG_FILE}"
+    echo "  Done."
+fi
