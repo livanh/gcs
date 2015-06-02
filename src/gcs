@@ -36,23 +36,44 @@ COLOR_THEME="$1"
 # set the value of the key named $KEY (in text file $FILE) equal to $VALUE
 # assuming they are separated by $SEPARATOR
 # warning: do not use for config file with different sections, because
-# if the key does not exist, it will be creted at the end of the last section
-# TODO: keep whitespaces at the beginning of the line
+# if the key does not exist, it will be created at the end of the file
 set_value() {
     if [ "$#" -ne 4 ]; then
 	echo "Error: set_value() requires 4 arguments!"
 	exit 2
     fi
-    KEY=$1
-    SEPARATOR=$2
-    VALUE=$3
-    FILE=$4
+    local KEY=$1
+    local SEPARATOR=$2
+    local VALUE=$3
+    local FILE=$4
     if grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*" "${FILE}" >/dev/null; then
 	sed -r -i "s/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
     else
 	echo "${KEY}${SEPARATOR}${VALUE}" >>"${FILE}"
     fi
 }
+
+# set the value of the key named $KEY (in section [section] on text
+# file $FILE) equal to $VALUE, assuming they are separated by $SEPARATOR
+# TODO: define behaviour when $SECTION is not found
+set_value_section() {
+    if [ "$#" -ne 5 ]; then
+	echo "Error: set_value_section() requires 5 arguments!"
+	exit 2
+    fi
+    local SECTION=$1
+    local KEY=$2
+    local SEPARATOR=$3
+    local VALUE=$4
+    local FILE=$5
+    local old_section=$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}")
+    local tmp_file="$(mktemp)"
+    echo "$old_section" >"$tmp_file"
+    set_value "$KEY" "$SEPARATOR" "$VALUE" "$tmp_file"
+    perl -i -p0e "s/\Q${old_section}\E/$(cat $tmp_file)/" ${FILE}
+    rm $tmp_file
+}
+
 
 if [ -f "${THEMES_DIR}/${COLOR_THEME}/colortheme" ]; then
     echo "Applying color theme ${COLOR_THEME}"

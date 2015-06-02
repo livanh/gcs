@@ -1,10 +1,14 @@
 #!/bin/sh
 
-# TODO: find out how to handle keys with same name under different [..] blocks 
-
 DUNST_CONFIG_FILE="$HOME/.config/dunst/dunstrc"
-#if [ -f "${DUNST_CONFIG_FILE}" ]; then
-#    echo "* setting colors for dunst..."
-
-#    echo "  Done."
-#fi
+if [ -f "${DUNST_CONFIG_FILE}" ]; then
+    echo "* setting colors for dunst..."
+    set_value_section "frame"            "color"      " = " "\"$notification_frame\""     "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_low"      "background" " = " "\"$notification_low_bg\""    "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_low"      "foreground" " = " "\"$notification_low_fg\""    "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_normal"   "background" " = " "\"$notification_medium_bg\"" "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_normal"   "foreground" " = " "\"$notification_medium_fg\"" "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_critical" "background" " = " "\"$notification_high_bg\""   "$DUNST_CONFIG_FILE"
+    set_value_section "urgency_critical" "foreground" " = " "\"$notification_high_fg\""   "$DUNST_CONFIG_FILE"
+    echo "  Done."
+fi

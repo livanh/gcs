@@ -34,3 +34,12 @@ wallpaper_bg_color=#542303
 # terminal
 terminal_bg_color=$bg_color
 terminal_fg_color=$text_color
+
+# notifications
+notification_frame=$selected_bg_color
+notification_low_bg=$bg_color
+notification_low_fg=$text_color
+notification_medium_bg=$selected_bg_color
+notification_medium_fg=$selected_fg_color
+notification_high_bg=$urgent_color
+notification_high_fg=$selected_fg_color
