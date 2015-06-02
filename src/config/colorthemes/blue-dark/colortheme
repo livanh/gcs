@@ -5,8 +5,8 @@ bg_color=#333333
 fg_color=#BBBBBB
 selected_bg_color=#205FC6
 selected_fg_color=#FFFFFF
-tooltip_bg_color=#A35D39
-tooltip_fg_color=#ffffff
+tooltip_bg_color=#555555
+tooltip_fg_color=#FFFFFF
 link_color=#4a90d9
 visited_link_color=#551a8b
 
