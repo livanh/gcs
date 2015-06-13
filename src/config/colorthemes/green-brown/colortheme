@@ -44,3 +44,57 @@ notification_medium_bg=$selected_bg_color
 notification_medium_fg=$selected_fg_color
 notification_high_bg=$urgent_color
 notification_high_fg=$selected_fg_color
+
+# text editors with syntax highlighting
+editor_bg=$base_color
+editor_fg=$text_color
+editor_selected_bg=$selected_bg_color
+editor_selected_fg=$selected_fg_color
+editor_frame_bg=$bg_color
+editor_frame_fg=$fg_color
+editor_current_line_bg=
+editor_margin_line_number_bg=
+editor_margin_line_number_fg=
+editor_margin_folding_bg=
+editor_margin_folding_fg=
+editor_fold_symbol_highlight=
+editor_indent_guide=
+editor_caret=
+# editor_marker_line
+# editor_marker_search
+# editor_marker_mark
+editor_white_space=
+editor_error=$error_color
+editor_brace_good=
+editor_brace_bad=$editor_error
+
+editor_comment=#A0A0A0
+editor_number=#C59F3F
+editor_type=
+editor_class=#D66EDA
+editor_function=
+editor_parameter=
+editor_keyword=
+editor_identifier=
+editor_string=
+editor_character=
+# editor_backtick
+# editor_here_doc
+# editor_scalar
+editor_label=
+editor_preprocessor=
+editor_regex=
+editor_operator=#BB53FF
+# editor_decorator
+
+editor_tag=
+editor_tag_unknown=
+editor_tag_end=
+editor_attribute=
+editor_attribute_unknown=
+editor_value=
+editor_entity=
+
+editor_diff_added=
+editor_diff_removed=
+editor_diff_changed=
