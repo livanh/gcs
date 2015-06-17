@@ -65,27 +65,26 @@ editor_caret=
 # editor_marker_mark
 editor_white_space=
 editor_error=$error_color
-editor_highlight=
 editor_brace_good=
 editor_brace_bad=$editor_error
 
-editor_comment=#555555
-editor_number=#C59F3F
+editor_comment=#444444
+editor_number=#E3DB28
 editor_type=
-editor_class=#A12099
+editor_class=#007500
 editor_function=
 editor_parameter=
-editor_keyword=
+editor_keyword=$selected_bg_color
 editor_identifier=
-editor_string=
-editor_character=
+editor_string=#D26F2A
+editor_character=#E3DB28
 # editor_backtick
 # editor_here_doc
 # editor_scalar
 editor_label=
-editor_preprocessor=
+editor_preprocessor=#259F86
 editor_regex=
-editor_operator=#DA602B
+editor_operator=#A820A8
 # editor_decorator
 
 editor_tag=

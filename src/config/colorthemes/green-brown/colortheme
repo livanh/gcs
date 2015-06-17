@@ -68,21 +68,21 @@ editor_error=$error_color
 editor_brace_good=
 editor_brace_bad=$editor_error
 
-editor_comment=#A0A0A0
-editor_number=#C59F3F
+editor_comment=#C8C8C8
+editor_number=#E0A000
 editor_type=
-editor_class=#D66EDA
+editor_class=#4995F1
 editor_function=
 editor_parameter=
-editor_keyword=
+editor_keyword=$selected_bg_color
 editor_identifier=
-editor_string=
-editor_character=
+editor_string=#E073F4
+editor_character=#E0A000
 # editor_backtick
 # editor_here_doc
 # editor_scalar
 editor_label=
-editor_preprocessor=
+editor_preprocessor=#67CFF4
 editor_regex=
 editor_operator=#BB53FF
 # editor_decorator
