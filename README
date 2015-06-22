@@ -26,3 +26,4 @@ BEFORE ATTEMPTING TO DO ANY EXPERIMENT, BACKUP THE FOLLOWING FILES:
     $HOME/.config/dunst/dunstrc
     $HOME/.config/lxterminal/lxterminal.conf
     $HOME/.icons/default/index.theme
+    $HOME/.codeblocks/default.conf

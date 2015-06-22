@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# TODO: set bold font on some styles
+# TODO: set colors outside <colour_sets>
+
+CB_STYLE_CTR=0
+CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
+CB_COLORSET_NAME="gcs_theme"
+CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
+
+# helper function to set styles in Code::blocks config file
+codeblocks_add_style() {
+    
+    if [ "$#" -ne 5 ]; then
+	    echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
+	    exit 2
+    fi
+    
+    local name="$1"
+    local lang="$2"
+    local fg_color="$3"
+    local bg_color="$4"
+    local file="$5"
+    
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}"                           --type elem -n "style${CB_STYLE_CTR}"  "${file}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"      --type elem -n "NAME"                  "${file}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
+    
+    if [ "${fg_color}" != "default" ]; then
+        local fg_red="$(printf   "%d" 0x${fg_color:1:2})"
+        local fg_green="$(printf "%d" 0x${fg_color:3:2})"
+        local fg_blue="$(printf  "%d" 0x${fg_color:5:2})"
+        
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "FORE"                         "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"        --type elem -n "colour"                       "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "r"      --value "${fg_red}"   "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "g"      --value "${fg_green}" "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "b"      --value "${fg_blue}"  "${file}"
+    fi
+    
+    if [ "${bg_color}" != "default" ]; then
+        local bg_red="$(printf   "%d" 0x${bg_color:1:2})"
+        local bg_green="$(printf "%d" 0x${bg_color:3:2})"
+        local bg_blue="$(printf  "%d" 0x${bg_color:5:2})"
+        
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "BACK"                         "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"        --type elem -n "colour"                       "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "r"      --value "${bg_red}"   "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "g"      --value "${bg_green}" "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
+    fi
+    
+    CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
+}
+
+
+
+CODEBLOCKS_CONFIG_FILE="$HOME/.codeblocks/default.conf"
+
+if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
+    echo "* setting colors for Code::Blocks..."
+    
+    # clear colorset with same name, if any
+    xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}"                                                             "${CODEBLOCKS_CONFIG_FILE}"
+    
+    # create new colorset
+    xmlstarlet ed --inplace --subnode "${CB_PREFIX}"                  --type elem -n "${CB_COLORSET_NAME}"               "${CODEBLOCKS_CONFIG_FILE}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "NAME"                              "${CODEBLOCKS_CONFIG_FILE}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/NAME"    --type elem -n "str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
+    
+    # apply C/C++ syntax highlighting
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "cc"                                "${CODEBLOCKS_CONFIG_FILE}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc"      --type elem -n "NAME"                              "${CODEBLOCKS_CONFIG_FILE}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc/NAME" --type elem -n "str" --value "C/C++"               "${CODEBLOCKS_CONFIG_FILE}"
+    
+    codeblocks_add_style "Default"   "cc" "${editor_fg}"          "${editor_bg}"          "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Selection" "cc" "${editor_selected_fg}" "${editor_selected_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    
+    codeblocks_add_style "Number"                                "cc" "${editor_number}"       "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "User keyword"                          "cc" "${editor_class}"        "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "String"                                "cc" "${editor_string}"       "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Operator"                              "cc" "${editor_operator}"     "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment (normal)"                      "cc" "${editor_comment}"      "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment line (normal)"                 "cc" "${editor_comment}"      "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment (documentation)"               "cc" "${editor_comment}"      "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment line (documentation)"          "cc" "${editor_comment}"      "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment keyword (documentation)"       "cc" "${editor_preprocessor}" "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment keyword error (documentation)" "cc" "${editor_error}"        "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Keyword"                               "cc" "${editor_keyword}"      "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Character"                             "cc" "${editor_character}"    "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Preprocessor"                          "cc" "${editor_preprocessor}" "default" "${CODEBLOCKS_CONFIG_FILE}"
+    
+    # set new colorset as active
+    xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
+    
+    echo "  Done."
+fi
