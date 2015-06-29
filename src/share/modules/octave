@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# FIXME: set_value_section doesn't work, why?
+
+OCTAVE_CONFIG_FILE="$HOME/.config/octave/qt-settings"
+
+if [ -f "${OCTAVE_CONFIG_FILE}" ]; then
+    echo "* setting colors for Octave..."
+    
+    crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_b" "${terminal_bg_color}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_f" "${terminal_fg_color}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_s" "${selected_bg_color}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_c" "${terminal_fg_color}"
+    
+    crudini --set "${OCTAVE_CONFIG_FILE}" "editor" "highlight_current_line_color" "${editor_current_line_bg}"
+    
+    # TODO: obseve these in practice
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_a" "${editor_class}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_f" "${editor_number}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_g" "${editor_keyword}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_h" "${editor_operator}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_i" "${editor_string}"
+    crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_p" "${editor_preprocessor}"
+    
+    set_value "Octave\\\\defaultcolor"    "=" "$(printf   "%d" 0x${editor_fg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\defaultpaper"    "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style0\\\\color" "=" "$(printf   "%d" 0x${editor_fg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style0\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style1\\\\color" "=" "$(printf   "%d" 0x${editor_comment:1:6})"  "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style1\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style2\\\\color" "=" "$(printf   "%d" 0x${editor_class:1:6})"    "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style2\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style3\\\\color" "=" "$(printf   "%d" 0x${editor_number:1:6})"   "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style3\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style4\\\\color" "=" "$(printf   "%d" 0x${editor_keyword:1:6})"  "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style4\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style5\\\\color" "=" "$(printf   "%d" 0x${editor_number:1:6})"   "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style5\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style6\\\\color" "=" "$(printf   "%d" 0x${editor_operator:1:6})" "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style6\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style7\\\\color" "=" "$(printf   "%d" 0x${editor_fg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style7\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style8\\\\color" "=" "$(printf   "%d" 0x${editor_string:1:6})"   "${OCTAVE_CONFIG_FILE}"
+    set_value "Octave\\\\style8\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
+
+    echo "  Done."
+fi
+    
