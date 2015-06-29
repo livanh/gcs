@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # TODO: replace other $colorN colors
 # TODO: replace background color
 # TODO: do not apply colors which are not defined
