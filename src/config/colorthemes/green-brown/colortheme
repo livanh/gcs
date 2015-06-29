@@ -1,26 +1,26 @@
 # gtk color theme
-base_color=#853F10
-text_color=#FFF285
-bg_color=#542303
-fg_color=#FFF285
-selected_bg_color=#4C942D
-selected_fg_color=#FFFFFF
-tooltip_bg_color=#A35D39
-tooltip_fg_color=#000000
-link_color=#4a90d9
-visited_link_color=#551a8b
+base_color="#853F10"
+text_color="#FFF285"
+bg_color="#542303"
+fg_color="#FFF285"
+selected_bg_color="#4C942D"
+selected_fg_color="#FFFFFF"
+tooltip_bg_color="#A35D39"
+tooltip_fg_color="#000000"
+link_color="#4a90d9"
+visited_link_color="#551a8b"
 
 # icon and cursor theme
-icon_theme_name=gnome-wise
-cursor_theme_name=crystalgreen
+icon_theme_name="gnome-wise"
+cursor_theme_name="crystalgreen"
 
 # error/warning
-error_color=#cc0000
-warning_bg_color=#faad3d
+error_color="#cc0000"
+warning_bg_color="#faad3d"
 
 # gtk3 core colors
-core_color_a=$selected_bg_color
-core_color_b=$bg_color
+core_color_a="$selected_bg_color"
+core_color_b="$bg_color"
 
 # i3 colors
 urgent_color=#BA0000
@@ -52,7 +52,7 @@ editor_selected_bg=$selected_bg_color
 editor_selected_fg=$selected_fg_color
 editor_frame_bg=$bg_color
 editor_frame_fg=$fg_color
-editor_current_line_bg=
+editor_current_line_bg="#6D330B"
 editor_margin_line_number_bg=
 editor_margin_line_number_fg=
 editor_margin_folding_bg=
@@ -68,7 +68,7 @@ editor_error=$error_color
 editor_brace_good=
 editor_brace_bad=$editor_error
 
-editor_comment=#C8C8C8
+editor_comment="#9C7D55"
 editor_number=#E0A000
 editor_type=
 editor_class=#4995F1
