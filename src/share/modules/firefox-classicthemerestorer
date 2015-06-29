@@ -1,0 +1,28 @@
+#!/bin/bash
+FIREFOX_CONFIG_FILE="/home/alessandro/.mozilla/firefox/Profilo completo/prefs.js"
+
+ff_ctr_set_value(){
+    key="$1"
+    value="$2"
+    file="$3"
+    sed -i "s/\"$1\", \".*\"/\"$1\", \"$2\"/g" "$3"
+}
+
+if [ -f "${FIREFOX_CONFIG_FILE}" ]; then
+    echo "* Setting colors for Firefox (Classic Theme Restorer)..."
+
+    ff_ctr_set_value "extensions.classicthemerestorer.ctab1" "${bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctab2" "${base_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabact1" "${bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabact2" "${bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabactt" "${text_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabacttsh" "${selected_bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabhov1" "${bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabhov2" "${base_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabhovt" "${text_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabhovtsh" "${selected_bg_color}" "${FIREFOX_CONFIG_FILE}"
+    ff_ctr_set_value "extensions.classicthemerestorer.ctabt" "${unfocused_text_color}" "${FIREFOX_CONFIG_FILE}"
+
+    echo "  Done."
+fi
+
