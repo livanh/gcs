@@ -108,7 +108,7 @@ if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
     codeblocks_add_style "Keyword"                               "cc" "${editor_keyword}"         "default" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Character"                             "cc" "${editor_character}"       "default" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Preprocessor"                          "cc" "${editor_preprocessor}"    "default" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Active line"                           "cc" "${editor_current_line_bg}" "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Active line"                           "cc" "default" "${editor_current_line_bg}" "${CODEBLOCKS_CONFIG_FILE}"
     
     # set new colorset as active
     xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
