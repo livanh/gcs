@@ -4,13 +4,13 @@
 # TODO: do not apply colors which are not defined
 # TODO: print messages only if some config file exist
 source "${CONFIG_DIR}/modules/conky"
-echo "* setting colors for conky..."
+printf "* Setting colors for conky...\n"
 for i in ${CONKY_CONFIG_FILES[*]}; do
     if [ -f "${i}" ]; then
-        echo "  ${i}..."
+        printf "  ${i}..."
         set_value "default_color" " "  "${text_color:1}" "${i}"
         set_value "color0" " " "${conky_color0:1}" "${i}"
+        printf " done.\n"
     fi
 done
 killall -SIGUSR1 conky
-echo "  Done."

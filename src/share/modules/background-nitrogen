@@ -2,8 +2,8 @@
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
-echo "* setting wallpaper with nitrogen..."
 if [ -f "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" ]; then
+    printf "* Setting wallpaper with nitrogen..."
     case "${wallpaper_mode}" in
         centered)  nitrogen --save --set-centered "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" --set-color=${wallpaper_bg_color};;
         tiled)     nitrogen --save --set-tiled "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
@@ -11,5 +11,5 @@ if [ -f "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" ]; then
         zoom-fit)  nitrogen --save --set-zoom "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" --set-color=${wallpaper_bg_color};;
         zoom-fill) nitrogen --save --set-zoom-fill "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
     esac
-    echo "  Done."
+    printf " done.\n"
 fi

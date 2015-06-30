@@ -5,9 +5,9 @@
 #TODO allow cursor themes in $HOME/.icons and/or $HOME/.local/share/icons too
 
 if [[ $cursor_theme_name ]]; then
-    echo "* Setting cursor theme: ${cursor_theme_name}..."
+    printf "* Setting cursor theme: ${cursor_theme_name}..."
     set_value "Inherits" "=" "${cursor_theme_name}" "$HOME/.icons/default/index.theme"
     rm "$HOME/.icons/default/cursors"
     ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "$HOME/.icons/default/cursors"
-    echo "  Done."
+    printf " done.\n"
 fi

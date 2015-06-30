@@ -59,6 +59,7 @@ editor_margin_folding_bg=
 editor_margin_folding_fg=
 editor_fold_symbol_highlight=
 editor_indent_guide="#D26F2A"
+editor_long_line_marker="#191919"
 editor_caret=
 # editor_marker_line
 # editor_marker_search

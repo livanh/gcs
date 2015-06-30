@@ -77,13 +77,11 @@ set_value_section() {
 
 if [ -f "${THEMES_DIR}/${COLOR_THEME}/colortheme" ]; then
     echo "Applying color theme ${COLOR_THEME}"
-    echo
     # main loop invokes all available modules
     for i in "${MODULES_DIR}/"*; do
 	if [ -x "$i" ]; then
 	    . "${THEMES_DIR}/${COLOR_THEME}/colortheme"
 	    . "$i"
-	    echo
 	fi
     done
 else

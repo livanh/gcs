@@ -77,7 +77,7 @@ codeblocks_set_color (){
 CODEBLOCKS_CONFIG_FILE="$HOME/.codeblocks/default.conf"
 
 if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
-    echo "* setting colors for Code::Blocks..."
+    printf "* Setting colors for Code::Blocks..."
     
     # clear colorset with same name, if any
     xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}"                                                             "${CODEBLOCKS_CONFIG_FILE}"
@@ -122,10 +122,13 @@ if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${editor_comment}"       "${CODEBLOCKS_CONFIG_FILE}"
     
     
-    codeblocks_set_color "CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${fg_color}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${fg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${editor_long_line_marker}" "${CODEBLOCKS_CONFIG_FILE}"
     
-    echo "  Done."
+    
+    
+    printf " done.\n"
 fi

@@ -2,7 +2,7 @@
 
 I3_CONFIG_FILE="$HOME/.config/i3/config"
 if [ -f "${I3_CONFIG_FILE}" ]; then
-    echo "* setting colors for i3 window manager..."
+    printf "* Setting colors for i3 window manager..."
     
     set_value "client\.focused"          " " "${selected_bg_color} ${selected_bg_color} ${selected_fg_color} ${selected_bg_color}" "${I3_CONFIG_FILE}"
     set_value "client\.focused_inactive" " " "${unfocused_color} ${unfocused_color} ${unfocused_text_color} ${selected_bg_color}" "${I3_CONFIG_FILE}"
@@ -19,5 +19,5 @@ if [ -f "${I3_CONFIG_FILE}" ]; then
     set_value "urgent_workspace"   " " "${urgent_color} ${urgent_color} ${selected_fg_color}" "${I3_CONFIG_FILE}"
     
     i3-msg reload >/dev/null
-    echo "  Done."
+    printf " done.\n"
 fi

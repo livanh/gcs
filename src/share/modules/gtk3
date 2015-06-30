@@ -2,7 +2,7 @@
 
 # TODO: document how to make it work
 
-echo "* setting colors for GTK+ 3..."
+printf "* Setting colors for GTK+ 3..."
 
 GTK3_COLORS_FILE="$HOME/.config/gtk-3.0/colors.css"
 
@@ -19,7 +19,7 @@ if [ -f "${GTK3_COLORS_FILE}" ]; then
     set_value "visited_link_color"      " " "${visited_link_color};" "${GTK3_COLORS_FILE}"
     set_value "core_color_a"            " " "${core_color_a};"       "${GTK3_COLORS_FILE}"
     set_value "core_color_b"            " " "${core_color_b};"       "${GTK3_COLORS_FILE}"
-    echo "  Done."
+    printf " done.\n"
 else
-    echo "  ${GTK3_COLORS_FILE} not found!"
+    printf " ${GTK3_COLORS_FILE} not found!\n"
 fi
