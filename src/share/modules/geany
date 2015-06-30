@@ -15,6 +15,7 @@ if [ -f "${GEANY_CONFIG_FILE}" ]; then
 	set_value "editor_frame_bg"        "=" "${editor_frame_bg}"        "${destfile}"
 	set_value "editor_frame_fg"        "=" "${editor_frame_fg}"        "${destfile}"
 	set_value "editor_current_line_bg" "=" "${editor_current_line_bg}" "${destfile}"
+	set_value "editor_indent_guide"    "=" "${editor_indent_guide}"    "${destfile}"
 	
 	set_value "editor_number"          "=" "${editor_number}"          "${destfile}"
 	set_value "editor_class"           "=" "${editor_class}"           "${destfile}"
