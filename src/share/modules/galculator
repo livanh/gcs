@@ -1,0 +1,16 @@
+#!/bin/bash
+
+GALCULATOR_CONFIG_FILE="$HOME/.config/galculator/galculator.conf"
+if [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
+
+    printf "* Settings color for Galculator..."
+    
+    set_value "display_bkg_color"    "=" "\"${base_color}\""          "${GALCULATOR_CONFIG_FILE}"
+    set_value "display_result_color" "=" "\"${text_color}\""          "${GALCULATOR_CONFIG_FILE}"
+    set_value "display_stack_color"  "=" "\"${text_color}\"" "${GALCULATOR_CONFIG_FILE}"
+    set_value "display_module_active_color"  "=" "\"${selected_bg_color}\"" "${GALCULATOR_CONFIG_FILE}"
+    set_value "display_module_inactive_color"  "=" "\"${unfocused_text_color}\"" "${GALCULATOR_CONFIG_FILE}"
+    
+    printf " done.\n"
+    
+fi
