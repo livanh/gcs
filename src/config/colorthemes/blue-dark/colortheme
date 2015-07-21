@@ -66,7 +66,7 @@ editor_caret=
 # editor_marker_mark
 editor_white_space=
 editor_error=$error_color
-editor_brace_good=
+editor_brace_good=#D26F2A
 editor_brace_bad=$editor_error
 
 editor_comment=#444444

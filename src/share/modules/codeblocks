@@ -27,6 +27,8 @@ codeblocks_add_style() {
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
     
     if [ "${fg_color}" != "default" ]; then
+	#xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"
+    #else
         local fg_red="$(   printf "%d" 0x${fg_color:1:2})"
         local fg_green="$( printf "%d" 0x${fg_color:3:2})"
         local fg_blue="$(  printf "%d" 0x${fg_color:5:2})"
@@ -39,6 +41,8 @@ codeblocks_add_style() {
     fi
     
     if [ "${bg_color}" != "default" ]; then
+	#xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
+    #else
         local bg_red="$(   printf "%d" 0x${bg_color:1:2})"
         local bg_green="$( printf "%d" 0x${bg_color:3:2})"
         local bg_blue="$(  printf "%d" 0x${bg_color:5:2})"
@@ -108,6 +112,8 @@ if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
     codeblocks_add_style "Keyword"                               "cc" "${editor_keyword}"         "default" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Character"                             "cc" "${editor_character}"       "default" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Preprocessor"                          "cc" "${editor_preprocessor}"    "default" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Matching brace highlight"              "cc" "${editor_brace_good}"      "${editor_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    
     codeblocks_add_style "Active line"                           "cc" "default" "${editor_current_line_bg}" "${CODEBLOCKS_CONFIG_FILE}"
     
     # set new colorset as active
