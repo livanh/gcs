@@ -64,7 +64,7 @@ editor_caret=
 # editor_marker_line
 # editor_marker_search
 # editor_marker_mark
-editor_white_space=
+editor_white_space="#9C7D55"
 editor_error=$error_color
 editor_brace_good=#E073F4
 editor_brace_bad=$editor_error
@@ -96,9 +96,9 @@ editor_attribute_unknown=
 editor_value=
 editor_entity=
 
-editor_diff_added=
-editor_diff_removed=
-editor_diff_changed=
+editor_diff_added="#4C942D"
+editor_diff_removed="#CC0000"
+editor_diff_changed="#BB53FF"
 
 meld_insert_bg="#028106"
 meld_insert_outline="#004C02"

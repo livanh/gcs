@@ -15,7 +15,7 @@ icon_theme_name=gnome-brave
 cursor_theme_name=crystalblue
 
 # error/warning
-error_color=#cc0000
+error_color=#ec322f
 warning_bg_color=#faad3d
 
 # gtk3 core colors
@@ -64,7 +64,7 @@ editor_caret=
 # editor_marker_line
 # editor_marker_search
 # editor_marker_mark
-editor_white_space=
+editor_white_space=#444444
 editor_error=$error_color
 editor_brace_good=#D26F2A
 editor_brace_bad=$editor_error
@@ -96,9 +96,9 @@ editor_attribute_unknown=
 editor_value=
 editor_entity=
 
-editor_diff_added=
-editor_diff_removed=
-editor_diff_changed=
+editor_diff_added="#007500"
+editor_diff_removed="#ec322f"
+editor_diff_changed="#A820A8"
 
 meld_insert_bg="#00380E"
 meld_insert_outline="#007E1F"
