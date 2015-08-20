@@ -3,7 +3,7 @@
 GALCULATOR_CONFIG_FILE="$HOME/.config/galculator/galculator.conf"
 if [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
 
-    printf "* Setting color for Galculator..."
+    printf "* Setting colors for Galculator..."
     
     set_value "display_bkg_color"    "=" "\"${base_color}\""          "${GALCULATOR_CONFIG_FILE}"
     set_value "display_result_color" "=" "\"${text_color}\""          "${GALCULATOR_CONFIG_FILE}"
