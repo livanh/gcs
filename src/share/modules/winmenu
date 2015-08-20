@@ -3,7 +3,7 @@
 WINMENU_FILE="$HOME/bin/winmenu.py"
 if [ -f "${WINMENU_FILE}" ]; then
 
-    printf "* Settings color for winmenu.py..."
+    printf "* Setting colors for winmenu.py..."
     
     set_value "normal_background"   " = " "\"${bg_color}\""          "${WINMENU_FILE}"
     set_value "normal_foreground"   " = " "\"${fg_color}\""          "${WINMENU_FILE}"

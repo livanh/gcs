@@ -17,7 +17,7 @@
 
 I3_CONFIG_FILE="$HOME/.config/i3/config"
 if [ -f "${I3_CONFIG_FILE}" ]; then
-    printf "* Settig colors for dmenu..."
+    printf "* Setting colors for dmenu..."
     set_value 'set \$dmenu_normal_bg'   " " "${bg_color}"          "${I3_CONFIG_FILE}"
     set_value 'set \$dmenu_normal_fg'   " " "${fg_color}"          "${I3_CONFIG_FILE}"
     set_value 'set \$dmenu_selected_bg' " " "${selected_bg_color}" "${I3_CONFIG_FILE}"

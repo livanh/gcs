@@ -3,7 +3,7 @@
 MELD_GTKRC_FILE="$HOME/.gtkrc.mine"
 if [ -f "${MELD_GTKRC_FILE}" ]; then
 
-    printf "* Settings color for Meld..."
+    printf "* Setting colors for Meld..."
     
     set_value "color\[\"insert-bg\"\]"               " = " "\"${meld_insert_bg}\""               "${MELD_GTKRC_FILE}"
     set_value "color\[\"insert-outline\"\]"          " = " "\"${meld_insert_outline}\""          "${MELD_GTKRC_FILE}"
