@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set_color_mcomix() {
+    
+    if [ "$#" -ne 3 ]; then
+	    echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+	    exit 2
+    fi
+    
+    local key="$1"
+    local value="$2"
+    local file="$3"
+    
+    local red="$(   expr 257 \* $(printf "%d" 0x${value:1:2}))"
+    local green="$( expr 257 \* $(printf "%d" 0x${value:3:2}))"
+    local blue="$(  expr 257 \* $(printf "%d" 0x${value:5:2}))"
+    sed -i "
+	/\"${key}\"/{
+	    : search
+	    /\]/ {
+		b replace
+	    }
+	    N
+	    b search
+	    : replace
+	    s/\"${key}\".*\]/\"${key}\": \[${red},${green},${blue}\]/
+	}
+    " "${file}"
+}
+
+MCOMIX_CONFIG_FILE="$HOME/.config/mcomix/preferences.conf"
+
+if [ -f "${MCOMIX_CONFIG_FILE}" ]; then
+    printf "* Setting colors for MComix..."
+    set_color_mcomix "bg colour"       "${base_color}" "${MCOMIX_CONFIG_FILE}"
+    set_color_mcomix "thumb bg colour" "${bg_color}"   "${MCOMIX_CONFIG_FILE}"
+    printf " done.\n"
+fi
