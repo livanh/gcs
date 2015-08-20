@@ -39,5 +39,11 @@ if [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
     terminator_set_value_default_profile "cursor_color"     "${terminal_bg_color}"  "${TERMINATOR_CONFIG_FILE}"
     terminator_palette="${terminal_palette_black}:${terminal_palette_red}:${terminal_palette_green}:${terminal_palette_yellow}:${terminal_palette_blue}:${terminal_palette_purple}:${terminal_palette_cyan}:${terminal_palette_white}:${terminal_palette_light_black}:${terminal_palette_light_red}:${terminal_palette_light_green}:${terminal_palette_light_yellow}:${terminal_palette_light_blue}:${terminal_palette_light_purple}:${terminal_palette_light_cyan}:${terminal_palette_light_white}"
     terminator_set_value_default_profile "palette"          "${terminator_palette}" "${TERMINATOR_CONFIG_FILE}"
+    if [ "${terminal_transparency}" != "" ]; then
+        terminator_set_value_default_profile "background_type"          "transparent" "${TERMINATOR_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_darkness"          "${terminal_transparency}" "${TERMINATOR_CONFIG_FILE}"
+    else
+        terminator_set_value_default_profile "background_type"          "solid" "${TERMINATOR_CONFIG_FILE}"
+    fi
     printf " done.\n"
 fi

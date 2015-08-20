@@ -51,6 +51,7 @@ terminal_palette_light_blue="#5555ff"
 terminal_palette_light_purple="#ff55ff"
 terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
+terminal_transparency="0.67"
 
 # notifications
 notification_frame=$selected_bg_color
