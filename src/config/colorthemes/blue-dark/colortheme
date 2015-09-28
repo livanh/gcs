@@ -138,3 +138,8 @@ meld_unknown_text="#888888"
 meld_current_line_highlight="#666666"
 meld_syncpoint_outline="#888888"
 meld_current_chunk_highlight="#444444"
+
+prompt_username_color="B_I_Red"
+prompt_hostname_color="B_I_Yellow"
+prompt_directory_color="B_I_Green"
+prompt_git_color="B_I_Cyan"

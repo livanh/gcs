@@ -1,0 +1,54 @@
+#!/bin/bash
+
+bash_set_color(){
+    
+    if [ "$#" -ne 3 ]; then
+	    echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+	    exit 2
+    fi
+    
+    local key="$1"
+    local value="$2"
+    local file="$3"
+    local color_code=
+    local style_code=
+    local intensity_code=
+    local escape_code=
+    
+    case ${value} in
+	*Black)  color_code=0;;
+	*Red)    color_code=1;;
+	*Green)  color_code=2;;
+	*Yellow) color_code=3;;
+	*Blue)   color_code=4;;
+	*Purple) color_code=5;;
+	*Cyan)   color_code=6;;
+	*White)  color_code=7;;
+    esac
+    
+    case ${value} in
+	*B_*) style_code=1;;
+	*U_*) style_code=4;;
+	*)    style_code=0;;
+    esac
+    
+    case ${value} in
+	*I_*) intensity_code=9;;
+	*)    intensity_code=3;;
+    esac
+    
+    escape_code="\'\\\\e[${style_code};${intensity_code}${color_code}m\'"
+    
+    set_value "${key}" "=" "${escape_code}" "${file}"
+}
+
+BASH_CONFIG_FILE="$HOME/.bashrc.local"
+
+if [ -f "${BASH_CONFIG_FILE}" ]; then
+    printf "* Setting colors for Bash prompt..."
+    bash_set_color "prompt_username_color"  "${prompt_username_color}"  "${BASH_CONFIG_FILE}"
+    bash_set_color "prompt_hostname_color"  "${prompt_hostname_color}"  "${BASH_CONFIG_FILE}"
+    bash_set_color "prompt_directory_color" "${prompt_directory_color}" "${BASH_CONFIG_FILE}"
+    bash_set_color "prompt_git_color"       "${prompt_git_color}"       "${BASH_CONFIG_FILE}"
+    printf " done.\n"
+fi
