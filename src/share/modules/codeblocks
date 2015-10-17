@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # TODO: set bold font on some styles
-# TODO: set colors outside <colour_sets>
 
+# declare some constants
 CB_STYLE_CTR=0
 CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
 CB_COLORSET_NAME="gcs_theme"
@@ -12,8 +12,8 @@ CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 codeblocks_add_style() {
     
     if [ "$#" -ne 5 ]; then
-	    echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
-	    exit 2
+        echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
+        exit 2
     fi
     
     local name="$1"
@@ -27,7 +27,7 @@ codeblocks_add_style() {
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
     
     if [ "${fg_color}" != "default" ]; then
-	#xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"
+    #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"
     #else
         local fg_red="$(   printf "%d" 0x${fg_color:1:2})"
         local fg_green="$( printf "%d" 0x${fg_color:3:2})"
@@ -41,7 +41,7 @@ codeblocks_add_style() {
     fi
     
     if [ "${bg_color}" != "default" ]; then
-	#xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
+    #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
     #else
         local bg_red="$(   printf "%d" 0x${bg_color:1:2})"
         local bg_green="$( printf "%d" 0x${bg_color:3:2})"
@@ -57,11 +57,12 @@ codeblocks_add_style() {
     CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
 }
 
+# helper function to set colors outside colorsets
 codeblocks_set_color (){
     
     if [ "$#" -ne 3 ]; then
-	    echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-	    exit 2
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
     fi
     
     local path="$1"
@@ -75,12 +76,25 @@ codeblocks_set_color (){
     xmlstarlet ed --inplace --update "${path}/colour/@r" --value "${red}"   "${file}"
     xmlstarlet ed --inplace --update "${path}/colour/@g" --value "${green}" "${file}"
     xmlstarlet ed --inplace --update "${path}/colour/@b" --value "${blue}"  "${file}"
-    
 }
 
-CODEBLOCKS_CONFIG_FILE="$HOME/.codeblocks/default.conf"
 
-if [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
+# declare default values
+CODEBLOCKS_ENABLE_DEFAULT="true"
+CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.codeblocks/default.conf"
+
+# apply default values if appropriate
+CODEBLOCKS_ENABLE="${CODEBLOCKS_ENABLE:-${CODEBLOCKS_ENABLE_DEFAULT}}"
+CODEBLOCKS_CONFIG_FILE="${CODEBLOCKS_CONFIG_FILE:-${CODEBLOCKS_CONFIG_FILE_DEFAULT}}"
+
+# perform operations if possible
+if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for Code::Blocks (disabled from configuration).\n"
+    
+elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for Code::Blocks (target file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
+    
+else
     printf "* Setting colors for Code::Blocks..."
     
     # clear colorset with same name, if any

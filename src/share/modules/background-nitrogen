@@ -2,7 +2,23 @@
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
-if [ -f "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" ]; then
+# read configuration from config file, if existing
+[ -f "${CONFIG_DIR}/modules/nitrogen" ] && source "${CONFIG_DIR}/modules/nitrogen"
+
+# declare default values
+NITROGEN_ENABLE_DEFAULT="true"
+
+# apply default values if appropriate
+NITROGEN_ENABLE="${NITROGEN_ENABLE:-${NITROGEN_ENABLE_DEFAULT}}"
+
+# perform operations if possible
+if ! [ "${NITROGEN_ENABLE}" == "true" ]; then
+    printf "* Not setting wallpaper with nitrogen (disabled from configuration).\n"
+    
+elif ! [ -f "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" ]; then
+    printf "* Not setting wallpaper with nitrogen (image file not found: ${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}).\n"
+    
+else
     printf "* Setting wallpaper with nitrogen..."
     case "${wallpaper_mode}" in
         centered)  nitrogen --save --set-centered "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" --set-color=${wallpaper_bg_color};;
