@@ -5,6 +5,7 @@ if [ -f "${GEANY_CONFIG_FILE}" ]; then
     printf "* Setting colors for Geany..."
     
     if [ -f "${MODULES_DIR}/geany-template.conf" ]; then
+		[ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
 		destfile="$HOME/.config/geany/colorschemes/gcs.conf"
 		cp "${MODULES_DIR}/geany-template.conf" "${destfile}"
 		

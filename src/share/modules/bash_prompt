@@ -37,7 +37,7 @@ bash_set_color(){
 	*)    intensity_code=3;;
     esac
     
-    escape_code="\'\\\\e[${style_code};${intensity_code}${color_code}m\'"
+    escape_code="\'\\\[\\\\e[${style_code};${intensity_code}${color_code}m\\\]\'"
     
     set_value "${key}" "=" "${escape_code}" "${file}"
 }
