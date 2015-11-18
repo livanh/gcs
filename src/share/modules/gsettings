@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$SESSIONTYPE" == "gnome-session" ]; then
+    printf "* Setting colors (for GTK+ 2) and icon theme using gsettings..."
+    gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+    gsettings set org.gnome.desktop.interface gtk-color-scheme "bg_color:${bg_color};fg_color:${fg_color};base_color:${base_color};text_color:${text_color};selected_bg_color:${selected_bg_color};selected_fg_color:${selected_fg_color};tooltip_bg_color:${tooltip_bg_color};tooltip_fg_color:${tooltip_fg_color};link_color:${link_color};"
+    printf " done.\n"
+fi
