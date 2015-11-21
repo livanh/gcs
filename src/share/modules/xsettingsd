@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ -f "$HOME/.xsettingsd" ]; then
-    printf "* Setting colors and icon theme for GTK+ 2 in .xsettingsd..."
-    set_value "Gtk\/ColorScheme"   " " "\"base_color:${base_color};fg_color:${fg_color};tooltip_fg_color:${tooltip_fg_color};selected_bg_color:${selected_bg_color};selected_fg_color:${selected_fg_color};text_color:${text_color};bg_color:${bg_color};tooltip_bg_color:${tooltip_bg_color};link_color:${link_color};visited_link_color:${visited_link_color}\"" "$HOME/.xsettingsd"
-    set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "$HOME/.xsettingsd"
-    killall -SIGHUP xsettingsd
-    printf " done.\n"
-fi

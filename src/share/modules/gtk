@@ -1,0 +1,86 @@
+#!/bin/bash
+
+copy_gtk_theme() {
+    # FIXME: check number of input arguments
+    local gtk_theme_name="$1"
+    
+    if [ -d "$HOME/.local/share/themes/${gtk_theme_name}" ]; then
+        local gtk_theme_source="$HOME/.local/share/themes/${gtk_theme_name}"
+    elif [ -d "$HOME/.themes/${gtk_theme_name}" ]; then
+        local gtk_theme_source="$HOME/.themes/${gtk_theme_name}"
+    elif [ -d "/usr/share/themes/${gtk_theme_name}" ]; then
+        local gtk_theme_source="/usr/share/themes/${gtk_theme_name}"
+    else
+        exit
+        # FIXME: theme does not exist. Abort?
+    fi
+    local gtk_theme_destination="$HOME/.themes/${gtk_theme_name}-gcs"
+    
+    if [ -d "${gtk_theme_destination}" ]; then
+        rm -r "${gtk_theme_destination}"
+    fi
+    
+    mkdir -p "${gtk_theme_destination}"
+    cp -r "${gtk_theme_source}/"* "${gtk_theme_destination}"
+}
+
+set_gtk3_colors() {
+    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk-main.css"
+    set_value "base_color"        " " "${base_color};"         "${gtk3_theme_file}"
+    set_value "text_color"        " " "${text_color};"         "${gtk3_theme_file}"
+    set_value "bg_color"          " " "${bg_color};"           "${gtk3_theme_file}"
+    set_value "fg_color"          " " "${fg_color};"           "${gtk3_theme_file}"
+    set_value "selected_fg_color" " " "${selected_fg_color};"  "${gtk3_theme_file}"
+    set_value "selected_bg_color" " " "${selected_bg_color};"  "${gtk3_theme_file}"
+    set_value "tooltip_fg_color"  " " "${tooltip_fg_color};"   "${gtk3_theme_file}"
+    set_value "tooltip_bg_color"  " " "${tooltip_bg_color};"   "${gtk3_theme_file}"
+    set_value "link_color"              " " "${link_color};"         "${gtk3_theme_file}"
+    set_value "visited_link_color"      " " "${visited_link_color};" "${gtk3_theme_file}"
+    set_value "core_color_a"            " " "${core_color_a};"       "${gtk3_theme_file}"
+    set_value "core_color_b"            " " "${core_color_b};"       "${gtk3_theme_file}"
+}
+
+# TODO: set parameters in configuration file?
+printf "* Setting colors and icon theme for GTK+..."
+
+if ps -e | grep xsettings >/dev/null; then
+
+    gtk_theme_name="$(dump_xsettings | awk '/^Net\/ThemeName/{print substr($2,2,length($2)-2)}')"
+    # FIXME: we're assuming that Net/ThemeName is set, what if it isn't?
+    gtk_theme_name="${gtk_theme_name%-gcs}"
+    
+    copy_gtk_theme "${gtk_theme_name}"
+    
+    set_value "Net\/ThemeName" " " "\"${gtk_theme_name}-gcs\"" "$HOME/.xsettingsd"
+    
+    set_value "Gtk\/ColorScheme"   " " "\"base_color:${base_color};fg_color:${fg_color};tooltip_fg_color:${tooltip_fg_color};selected_bg_color:${selected_bg_color};selected_fg_color:${selected_fg_color};text_color:${text_color};bg_color:${bg_color};tooltip_bg_color:${tooltip_bg_color};link_color:${link_color};visited_link_color:${visited_link_color}\"" "$HOME/.xsettingsd"
+    set_gtk3_colors
+    
+    set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "$HOME/.xsettingsd"
+    
+    killall -SIGHUP xsettingsd
+    
+    printf " done.\n"
+    
+elif ps -e | grep gnome-session >/dev/null; then
+    
+    gtk_theme_name=$(gsettings get org.gnome.desktop.interface gtk-theme)
+    # FIXME: we're assuming that gtk-theme-name is set, what if it isn't?
+
+    gtk_theme_name="${gtk_theme_name:1:-1}"
+    gtk_theme_name="${gtk_theme_name%-gcs}"
+    copy_gtk_theme "${gtk_theme_name}"
+    
+    gsettings set org.gnome.desktop.interface gtk-theme "${gtk_theme_name}-gcs"
+    
+    gsettings set org.gnome.desktop.interface gtk-color-scheme "base_color:${base_color};fg_color:${fg_color};tooltip_fg_color:${tooltip_fg_color};selected_bg_color:${selected_bg_color};selected_fg_color:${selected_fg_color};text_color:${text_color};bg_color:${bg_color};tooltip_bg_color:${tooltip_bg_color};link_color:${link_color};visited_link_color:${visited_link_color}"
+    set_gtk3_colors
+    
+    gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+    
+    printf " done.\n"
+    
+else
+	printf " no supported XSettings manager found!\n"
+	# TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
+fi
