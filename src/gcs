@@ -83,8 +83,9 @@ if [ -f "${THEMES_DIR}/${COLOR_THEME}/colortheme" ]; then
 	    # Load color theme file. It is loaded before each module to prevent moduled from modifying the colors.
 	    # egrep is used to only select lines which contain declaration for variables containing only
 	    # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
-	    # (to reuse other variables, i.e. var=$var_2) and dots (for filenames). Single or double quotes are permitted.
-	    eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.]+|\"[[:alnum:]_#$.]+\"|'[[:alnum:]_#$.]+')$" "${THEMES_DIR}/${COLOR_THEME}/colortheme")
+	    # (to reuse other variables, i.e. var=$var_2), dots (for filenames) and hyphens (for icon theme names).
+	    # Single or double quotes are permitted.
+	    eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${THEMES_DIR}/${COLOR_THEME}/colortheme")
 	    # Load a module
 	    . "$i"
 	fi
