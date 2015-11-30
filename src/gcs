@@ -32,6 +32,164 @@ if [ "$#" -ne 1 ]; then
 fi
 COLOR_THEME="$1"
 
+# Load a color theme file.
+# egrep is used to only select lines which contain declaration for variables containing only
+# alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
+# (to reuse other variables, i.e. var=$var_2), dots (for filenames) and hyphens (for icon theme names).
+# Single or double quotes are permitted.
+load_color_theme() {
+    # unset all known colors first
+    
+    # gtk color theme
+    unset base_color
+    unset text_color
+    unset bg_color
+    unset fg_color
+    unset selected_bg_color
+    unset selected_fg_color
+    unset tooltip_bg_color
+    unset tooltip_fg_color
+    unset link_color
+    unset visited_link_color
+    
+    # icon and cursor theme
+    unset icon_theme_name
+    unset cursor_theme_name
+    
+    # error/warning
+    unset error_color
+    unset warning_bg_color
+    
+    # gtk3 core colors
+    unset core_color_a
+    unset core_color_b
+    
+    # i3 colors
+    unset urgent_color
+    unset unfocused_color
+    unset unfocused_text_color
+    
+    # background
+    unset wallpaper_image
+    unset wallpaper_mode
+    unset wallpaper_bg_color
+    
+    # terminal
+    unset terminal_bg_color
+    unset terminal_fg_color
+    unset terminal_palette_black
+    unset terminal_palette_red
+    unset terminal_palette_green
+    unset terminal_palette_yellow
+    unset terminal_palette_blue
+    unset terminal_palette_purple
+    unset terminal_palette_cyan
+    unset terminal_palette_white
+    unset terminal_palette_light_black
+    unset terminal_palette_light_red
+    unset terminal_palette_light_green
+    unset terminal_palette_light_yellow
+    unset terminal_palette_light_blue
+    unset terminal_palette_light_purple
+    unset terminal_palette_light_cyan
+    unset terminal_palette_light_white
+    unset terminal_transparency
+    
+    # notifications
+    unset notification_frame
+    unset notification_low_bg
+    unset notification_low_fg
+    unset notification_medium_bg
+    unset notification_medium_fg
+    unset notification_high_bg
+    unset notification_high_fg
+    
+    # text editors with syntax highlighting
+    unset editor_bg
+    unset editor_fg
+    unset editor_selected_bg
+    unset editor_selected_fg
+    unset editor_frame_bg
+    unset editor_frame_fg
+    unset editor_current_line_bg
+    unset editor_margin_line_number_bg
+    unset editor_margin_line_number_fg
+    unset editor_margin_folding_bg
+    unset editor_margin_folding_fg
+    unset editor_fold_symbol_highlight
+    unset editor_indent_guide
+    unset editor_long_line_marker
+    unset editor_caret
+    # editor_marker_line
+    # editor_marker_search
+    # editor_marker_mark
+    unset editor_white_space
+    unset editor_error
+    unset editor_brace_good
+    unset editor_brace_bad
+    unset 
+    unset editor_comment
+    unset editor_number
+    unset editor_type
+    unset editor_class
+    unset editor_function
+    unset editor_parameter
+    unset editor_keyword
+    unset editor_identifier
+    unset editor_string
+    unset editor_character
+    # editor_backtick
+    # editor_here_doc
+    # editor_scalar
+    unset editor_label
+    unset editor_preprocessor
+    unset editor_regex
+    unset editor_operator
+    # editor_decorator
+
+    unset editor_tag
+    unset editor_tag_unknown
+    unset editor_tag_end
+    unset editor_attribute
+    unset editor_attribute_unknown
+    unset editor_value
+    unset editor_entity
+
+    unset editor_diff_added
+    unset editor_diff_removed
+    unset editor_diff_changed
+
+    unset meld_insert_bg
+    unset meld_insert_outline
+    unset meld_insert_text
+    unset meld_delete_bg
+    unset meld_delete_outline
+    unset meld_delete_text
+    unset meld_replace_bg
+    unset meld_replace_outline
+    unset meld_replace_text
+    unset meld_conflict_bg
+    unset meld_conflict_outline
+    unset meld_conflict_text
+    unset meld_error_bg
+    unset meld_error_outline
+    unset meld_error_text
+    unset meld_inline_bg
+    unset meld_inline_fg
+    unset meld_unknown_text
+    unset meld_current_line_highlight
+    unset meld_syncpoint_outline
+    unset meld_current_chunk_highlight
+
+    unset prompt_username_color
+    unset prompt_hostname_color
+    unset prompt_directory_color
+    unset prompt_git_color
+
+    # read color theme file
+    eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${THEMES_DIR}/${COLOR_THEME}/colortheme")
+}
+
 
 # set the value of the key named $KEY (in text file $FILE) equal to $VALUE
 # assuming they are separated by $SEPARATOR
@@ -81,11 +239,7 @@ if [ -f "${THEMES_DIR}/${COLOR_THEME}/colortheme" ]; then
     for i in "${MODULES_DIR}/"*; do
 	if [ -x "$i" ]; then
 	    # Load color theme file. It is loaded before each module to prevent moduled from modifying the colors.
-	    # egrep is used to only select lines which contain declaration for variables containing only
-	    # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
-	    # (to reuse other variables, i.e. var=$var_2), dots (for filenames) and hyphens (for icon theme names).
-	    # Single or double quotes are permitted.
-	    eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${THEMES_DIR}/${COLOR_THEME}/colortheme")
+	    load_color_theme
 	    # Load a module
 	    . "$i"
 	fi
