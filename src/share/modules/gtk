@@ -25,7 +25,20 @@ copy_gtk_theme() {
 }
 
 set_gtk3_colors() {
-    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk-main.css"
+    case ${gtk_theme_name} in
+	Clearlooks)
+	    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk.css";;
+	Clearlooks-Phenix)
+	    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk.css";;
+	Ambiance)
+	    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk-main.css";;
+	Radiance)
+	    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk-main.css";;
+	*)
+	    # TODO: is there a "standard" naming convention for gtk3 themes?
+	    gtk3_theme_file="$HOME/.themes/${gtk_theme_name}-gcs/gtk-3.0/gtk-main.css";;
+    esac
+    
     set_value "base_color"        " " "${base_color};"         "${gtk3_theme_file}"
     set_value "text_color"        " " "${text_color};"         "${gtk3_theme_file}"
     set_value "bg_color"          " " "${bg_color};"           "${gtk3_theme_file}"
