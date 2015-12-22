@@ -40,7 +40,7 @@ COLOR_THEME="$1"
 load_color_theme() {
     # unset all known colors first
     
-    # gtk color theme
+    # base colors
     unset base_color
     unset text_color
     unset bg_color
@@ -51,6 +51,18 @@ load_color_theme() {
     unset tooltip_fg_color
     unset link_color
     unset visited_link_color
+    
+    # gtk color theme
+    unset gtk_base_color
+    unset gtk_text_color
+    unset gtk_bg_color
+    unset gtk_fg_color
+    unset gtk_selected_bg_color
+    unset gtk_selected_fg_color
+    unset gtk_tooltip_bg_color
+    unset gtk_tooltip_fg_color
+    unset gtk_link_color
+    unset gtk_visited_link_color
     
     # icon and cursor theme
     unset icon_theme_name
@@ -191,7 +203,7 @@ load_color_theme() {
     
     # apply default values to some variables by referencing other variables
     
-    #~ # gtk color theme
+    #~ # base colors
     #~ unset base_color
     #~ unset text_color
     #~ unset bg_color
@@ -202,6 +214,18 @@ load_color_theme() {
     #~ unset tooltip_fg_color
     #~ unset link_color
     #~ unset visited_link_color
+
+    # gtk color theme
+    : ${gtk_base_color:=$base_color}
+    : ${gtk_text_color:=$text_color}
+    : ${gtk_bg_color:=$bg_color}
+    : ${gtk_fg_color:=$fg_color}
+    : ${gtk_selected_bg_color:=$selected_bg_color}
+    : ${gtk_selected_fg_color:=$selected_fg_color}
+    : ${gtk_tooltip_bg_color:=$tooltip_bg_color}
+    : ${gtk_tooltip_fg_color:=$tooltip_fg_color}
+    : ${gtk_link_color:=$link_color}
+    : ${gtk_visited_link_color:=$visited_link_color}
     
     #~ # icon and cursor theme
     #~ unset icon_theme_name
@@ -256,12 +280,12 @@ load_color_theme() {
     #~ unset notification_high_fg
     
     #~ # text editors with syntax highlighting
-    editor_bg=${editor_bg:-$bg_color}
-    editor_fg=${editor_fg:-$fg_color}
-    editor_selected_bg=${editor_selected_bg:-$selected_bg_color}
-    editor_selected_fg=${editor_selected_fg:-$selected_fg_color}
-    editor_frame_bg=${editor_frame_bg:-bg_color}
-    editor_frame_fg=${editor_frame_fg:-fg_color}
+    : ${editor_bg:=$bg_color}
+    : ${editor_fg:=$fg_color}
+    : ${editor_selected_bg:=$selected_bg_color}
+    : ${editor_selected_fg:=$selected_fg_color}
+    : ${editor_frame_bg:=$bg_color}
+    : ${editor_frame_fg:=$fg_color}
     #~ unset editor_current_line_bg
     #~ unset editor_margin_line_number_bg
     #~ unset editor_margin_line_number_fg
