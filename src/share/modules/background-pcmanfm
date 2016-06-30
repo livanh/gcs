@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
+# TODO: can not set background/text color from command line, prepare a patch for pcmanfm 
+
+# read configuration from config file, if existing
+[ -f "${CONFIG_DIR}/modules/background-pcmanfm" ] && source "${CONFIG_DIR}/modules/background-pcmanfm"
+
+# declare default values
+BACKGROUND_PCMANFM_ENABLE_DEFAULT="true"
+
+# apply default values if appropriate
+BACKGROUND_PCMANFM_ENABLE="${BACKGROUND_PCMANFM_ENABLE:-${BACKGROUND_PCMANFM_ENABLE_DEFAULT}}"
+
+# perform operations if possible
+if ! [ "${BACKGROUND_PCMANFM_ENABLE}" == "true" ]; then
+    printf "* Not setting wallpaper with pcmanfm (disabled from configuration).\n"
+    
+elif ! [ -f "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}" ]; then
+    printf "* Not setting wallpaper with pcmanfm (image file not found: ${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}).\n"
+    
+else
+    printf "* Setting wallpaper with pcmanfm..."
+    case "${wallpaper_mode}" in
+        centered)  pcmanfm --wallpaper-mode=center  --set-wallpaper "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
+        tiled)     pcmanfm --wallpaper-mode=tile    --set-wallpaper "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
+        stretched) pcmanfm --wallpaper-mode=stretch --set-wallpaper "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
+        zoom-fit)  pcmanfm --wallpaper-mode=fit     --set-wallpaper "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
+        zoom-fill) pcmanfm --wallpaper-mode=crop    --set-wallpaper "${THEMES_DIR}/${COLOR_THEME}/${wallpaper_image}";;
+    esac
+    printf " done.\n"
+fi
