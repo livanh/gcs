@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: set parameters in configuration file?
+printf "* Setting colors and icon theme for GTK+..."
+
 TMPFILE="/tmp/.oomox-theme"
 
 echo "NAME=gcs-theme" > "${TMPFILE}"
@@ -13,8 +16,8 @@ echo "TXT_BG=${base_color:1}" >> "${TMPFILE}"
 echo "TXT_FG=${text_color:1}" >> "${TMPFILE}"
 echo "BTN_BG=${bg_color:1}" >> "${TMPFILE}"
 echo "BTN_FG=${text_color:1}" >> "${TMPFILE}"
-echo "HDR_BTN_BG=${selected_bg_color:1}" >> "${TMPFILE}"
-echo "HDR_BTN_FG=${selected_fg_color:1}" >> "${TMPFILE}"
+echo "HDR_BTN_BG=${bg_color:1}" >> "${TMPFILE}"
+echo "HDR_BTN_FG=${fg_color:1}" >> "${TMPFILE}"
 echo "GTK3_GENERATE_DARK=True" >> "${TMPFILE}"
 echo "ROUNDNESS=3" >> "${TMPFILE}"
 echo "SPACING=3" >> "${TMPFILE}"
@@ -22,9 +25,6 @@ echo "GRADIENT=0.14" >> "${TMPFILE}"
 
 oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null
 rm "${TMPFILE}"
-
-# TODO: set parameters in configuration file?
-printf "* Setting colors and icon theme for GTK+..."
 
 if ps -e | grep xsettings >/dev/null; then
 
