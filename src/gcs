@@ -47,22 +47,20 @@ load_color_theme() {
     unset fg_color
     unset selected_bg_color
     unset selected_fg_color
-    unset tooltip_bg_color
-    unset tooltip_fg_color
-    unset link_color
-    unset visited_link_color
     
     # gtk color theme
     unset gtk_base_color
     unset gtk_text_color
     unset gtk_bg_color
     unset gtk_fg_color
+    unset gtk_menu_bg_color
+    unset gtk_menu_fg_color
     unset gtk_selected_bg_color
     unset gtk_selected_fg_color
-    unset gtk_tooltip_bg_color
-    unset gtk_tooltip_fg_color
-    unset gtk_link_color
-    unset gtk_visited_link_color
+    unset gtk_button_bg_color
+    unset gtk_button_fg_color
+    unset gtk_header_button_bg_color
+    unset gtk_header_button_fg_color
     
     # icon and cursor theme
     unset icon_theme_name
@@ -76,10 +74,13 @@ load_color_theme() {
     unset core_color_a
     unset core_color_b
     
-    # i3 colors
-    unset urgent_color
-    unset unfocused_color
-    unset unfocused_text_color
+    # window manager colors
+    unset titlebar_urgent_bg_color
+    unset titlebar_urgent_fg_color
+    unset titlebar_focused_bg_color
+    unset titlebar_focused_fg_color
+    unset titlebar_unfocused_bg_color
+    unset titlebar_unfocused_fg_color
     
     # background
     unset wallpaper_image
@@ -220,12 +221,14 @@ load_color_theme() {
     : ${gtk_text_color:=$text_color}
     : ${gtk_bg_color:=$bg_color}
     : ${gtk_fg_color:=$fg_color}
+    : ${gtk_menu_bg_color:=$bg_color}
+    : ${gtk_menu_fg_color:=$fg_color}
     : ${gtk_selected_bg_color:=$selected_bg_color}
     : ${gtk_selected_fg_color:=$selected_fg_color}
-    : ${gtk_tooltip_bg_color:=$tooltip_bg_color}
-    : ${gtk_tooltip_fg_color:=$tooltip_fg_color}
-    : ${gtk_link_color:=$link_color}
-    : ${gtk_visited_link_color:=$visited_link_color}
+    : ${gtk_button_bg_color:=$bg_color}
+    : ${gtk_button_fg_color:=$fg_color}
+    : ${gtk_header_button_bg_color:=$bg_color}
+    : ${gtk_header_button_fg_color:=$fg_color}
     
     #~ # icon and cursor theme
     #~ unset icon_theme_name
@@ -235,23 +238,22 @@ load_color_theme() {
     #~ unset error_color
     #~ unset warning_bg_color
     
-    #~ # gtk3 core colors
-    #~ unset core_color_a
-    #~ unset core_color_b
-    
-    #~ # i3 colors
-    #~ unset urgent_color
-    #~ unset unfocused_color
-    #~ unset unfocused_text_color
+    #~ # window manager colors
+    : ${titlebar_urgent_bg_color:=$selected_bg_color}
+    : ${titlebar_urgent_fg_color:=$selected_fg_color}
+    : ${titlebar_focused_bg_color:=$selected_bg_color}
+    : ${titlebar_focused_fg_color:=$selected_fg_color}
+    : ${titlebar_unfocused_bg_color:=$base_color}
+    : ${titlebar_unfocused_fg_color:=$text_color}
     
     #~ # background
     #~ unset wallpaper_image
     #~ unset wallpaper_mode
-    #~ unset wallpaper_bg_color
+    : ${wallpaper_bg_color:=$bg_color}
     
     #~ # terminal
-    #~ unset terminal_bg_color
-    #~ unset terminal_fg_color
+    : ${terminal_bg_color:=$fg_color}
+    : ${terminal_fg_color:=$bg_color}
     #~ unset terminal_palette_black
     #~ unset terminal_palette_red
     #~ unset terminal_palette_green
@@ -271,17 +273,17 @@ load_color_theme() {
     #~ unset terminal_transparency
     
     #~ # notifications
-    #~ unset notification_frame
-    #~ unset notification_low_bg
-    #~ unset notification_low_fg
-    #~ unset notification_medium_bg
-    #~ unset notification_medium_fg
-    #~ unset notification_high_bg
-    #~ unset notification_high_fg
+    : ${notification_frame:=$selected_bg_color}
+    : ${notification_low_bg:=$bg_color}
+    : ${notification_low_fg:=$text_color}
+    : ${notification_medium_bg:=$selected_bg_color}
+    : ${notification_medium_fg:=$selected_fg_color}
+    : ${notification_high_bg:=$urgent_color}
+    : ${notification_high_fg:=$selected_fg_color}
     
     #~ # text editors with syntax highlighting
-    : ${editor_bg:=$bg_color}
-    : ${editor_fg:=$fg_color}
+    : ${editor_bg:=$base_color}
+    : ${editor_fg:=$text_color}
     : ${editor_selected_bg:=$selected_bg_color}
     : ${editor_selected_fg:=$selected_fg_color}
     : ${editor_frame_bg:=$bg_color}
@@ -292,16 +294,16 @@ load_color_theme() {
     #~ unset editor_margin_folding_bg
     #~ unset editor_margin_folding_fg
     #~ unset editor_fold_symbol_highlight
-    #~ unset editor_indent_guide
-    #~ unset editor_long_line_marker
-    #~ unset editor_caret
+    : ${editor_indent_guide:=$editor_string}
+    : ${editor_long_line_marker:=$editor_current_line_bg}
+    : ${editor_caret:=$text_color}
     #~ # editor_marker_line
     #~ # editor_marker_search
     #~ # editor_marker_mark
-    #~ unset editor_white_space
-    #~ unset editor_error
-    #~ unset editor_brace_good
-    #~ unset editor_brace_bad
+    : ${editor_white_space:=$editor_comment}
+    : ${editor_error:=$error_color}
+    : ${editor_brace_good:=$editor_string}
+    : ${editor_brace_bad:=$editor_error}
     #~ unset 
     #~ unset editor_comment
     #~ unset editor_number
@@ -309,10 +311,10 @@ load_color_theme() {
     #~ unset editor_class
     #~ unset editor_function
     #~ unset editor_parameter
-    #~ unset editor_keyword
+    : ${editor_keyword:=$selected_bg_color}
     #~ unset editor_identifier
     #~ unset editor_string
-    #~ unset editor_character
+    : ${editor_character:=$editor_number}
     #~ # editor_backtick
     #~ # editor_here_doc
     #~ # editor_scalar

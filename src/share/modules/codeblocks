@@ -81,7 +81,7 @@ codeblocks_set_color (){
 
 # declare default values
 CODEBLOCKS_ENABLE_DEFAULT="true"
-CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.codeblocks/default.conf"
+CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 
 # apply default values if appropriate
 CODEBLOCKS_ENABLE="${CODEBLOCKS_ENABLE:-${CODEBLOCKS_ENABLE_DEFAULT}}"

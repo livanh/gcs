@@ -1,14 +1,10 @@
-# gtk color theme
+# base color theme
 base_color=#000000
 text_color=#AAAAAA
 bg_color=#333333
 fg_color=#BBBBBB
 selected_bg_color=#205FC6
 selected_fg_color=#FFFFFF
-tooltip_bg_color=#555555
-tooltip_fg_color=#FFFFFF
-link_color=#4a90d9
-visited_link_color=#551a8b
 
 # icon and cursor theme
 icon_theme_name=gnome-brave
@@ -18,19 +14,15 @@ cursor_theme_name=crystalblue
 error_color=#ec322f
 warning_bg_color=#faad3d
 
-# gtk3 core colors
-core_color_a=$selected_bg_color
-core_color_b=$bg_color
-
-# i3 colors
-urgent_color=#BA0000
-unfocused_color=#001644
-unfocused_text_color=#AAAAAA
+# window manager colors
+titlebar_urgent_bg_color=#BA0000
+titlebar_unfocused_bg_color=#001644
+titlebar_unfocused_fg_color=$text_color
 
 # background
 wallpaper_image=background.png
 wallpaper_mode=centered
-wallpaper_bg_color=#000000
+wallpaper_bg_color=$base_color
 
 # terminal
 terminal_bg_color=$base_color
@@ -53,38 +45,17 @@ terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
 terminal_transparency="0.67"
 
-# notifications
-notification_frame=$selected_bg_color
-notification_low_bg=$bg_color
-notification_low_fg=$text_color
-notification_medium_bg=$selected_bg_color
-notification_medium_fg=$selected_fg_color
-notification_high_bg=$urgent_color
-notification_high_fg=$selected_fg_color
-
 # text editors with syntax highlighting
-editor_bg=$base_color
-editor_fg=$text_color
-editor_selected_bg=$selected_bg_color
-editor_selected_fg=$selected_fg_color
-editor_frame_bg=$bg_color
-editor_frame_fg=$fg_color
 editor_current_line_bg="#191919"
 editor_margin_line_number_bg=
 editor_margin_line_number_fg=
 editor_margin_folding_bg=
 editor_margin_folding_fg=
 editor_fold_symbol_highlight=
-editor_indent_guide="#D26F2A"
-editor_long_line_marker="#191919"
 editor_caret=
 # editor_marker_line
 # editor_marker_search
 # editor_marker_mark
-editor_white_space=#444444
-editor_error=$error_color
-editor_brace_good=#D26F2A
-editor_brace_bad=$editor_error
 
 editor_comment=#444444
 editor_number=#E3DB28
@@ -92,10 +63,8 @@ editor_type=
 editor_class=#007500
 editor_function=
 editor_parameter=
-editor_keyword=$selected_bg_color
 editor_identifier=
 editor_string=#D26F2A
-editor_character=#E3DB28
 # editor_backtick
 # editor_here_doc
 # editor_scalar
@@ -138,8 +107,3 @@ meld_unknown_text="#888888"
 meld_current_line_highlight="#666666"
 meld_syncpoint_outline="#888888"
 meld_current_chunk_highlight="#444444"
-
-prompt_username_color="B_I_Red"
-prompt_hostname_color="B_I_Yellow"
-prompt_directory_color="B_I_Green"
-prompt_git_color="B_I_Cyan"
