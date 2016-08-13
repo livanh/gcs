@@ -26,6 +26,8 @@ MODULES_DIR="$HOME/.local/share/gcs/modules"
 CONFIG_DIR="$HOME/.config/gcs"
 THEMES_DIR="$HOME/.config/gcs/colorthemes"
 
+CONFIG_FILE="${CONFIG_DIR}/gcs.conf"
+
 if [ "$#" -ne 1 ]; then
     echo Usage: $0 \<color theme name\>
     exit 1
