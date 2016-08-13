@@ -13,7 +13,7 @@ if ! [ "${MELD_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Meld (disabled from configuration).\n"
 elif ! [ -f "${MELD_DEFAULT_STYLE_FILE}" ]; then
     printf "* Not setting colors for Meld (default style not found: ${MELD_DEFAULT_STYLE_FILE}).\n"
-elif ! which xmlstarlet; then
+elif ! which xmlstarlet >/dev/null; then
     printf "* Not setting colors for Meld (XMLStarlet is not installed).\n"
 else
     printf "* Setting colors for Meld..."

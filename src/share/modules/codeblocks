@@ -150,13 +150,13 @@ else
     # set new colorset as active
     xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
     
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${selected_bg_color}"    "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${selected_bg_color}"    "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${selected_fg_color}"    "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${unfocused_color}"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${unfocused_color}"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${unfocused_text_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${editor_comment}"       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${titlebar_focused_fg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${titlebar_unfocused_bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${titlebar_unfocused_bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${titlebar_unfocused_fg_color}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${editor_comment}"              "${CODEBLOCKS_CONFIG_FILE}"
     
     
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"

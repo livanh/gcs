@@ -23,7 +23,7 @@ echo "ROUNDNESS=3" >> "${TMPFILE}"
 echo "SPACING=3" >> "${TMPFILE}"
 echo "GRADIENT=0.14" >> "${TMPFILE}"
 
-oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null
+oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
 rm "${TMPFILE}"
 
 if ps -e | grep xsettings >/dev/null; then

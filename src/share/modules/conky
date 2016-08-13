@@ -4,7 +4,7 @@
 # TODO: do not apply colors which are not defined
 # TODO: print messages only if some config file exist
 
-CONKY_CONFIG_FILES=$(crudini --get ${CONFIG_FILE} conky config_files 2>/dev/null || echo "${HOME}/.conkyrc)
+CONKY_CONFIG_FILES=$(crudini --get ${CONFIG_FILE} conky config_files 2>/dev/null || echo "${HOME}/.conkyrc")
 eval conky_color0=$(crudini --get ${CONFIG_FILE} conky color0 2>/dev/null || echo ${text_color} )
 
 printf "* Setting colors for conky...\n"
@@ -23,7 +23,6 @@ for i in ${CONKY_CONFIG_FILES}; do
         set_value "default_color" " "  "${text_color:1}" "${file}"
         set_value "color0" " " "${conky_color0:1}" "${file}"
         printf " done.\n"
-        echo color0: ${conky_color0}
     fi
 done
 killall -SIGUSR1 conky
