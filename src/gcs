@@ -88,6 +88,16 @@ load_color_theme() {
     : ${titlebar_unfocused_bg_color:=$base_color}
     : ${titlebar_unfocused_fg_color:=$text_color}
     
+    # tray bar colors
+    : ${tray_bg:=$bg_color}
+    : ${tray_fg:=$fg_color}
+    : ${tray_urgent_bg:=$titlebar_urgent_bg_color}
+    : ${tray_urgent_fg:=$titlebar_urgent_fg_color}
+    : ${tray_focused_bg:=$titlebar_focused_bg_color}
+    : ${tray_focused_fg:=$titlebar_focused_fg_color}
+    : ${tray_unfocused_bg:=$bg_color}
+    : ${tray_unfocused_fg:=$fg_color}
+    
     #~ # background
     #~ unset wallpaper_image
     #~ unset wallpaper_mode

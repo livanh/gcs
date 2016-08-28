@@ -20,10 +20,18 @@ warning_bg_color=#faad3d
 
 # window manager colors
 titlebar_urgent_bg_color=#BA0000
-titlebar_focused_bg_color=$text_color
-titlebar_focused_fg_color=$base_color
-titlebar_unfocused_bg_color=$text_color
+titlebar_focused_bg_color=$gtk_menu_bg_color
+titlebar_focused_fg_color=$gtk_menu_fg_color
+titlebar_unfocused_bg_color=$gtk_menu_bg_color
 titlebar_unfocused_fg_color=#687b78
+
+# tray bar colors
+tray_bg=$gtk_menu_bg_color
+tray_fg=$gtk_menu_fg_color
+tray_focused_bg=$selected_bg_color
+tray_focused_fg=$gtk_menu_fg_color
+tray_unfocused_bg=$gtk_menu_bg_color
+tray_unfocused_fg=$gtk_menu_fg_color
 
 # background
 wallpaper_image=background.png

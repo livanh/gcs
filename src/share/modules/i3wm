@@ -10,14 +10,14 @@ if [ -f "${I3_CONFIG_FILE}" ]; then
     set_value "client\.unfocused"        " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color} ${titlebar_unfocused_bg_color}" "${I3_CONFIG_FILE}"
     set_value "client\.urgent"           " " "${titlebar_urgent_bg_color}    ${titlebar_urgent_bg_color}    ${titlebar_urgent_fg_color}    ${titlebar_urgent_bg_color}"    "${I3_CONFIG_FILE}"
     
-    set_value "separator"  " " " ${selected_bg_color}"  "${I3_CONFIG_FILE}"
-    set_value "background" " " " ${bg_color}"           "${I3_CONFIG_FILE}"
-    set_value "statusline" " " " ${fg_color}"           "${I3_CONFIG_FILE}"
+    set_value "separator"  " " " ${selected_bg_color}" "${I3_CONFIG_FILE}"
+    set_value "background" " " " ${tray_bg}"           "${I3_CONFIG_FILE}"
+    set_value "statusline" " " " ${tray_fg}"           "${I3_CONFIG_FILE}"
     
-    set_value "focused_workspace"  " " "${titlebar_focused_bg_color} ${titlebar_focused_bg_color} ${titlebar_focused_fg_color}" "${I3_CONFIG_FILE}"
-    set_value "active_workspace"   " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color}" "${I3_CONFIG_FILE}"
-    set_value "inactive_workspace" " " "${bg_color} ${bg_color} ${fg_color}" "${I3_CONFIG_FILE}"
-    set_value "urgent_workspace"   " " "${titlebar_urgent_bg_color} ${titlebar_urgent_bg_color} ${titlebar_urgent_fg_color}" "${I3_CONFIG_FILE}"
+    set_value "focused_workspace"  " " "${tray_focused_bg}   ${tray_focused_bg}   ${tray_focused_fg}"   "${I3_CONFIG_FILE}"
+    set_value "active_workspace"   " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
+    set_value "inactive_workspace" " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
+    set_value "urgent_workspace"   " " "${tray_urgent_bg}    ${tray_urgent_bg}    ${tray_urgent_fg}"    "${I3_CONFIG_FILE}"
     
     i3-msg reload >/dev/null
     printf " done.\n"
