@@ -61,31 +61,19 @@ terminal_palette_light_white="#ffffff"
 terminal_transparency="1"
 
 # text editors with syntax highlighting
-editor_bg=$base_color
-editor_fg=$text_color
-editor_selected_bg=$selected_bg_color
-editor_selected_fg=$selected_fg_color
-editor_frame_bg=$bg_color
-editor_frame_fg=$fg_color
-#editor_current_line_bg="#191919"
+editor_current_line_bg="#191919"
 editor_margin_line_number_bg=
 editor_margin_line_number_fg=
 editor_margin_folding_bg=
 editor_margin_folding_fg=
 editor_fold_symbol_highlight=
-#editor_indent_guide="#D26F2A"
-#editor_long_line_marker="#191919"
 editor_caret=
 # editor_marker_line
 # editor_marker_search
 # editor_marker_mark
-#editor_white_space=#444444
-#editor_error=$error_color
-editor_brace_good=#BEBEBE
-#editor_brace_bad=$editor_error
 
 editor_comment=#0000FF
-#editor_number=#E3DB28
+editor_number=#E3DB28
 #editor_type=
 editor_class=#008A8C
 #editor_function=
@@ -98,9 +86,9 @@ editor_character=#6A5ACD
 # editor_here_doc
 # editor_scalar
 editor_label=
-#editor_preprocessor=#259F86
+editor_preprocessor=#259F86
 editor_regex=
-#editor_operator=#A820A8
+editor_operator=#A820A8
 # editor_decorator
 
 #editor_tag=
@@ -111,9 +99,9 @@ editor_regex=
 #editor_value=
 #editor_entity=
 
-#editor_diff_added="#007500"
-#editor_diff_removed="#ec322f"
-#editor_diff_changed="#A820A8"
+editor_diff_added="#007500"
+editor_diff_removed="#ec322f"
+editor_diff_changed="#A820A8"
 
 meld_insert_bg="#00380E"
 meld_insert_outline="#007E1F"
@@ -136,8 +124,3 @@ meld_unknown_text="#888888"
 meld_current_line_highlight="#666666"
 meld_syncpoint_outline="#888888"
 meld_current_chunk_highlight="#444444"
-
-prompt_username_color="B_I_Red"
-prompt_hostname_color="B_I_Yellow"
-prompt_directory_color="B_I_Green"
-prompt_git_color="B_I_Cyan"
