@@ -60,15 +60,6 @@ terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
 terminal_transparency="1"
 
-# notifications
-notification_frame=$selected_bg_color
-notification_low_bg=$bg_color
-notification_low_fg=$text_color
-notification_medium_bg=$selected_bg_color
-notification_medium_fg=$selected_fg_color
-notification_high_bg=$urgent_color
-notification_high_fg=$selected_fg_color
-
 # text editors with syntax highlighting
 editor_bg=$base_color
 editor_fg=$text_color
