@@ -43,9 +43,8 @@ load_color_theme() {
     
     # clear environment
     unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH' | /usr/bin/cut -d= -f1 );
-    pid=$$
-    eval export $(cat /proc/$pid/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
-
+    pid=$(ps -o ppid= -p $$)
+    eval export $(cat /proc/${pid:1}/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
     
     # read color theme file
     eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${THEMES_DIR}/${COLOR_THEME}/colortheme")
