@@ -1,14 +1,14 @@
+#ubuntu
 # gtk color theme
-base_color=#ffffff
+base_color=#FFFFFF
 text_color=#3C3C3C
 bg_color=#F2F1F0
-fg_color=#4c4c4c
-selected_bg_color=#f07746
+fg_color=#4C4C4C
+selected_bg_color=#F07746
 selected_fg_color=#FFFFFF
-tooltip_bg_color=#000000
-tooltip_fg_color=#ffffff
-link_color=#DD4814
-visited_link_color=#551a8b
+
+gtk_menu_bg_color=#3C3C3C
+gtk_menu_fg_color=#FFFFFF
 
 # icon and cursor theme
 icon_theme_name=Humanity
@@ -18,14 +18,12 @@ cursor_theme_name=crystalblue
 error_color=#ec322f
 warning_bg_color=#faad3d
 
-# gtk3 core colors
-core_color_a=$selected_bg_color
-core_color_b=$bg_color
-
-# i3 colors
-urgent_color=#BA0000
-unfocused_color=#001644
-unfocused_text_color=#AAAAAA
+# window manager colors
+titlebar_urgent_bg_color=#BA0000
+titlebar_focused_bg_color=$text_color
+titlebar_focused_fg_color=$base_color
+titlebar_unfocused_bg_color=$text_color
+titlebar_unfocused_fg_color=#687b78
 
 # background
 wallpaper_image=background.png
@@ -33,8 +31,9 @@ wallpaper_mode=centered
 wallpaper_bg_color=#000000
 
 # terminal
-terminal_bg_color=$base_color
-terminal_fg_color=$text_color
+terminal_bg_color=#300A24
+terminal_fg_color=#FFFFFF
+#-----------------------------------------
 terminal_palette_black="#000000"
 terminal_palette_red="#ff352b"
 terminal_palette_green="#00aa00"
@@ -51,7 +50,7 @@ terminal_palette_light_blue="#5555ff"
 terminal_palette_light_purple="#ff55ff"
 terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
-terminal_transparency="0.67"
+terminal_transparency="1"
 
 # notifications
 notification_frame=$selected_bg_color
