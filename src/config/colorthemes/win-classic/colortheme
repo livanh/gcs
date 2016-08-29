@@ -10,6 +10,3 @@ selected_fg_color=#FFFFFF
 titlebar_urgent_bg_color=#BA0000
 titlebar_unfocused_bg_color=#808080
 titlebar_unfocused_fg_color=#D4D0C8
-
-# text editors with syntax highlighting
-editor_comment=#808080

@@ -94,6 +94,10 @@ if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
 elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
     printf "* Not setting colors for Code::Blocks (target file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
     
+elif [ "${editor_syntax_enable}" == "false" ]; then
+    # set default colorset as active
+    xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
+    
 else
     printf "* Setting colors for Code::Blocks..."
     

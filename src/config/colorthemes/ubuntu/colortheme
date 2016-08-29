@@ -60,49 +60,6 @@ terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
 terminal_transparency="1"
 
-# text editors with syntax highlighting
-editor_current_line_bg="#191919"
-editor_margin_line_number_bg=
-editor_margin_line_number_fg=
-editor_margin_folding_bg=
-editor_margin_folding_fg=
-editor_fold_symbol_highlight=
-editor_caret=
-# editor_marker_line
-# editor_marker_search
-# editor_marker_mark
-
-editor_comment=#0000FF
-editor_number=#E3DB28
-#editor_type=
-editor_class=#008A8C
-#editor_function=
-#editor_parameter=
-editor_keyword=#A52A2A
-#editor_identifier=
-editor_string=#FF00FF
-editor_character=#6A5ACD
-# editor_backtick
-# editor_here_doc
-# editor_scalar
-editor_label=
-editor_preprocessor=#259F86
-editor_regex=
-editor_operator=#A820A8
-# editor_decorator
-
-#editor_tag=
-#editor_tag_unknown=
-#editor_tag_end=
-#editor_attribute=
-#editor_attribute_unknown=
-#editor_value=
-#editor_entity=
-
-editor_diff_added="#007500"
-editor_diff_removed="#ec322f"
-editor_diff_changed="#A820A8"
-
 meld_insert_bg="#00380E"
 meld_insert_outline="#007E1F"
 meld_insert_text="$text_color"

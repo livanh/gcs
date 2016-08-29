@@ -46,6 +46,7 @@ terminal_palette_light_white="#ffffff"
 terminal_transparency="0"
 
 # text editors with syntax highlighting
+editor_syntax_enable=true
 editor_current_line_bg="#6D330B"
 editor_margin_line_number_bg=
 editor_margin_line_number_fg=

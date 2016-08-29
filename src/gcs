@@ -135,6 +135,7 @@ load_color_theme() {
     : ${notification_high_fg:=$selected_fg_color}
     
     #~ # text editors with syntax highlighting
+    : ${editor_syntax_enable:=false}
     : ${editor_bg:=$base_color}
     : ${editor_fg:=$text_color}
     : ${editor_selected_bg:=$selected_bg_color}
