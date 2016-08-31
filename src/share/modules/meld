@@ -15,6 +15,10 @@ elif ! [ -f "${MELD_DEFAULT_STYLE_FILE}" ]; then
     printf "* Not setting colors for Meld (default style not found: ${MELD_DEFAULT_STYLE_FILE}).\n"
 elif ! which xmlstarlet >/dev/null; then
     printf "* Not setting colors for Meld (XMLStarlet is not installed).\n"
+elif [ "${editor_syntax_enable}" == "false" ]; then
+    if [ "$(gsettings get org.gnome.meld style-scheme)" == "'gcs-theme'" ]; then
+        gsettings set org.gnome.meld style-scheme "meld-base"
+    fi
 else
     printf "* Setting colors for Meld..."
     
