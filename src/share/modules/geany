@@ -1,56 +1,56 @@
-#!/bin/sh
+#!/bin/bash
 
 GEANY_CONFIG_FILE="$HOME/.config/geany/geany.conf"
 if [ "${editor_syntax_enable}" == "false" ]; then
-	if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
-		set_value "color_scheme" "=" ""                    "${GEANY_CONFIG_FILE}"
-	fi
-	set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
-	set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
-	
+    if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
+        set_value "color_scheme" "=" ""                    "${GEANY_CONFIG_FILE}"
+    fi
+    set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
+    set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
+
 elif [ -f "${GEANY_CONFIG_FILE}" ]; then
     printf "* Setting colors for Geany..."
-    
+
     if [ -f "${MODULES_DIR}/geany-template.conf" ]; then
-		[ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
-		destfile="$HOME/.config/geany/colorschemes/gcs.conf"
-		cp "${MODULES_DIR}/geany-template.conf" "${destfile}"
-		
-		set_value "editor_bg"              "=" "${editor_bg}"              "${destfile}"
-		set_value "editor_fg"              "=" "${editor_fg}"              "${destfile}"
-		set_value "editor_selected_bg"     "=" "${editor_selected_bg}"     "${destfile}"
-		set_value "editor_selected_fg"     "=" "${editor_selected_fg}"     "${destfile}"
-		set_value "editor_frame_bg"        "=" "${editor_frame_bg}"        "${destfile}"
-		set_value "editor_frame_fg"        "=" "${editor_frame_fg}"        "${destfile}"
-		set_value "editor_current_line_bg" "=" "${editor_current_line_bg}" "${destfile}"
-		set_value "editor_indent_guide"    "=" "${editor_indent_guide}"    "${destfile}"
-		
-		set_value "editor_number"          "=" "${editor_number}"          "${destfile}"
-		set_value "editor_class"           "=" "${editor_class}"           "${destfile}"
-		set_value "editor_string"          "=" "${editor_string}"          "${destfile}"
-		set_value "editor_operator"        "=" "${editor_operator}"        "${destfile}"
-		set_value "editor_comment"         "=" "${editor_comment}"         "${destfile}"
-		set_value "editor_error"           "=" "${editor_error}"           "${destfile}"
-		set_value "editor_keyword"         "=" "${editor_keyword}"         "${destfile}"
-		set_value "editor_character"       "=" "${editor_character}"       "${destfile}"
-		set_value "editor_preprocessor"    "=" "${editor_preprocessor}"    "${destfile}"
-		set_value "editor_brace_good"      "=" "${editor_brace_good}"      "${destfile}"
-		set_value "editor_white_space"     "=" "${editor_white_space}"     "${destfile}"
-		
-		set_value "editor_diff_added"      "=" "${editor_diff_added}"      "${destfile}"
-		set_value "editor_diff_removed"    "=" "${editor_diff_removed}"    "${destfile}"
-		set_value "editor_diff_changed"    "=" "${editor_diff_changed}"    "${destfile}"
-		
-		set_value "color_scheme" "=" "gcs.conf"             "${GEANY_CONFIG_FILE}"
-		
-		set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
-		set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
-		
-		set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_CONFIG_FILE}"
-		
-		printf " done.\n" 
+        [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
+        destfile="$HOME/.config/geany/colorschemes/gcs.conf"
+        cp "${MODULES_DIR}/geany-template.conf" "${destfile}"
+
+        set_value "editor_bg"              "=" "${editor_bg}"              "${destfile}"
+        set_value "editor_fg"              "=" "${editor_fg}"              "${destfile}"
+        set_value "editor_selected_bg"     "=" "${editor_selected_bg}"     "${destfile}"
+        set_value "editor_selected_fg"     "=" "${editor_selected_fg}"     "${destfile}"
+        set_value "editor_frame_bg"        "=" "${editor_frame_bg}"        "${destfile}"
+        set_value "editor_frame_fg"        "=" "${editor_frame_fg}"        "${destfile}"
+        set_value "editor_current_line_bg" "=" "${editor_current_line_bg}" "${destfile}"
+        set_value "editor_indent_guide"    "=" "${editor_indent_guide}"    "${destfile}"
+
+        set_value "editor_number"          "=" "${editor_number}"          "${destfile}"
+        set_value "editor_class"           "=" "${editor_class}"           "${destfile}"
+        set_value "editor_string"          "=" "${editor_string}"          "${destfile}"
+        set_value "editor_operator"        "=" "${editor_operator}"        "${destfile}"
+        set_value "editor_comment"         "=" "${editor_comment}"         "${destfile}"
+        set_value "editor_error"           "=" "${editor_error}"           "${destfile}"
+        set_value "editor_keyword"         "=" "${editor_keyword}"         "${destfile}"
+        set_value "editor_character"       "=" "${editor_character}"       "${destfile}"
+        set_value "editor_preprocessor"    "=" "${editor_preprocessor}"    "${destfile}"
+        set_value "editor_brace_good"      "=" "${editor_brace_good}"      "${destfile}"
+        set_value "editor_white_space"     "=" "${editor_white_space}"     "${destfile}"
+        
+        set_value "editor_diff_added"      "=" "${editor_diff_added}"      "${destfile}"
+        set_value "editor_diff_removed"    "=" "${editor_diff_removed}"    "${destfile}"
+        set_value "editor_diff_changed"    "=" "${editor_diff_changed}"    "${destfile}"
+
+        set_value "color_scheme" "=" "gcs.conf"             "${GEANY_CONFIG_FILE}"
+
+        set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
+        set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
+
+        set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_CONFIG_FILE}"
+
+        printf " done.\n" 
     else
-		printf " error: template not found!\n"
+        printf " error: template not found!\n"
     fi
-    
+
 fi
