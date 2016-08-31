@@ -10,7 +10,7 @@ if [ "${editor_syntax_enable}" == "false" ]; then
         crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_f" "${terminal_fg_color}"
         crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_s" "${selected_bg_color}"
         crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_c" "${terminal_fg_color}"
-    if
+    fi
     
     # apply defaut colors
     crudini --set "${OCTAVE_CONFIG_FILE}" "editor" "highlight_current_line_color" "#F0F0F0"
