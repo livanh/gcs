@@ -2,7 +2,9 @@
 
 GEANY_CONFIG_FILE="$HOME/.config/geany/geany.conf"
 if [ "${editor_syntax_enable}" == "false" ]; then
-	set_value "color_scheme" "=" ""                    "${GEANY_CONFIG_FILE}"
+	if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
+		set_value "color_scheme" "=" ""                    "${GEANY_CONFIG_FILE}"
+	fi
 	set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
 	set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
 	
