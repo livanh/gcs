@@ -1,0 +1,124 @@
+# named colors
+base03=#002b36
+base02=#073642
+base01=#586e75
+base00=#657b83
+base0=#839496
+base1=#93a1a1
+base2=#eee8d5
+base3=#fdf6e3
+yellow=#b58900
+orange=#cb4b16
+red=#dc322f
+magenta=#d33682
+violet=#6c71c4
+blue=#268bd2
+cyan=#2aa198
+green=#859900
+
+# base color theme
+base_color=$base3
+text_color=$base00
+bg_color=$base2
+fg_color=$base01
+selected_bg_color=$base03
+selected_fg_color=$base0
+
+# error/warning
+error_color=$red
+warning_bg_color=$orange
+
+# window manager colors
+titlebar_urgent_bg_color=$red
+titlebar_unfocused_bg_color=$bg_color
+titlebar_unfocused_fg_color=$fg_color
+
+# background
+wallpaper_image=background.png
+wallpaper_mode=tiled
+wallpaper_bg_color=$base_color
+
+# terminal
+terminal_bg_color=$base03
+terminal_fg_color=$base0
+terminal_palette_black=$base02
+terminal_palette_red=$red
+terminal_palette_green=$green
+terminal_palette_yellow=$yellow
+terminal_palette_blue=$blue
+terminal_palette_purple=$violet
+terminal_palette_cyan=$cyan
+terminal_palette_white=$base3
+terminal_palette_light_black=$base02
+terminal_palette_light_red=$red
+terminal_palette_light_green=$green
+terminal_palette_light_yellow=$yellow
+terminal_palette_light_blue=$blue
+terminal_palette_light_purple=$violet
+terminal_palette_light_cyan=$cyan
+terminal_palette_light_white=$base3
+terminal_transparency="1"
+
+# text editors with syntax highlighting
+editor_syntax_enable=true
+editor_current_line_bg=$base2
+editor_margin_line_number_bg=$base2
+editor_margin_line_number_fg=$base01
+editor_margin_folding_bg=$base2
+editor_margin_folding_fg=$base01
+editor_fold_symbol_highlight=$base2
+editor_caret=$base03
+# editor_marker_line
+# editor_marker_search
+# editor_marker_mark
+
+editor_comment=$base1
+editor_number=$cyan
+editor_type=$yellow
+editor_class=$yellow
+editor_function=$blue
+editor_parameter=$blue
+editor_identifier=$base00
+editor_string=$magenta
+# editor_backtick
+# editor_here_doc
+# editor_scalar
+editor_label=$base00
+editor_preprocessor=$orange
+editor_regex=$violet
+editor_operator=$base00
+# editor_decorator
+
+editor_tag=
+editor_tag_unknown=
+editor_tag_end=
+editor_attribute=
+editor_attribute_unknown=
+editor_value=
+editor_entity=
+
+editor_diff_added=$green
+editor_diff_removed=$red
+editor_diff_changed=$yellow
+
+meld_insert_bg=$base2
+meld_insert_outline=$green
+meld_insert_text=$base3
+meld_delete_bg=$base2
+meld_delete_outline=$red
+meld_delete_text=$base3
+meld_replace_bg=$base2
+meld_replace_outline=$orange
+meld_replace_text=$base3
+meld_conflict_bg=$base2
+meld_conflict_outline=$red
+meld_conflict_text=$base3
+meld_error_bg=$base2
+meld_error_outline=$red
+meld_error_text=$base3
+meld_inline_bg=$orange
+meld_inline_fg=$base3
+meld_unknown_text=$base1
+meld_current_line_highlight=$base2
+meld_syncpoint_outline=$base1
+meld_current_chunk_highlight=$base1
