@@ -41,7 +41,7 @@ wallpaper_bg_color=$base_color
 # terminal
 terminal_bg_color=$base_color
 terminal_fg_color=$text_color
-terminal_palette_black=$base03
+terminal_palette_black=$base01
 terminal_palette_red=$red
 terminal_palette_green=$green
 terminal_palette_yellow=$yellow
@@ -49,7 +49,7 @@ terminal_palette_blue=$blue
 terminal_palette_purple=$violet
 terminal_palette_cyan=$cyan
 terminal_palette_white=$base3
-terminal_palette_light_black=$base03
+terminal_palette_light_black=$base01
 terminal_palette_light_red=$red
 terminal_palette_light_green=$green
 terminal_palette_light_yellow=$yellow
