@@ -1,0 +1,125 @@
+#ubuntu
+# gtk color theme
+base_color=#300A24
+text_color=#F2F1F0
+bg_color=#3C3C3C
+fg_color=#FFFFFF
+selected_bg_color=#F07746
+selected_fg_color=#FFFFFF
+
+gtk_menu_bg_color=#3C3C3C
+gtk_menu_fg_color=#FFFFFF
+
+# icon and cursor theme
+icon_theme_name=Humanity
+cursor_theme_name=crystalblue
+
+# error/warning
+error_color=#ec322f
+warning_bg_color=#faad3d
+
+# window manager colors
+titlebar_urgent_bg_color=#BA0000
+titlebar_unfocused_bg_color=$gtk_menu_bg_color
+titlebar_unfocused_fg_color=#687b78
+
+# tray bar colors
+tray_bg=$gtk_menu_bg_color
+tray_fg=$gtk_menu_fg_color
+tray_focused_bg=$selected_bg_color
+tray_focused_fg=$gtk_menu_fg_color
+tray_unfocused_bg=$gtk_menu_bg_color
+tray_unfocused_fg=$gtk_menu_fg_color
+
+# background
+wallpaper_image=background.png
+wallpaper_mode=centered
+wallpaper_bg_color=#000000
+
+# terminal
+terminal_bg_color=#300A24
+terminal_fg_color=#FFFFFF
+#-----------------------------------------
+terminal_palette_black="#000000"
+terminal_palette_red="#ff352b"
+terminal_palette_green="#00aa00"
+terminal_palette_yellow="#77a600"
+terminal_palette_blue="#0000aa"
+terminal_palette_purple="#aa00aa"
+terminal_palette_cyan="#00aaaa"
+terminal_palette_white="#aaaaaa"
+terminal_palette_light_black="#555555"
+terminal_palette_light_red="#ff6a6a"
+terminal_palette_light_green="#55ff55"
+terminal_palette_light_yellow="#ffff39"
+terminal_palette_light_blue="#5555ff"
+terminal_palette_light_purple="#ff55ff"
+terminal_palette_light_cyan="#55ffff"
+terminal_palette_light_white="#ffffff"
+terminal_transparency="1"
+
+
+# text editors with syntax highlighting
+editor_syntax_enable=true
+editor_current_line_bg="#45002F"
+editor_margin_line_number_bg=
+editor_margin_line_number_fg=
+editor_margin_folding_bg=
+editor_margin_folding_fg=
+editor_fold_symbol_highlight=
+editor_caret=
+# editor_marker_line
+# editor_marker_search
+# editor_marker_mark
+
+editor_comment=#444444
+editor_number=#E3DB28
+editor_type=
+editor_class=#007500
+editor_function=
+editor_parameter=
+editor_identifier=
+editor_string=#108903
+# editor_backtick
+# editor_here_doc
+# editor_scalar
+editor_label=
+editor_preprocessor=#259F86
+editor_regex=
+editor_operator=#A820A8
+# editor_decorator
+
+editor_tag=
+editor_tag_unknown=
+editor_tag_end=
+editor_attribute=
+editor_attribute_unknown=
+editor_value=
+editor_entity=
+
+editor_diff_added="#007500"
+editor_diff_removed="#ec322f"
+editor_diff_changed="#A820A8"
+
+meld_insert_bg="#00380E"
+meld_insert_outline="#007E1F"
+meld_insert_text="$text_color"
+meld_delete_bg="#4F0300"
+meld_delete_outline="#9D0700"
+meld_delete_text="$text_color"
+meld_replace_bg="#505400"
+meld_replace_outline="#B3BA00"
+meld_replace_text="$text_color"
+meld_conflict_bg="#4F0300"
+meld_conflict_outline="#9D0700"
+meld_conflict_text="$text_color"
+meld_error_bg="#4F0300"
+meld_error_outline="#9D0700"
+meld_error_text="$text_color"
+meld_inline_bg="#006186"
+meld_inline_fg="$selected_fg_color"
+meld_unknown_text="#888888"
+meld_current_line_highlight="#666666"
+meld_syncpoint_outline="#888888"
+meld_current_chunk_highlight="#444444"
+
