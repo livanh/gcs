@@ -20,8 +20,6 @@ warning_bg_color=#faad3d
 
 # window manager colors
 titlebar_urgent_bg_color=#BA0000
-titlebar_focused_bg_color=$gtk_menu_bg_color
-titlebar_focused_fg_color=$gtk_menu_fg_color
 titlebar_unfocused_bg_color=$gtk_menu_bg_color
 titlebar_unfocused_fg_color=#687b78
 
