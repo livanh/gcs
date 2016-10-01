@@ -6,3 +6,4 @@ all install:
 	install -d ${PREFIX}/share/gcs/modules
 	cp -r src/config/colorthemes/* ${PREFIX}/share/gcs/colorthemes
 	cp -r src/share/modules/* ${PREFIX}/share/gcs/modules
+	install -D src/etc/bash_completion.d/gcs /etc/bash_completion.d/gcs

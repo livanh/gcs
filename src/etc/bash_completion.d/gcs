@@ -1,0 +1,17 @@
+
+# list gcs colorschemes
+function __gcs_comp {
+    find "${HOME}/.config/gcs/colorthemes" "/usr/local/share/gcs/colorthemes" "/usr/share/gcs/colorthemes" \
+        -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort | uniq
+}
+
+# completion command
+function _gcs_comp {
+    local curw
+    COMPREPLY=()
+    curw=${COMP_WORDS[COMP_CWORD]}
+    COMPREPLY=($(compgen -W '`__gcs_comp`' -- $curw))
+    return 0
+}
+
+complete -F _gcs_comp gcs
