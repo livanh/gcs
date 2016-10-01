@@ -1,7 +1,8 @@
+PREFIX=/usr/local
+
 all install:
-	install -D src/gcs ${HOME}/bin/gcs
-	install -d ${HOME}/.config/gcs/colorthemes
-	install -d ${HOME}/.config/gcs/modules
-	cp -r src/config/colorthemes/* ${HOME}/.config/gcs/colorthemes
-	install -d ${HOME}/.local/share/gcs
-	cp -r src/share/* ${HOME}/.local/share/gcs
+	install -D src/gcs ${PREFIX}/bin/gcs
+	install -d ${PREFIX}/share/gcs/colorthemes
+	install -d ${PREFIX}/share/gcs/modules
+	cp -r src/config/colorthemes/* ${PREFIX}/share/gcs/colorthemes
+	cp -r src/share/modules/* ${PREFIX}/share/gcs/modules
