@@ -19,8 +19,6 @@
 
 # TODO: enable or disable modules with a config file
 # TODO: create per-module configuration in config files
-# TODO: look for modules and themes in both system and user-specific directories
-# TODO: show a list of available color schemes when running without arguments 
 
 MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
 MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
@@ -33,7 +31,11 @@ THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
 CONFIG_FILE="${CONFIG_DIR}/gcs.conf"
 
 if [ "$#" -ne 1 ]; then
-    echo Usage: $0 \<color theme name\>
+    echo "Usage: $0 <color_theme_name>"
+    echo
+    echo "Avilable color themes:"
+    find "${HOME}/.config/gcs/colorthemes" "/usr/local/share/gcs/colorthemes" "/usr/share/gcs/colorthemes" \
+        -mindepth 1 -maxdepth 1 -type d -printf "\t%f\n" 2>/dev/null | sort | uniq
     exit 1
 fi
 COLOR_THEME="$1"
