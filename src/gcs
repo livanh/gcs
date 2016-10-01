@@ -280,10 +280,13 @@ set_value_section() {
 
 if [ -f "${THEMES_DIR_USER}/${COLOR_THEME}/colortheme" ]; then
     COLOR_THEME_FILE="${THEMES_DIR_USER}/${COLOR_THEME}/colortheme"
+    COLOR_THEME_DIR="${THEMES_DIR_USER}/${COLOR_THEME}"
 elif  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME}/colortheme" ]; then
     COLOR_THEME_FILE="${THEMES_DIR_LOCAL}/${COLOR_THEME}/colortheme"
+    COLOR_THEME_DIR="${THEMES_DIR_LOCAL}/${COLOR_THEME}"
 elif  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME}/colortheme" ]; then
     COLOR_THEME_FILE="${THEMES_DIR_SYSTEM}/${COLOR_THEME}/colortheme"
+    COLOR_THEME_DIR="${THEMES_DIR_SYSTEM}/${COLOR_THEME}"
 else
     echo "Error: theme \"${COLOR_THEME}\" not found!"
     exit 2
