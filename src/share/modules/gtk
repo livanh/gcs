@@ -41,7 +41,8 @@ elif ps -e | grep gnome-session >/dev/null; then
     
     gtk_theme_name=$(gsettings get org.gnome.desktop.interface gtk-theme)
     
-    gsettings set org.gnome.desktop.interface gtk-theme "$gcs-theme"
+    gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
+    gsettings set org.gnome.desktop.interface gtk-color-scheme ""
     
     gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
     
