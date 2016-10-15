@@ -206,28 +206,6 @@ load_color_theme() {
     #~ unset editor_diff_removed
     #~ unset editor_diff_changed
 
-    #~ unset meld_insert_bg
-    #~ unset meld_insert_outline
-    #~ unset meld_insert_text
-    #~ unset meld_delete_bg
-    #~ unset meld_delete_outline
-    #~ unset meld_delete_text
-    #~ unset meld_replace_bg
-    #~ unset meld_replace_outline
-    #~ unset meld_replace_text
-    #~ unset meld_conflict_bg
-    #~ unset meld_conflict_outline
-    #~ unset meld_conflict_text
-    #~ unset meld_error_bg
-    #~ unset meld_error_outline
-    #~ unset meld_error_text
-    #~ unset meld_inline_bg
-    #~ unset meld_inline_fg
-    #~ unset meld_unknown_text
-    #~ unset meld_current_line_highlight
-    #~ unset meld_syncpoint_outline
-    #~ unset meld_current_chunk_highlight
-
     #~ unset prompt_username_color
     #~ unset prompt_hostname_color
     #~ unset prompt_directory_color
