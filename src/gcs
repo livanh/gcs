@@ -269,7 +269,7 @@ set_value_section() {
     local SEPARATOR=$3
     local VALUE=$4
     local FILE=$5
-    local old_section=$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}")
+    local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}" | tr -d \\0)"
     local tmp_file="$(mktemp)"
     echo "$old_section" >"$tmp_file"
     set_value "$KEY" "$SEPARATOR" "$VALUE" "$tmp_file"
