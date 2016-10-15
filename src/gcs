@@ -220,17 +220,17 @@ load_color_theme() {
 # if the key does not exist, it will be created at the end of the file
 set_value() {
     if [ "$#" -ne 4 ]; then
-	echo "Error: set_value() requires 4 arguments!"
-	exit 2
+        echo "Error: set_value() requires 4 arguments!"
+        exit 2
     fi
     local KEY=$1
     local SEPARATOR=$2
     local VALUE=$3
     local FILE=$4
     if grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*" "${FILE}" >/dev/null; then
-	sed -r -i "s/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
+        sed -r -i "s/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
     else
-	echo "${KEY}${SEPARATOR}${VALUE}" >>"${FILE}"
+        echo "${KEY}${SEPARATOR}${VALUE}" >>"${FILE}"
     fi
 }
 
@@ -239,8 +239,8 @@ set_value() {
 # TODO: define behaviour when $SECTION is not found
 set_value_section() {
     if [ "$#" -ne 5 ]; then
-	echo "Error: set_value_section() requires 5 arguments!"
-	exit 2
+        echo "Error: set_value_section() requires 5 arguments!"
+        exit 2
     fi
     local SECTION=$1
     local KEY=$2

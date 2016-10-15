@@ -3,8 +3,8 @@
 set_color_mcomix() {
     
     if [ "$#" -ne 3 ]; then
-	    echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-	    exit 2
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
     fi
     
     local key="$1"
@@ -15,16 +15,16 @@ set_color_mcomix() {
     local green="$( expr 257 \* $(printf "%d" 0x${value:3:2}))"
     local blue="$(  expr 257 \* $(printf "%d" 0x${value:5:2}))"
     sed -i "
-	/\"${key}\"/{
-	    : search
-	    /\]/ {
-		b replace
-	    }
-	    N
-	    b search
-	    : replace
-	    s/\"${key}\".*\]/\"${key}\": \[${red},${green},${blue}\]/
-	}
+    /\"${key}\"/{
+        : search
+        /\]/ {
+        b replace
+        }
+        N
+        b search
+        : replace
+        s/\"${key}\".*\]/\"${key}\": \[${red},${green},${blue}\]/
+    }
     " "${file}"
 }
 

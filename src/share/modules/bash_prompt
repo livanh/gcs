@@ -3,8 +3,8 @@
 bash_set_color(){
     
     if [ "$#" -ne 3 ]; then
-	    echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-	    exit 2
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
     fi
     
     local key="$1"
@@ -16,25 +16,25 @@ bash_set_color(){
     local escape_code=
     
     case ${value} in
-	*Black)  color_code=0;;
-	*Red)    color_code=1;;
-	*Green)  color_code=2;;
-	*Yellow) color_code=3;;
-	*Blue)   color_code=4;;
-	*Purple) color_code=5;;
-	*Cyan)   color_code=6;;
-	*White)  color_code=7;;
+        *Black)  color_code=0;;
+        *Red)    color_code=1;;
+        *Green)  color_code=2;;
+        *Yellow) color_code=3;;
+        *Blue)   color_code=4;;
+        *Purple) color_code=5;;
+        *Cyan)   color_code=6;;
+        *White)  color_code=7;;
     esac
     
     case ${value} in
-	*B_*) style_code=1;;
-	*U_*) style_code=4;;
-	*)    style_code=0;;
+        *B_*) style_code=1;;
+        *U_*) style_code=4;;
+        *)    style_code=0;;
     esac
     
     case ${value} in
-	*I_*) intensity_code=9;;
-	*)    intensity_code=3;;
+        *I_*) intensity_code=9;;
+        *)    intensity_code=3;;
     esac
     
     escape_code="\'\\\[\\\\e[${style_code};${intensity_code}${color_code}m\\\]\'"
