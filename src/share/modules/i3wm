@@ -4,7 +4,7 @@
 I3_CONFIG_FILE="$HOME/.config/i3/config"
 if ! [ -f "${I3_CONFIG_FILE}" ]; then
     printf "* Not setting colors for i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
-elif ! [/tmp/i3-ipc.sock]; then
+elif ! i3 --get-socketpath &>/dev/null; then
     printf "* Not setting colors for i3 window manager (not currently active).\n"
 else
     printf "* Setting colors for i3 window manager..."
