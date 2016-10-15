@@ -10,11 +10,11 @@ if [ "${editor_syntax_enable}" == "false" ]; then
 
 elif [ -f "${GEANY_CONFIG_FILE}" ]; then
     printf "* Setting colors for Geany..."
-
-    if [ -f "${MODULES_DIR}/geany-template.conf" ]; then
+    
+    if [ -f "${BASH_SOURCE%/*}/geany-template.conf" ]; then
         [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
         destfile="$HOME/.config/geany/colorschemes/gcs.conf"
-        cp "${MODULES_DIR}/geany-template.conf" "${destfile}"
+        cp "${BASH_SOURCE%/*}/geany-template.conf" "${destfile}"
 
         set_value "editor_bg"              "=" "${editor_bg}"              "${destfile}"
         set_value "editor_fg"              "=" "${editor_fg}"              "${destfile}"
