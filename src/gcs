@@ -293,12 +293,27 @@ else
 fi
 
 echo "Applying color theme ${COLOR_THEME}"
-# main loop invokes all available modules
+
+# create an array of modules to execute
+MODULES=()
+
 for i in "${MODULES_DIR_SYSTEM}/"* "${MODULES_DIR_LOCAL}/"* "${MODULES_DIR_USER}/"*; do
     if [ -x "$i" ]; then
-        # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
-        load_color_theme "${COLOR_THEME_FILE}"
-        # Load a module
-        . "$i"
+        MODULE_NAME="${i##/*/}"
+        for j in ${!MODULES[@]}; do
+            if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
+                MODULES[$j]=''
+            fi
+        done
+        MODULES+=("$i")
     fi
+    
+done
+
+# execute modules
+for i in ${MODULES[@]}; do
+    # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
+    load_color_theme "${COLOR_THEME_FILE}"
+    # Load a module
+    . "$i"
 done
