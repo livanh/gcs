@@ -1,6 +1,8 @@
 #!/bin/sh
 
 DUNST_CONFIG_FILE="$HOME/.config/dunst/dunstrc"
+DUNST_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} dunst restart_command 2>/dev/null || echo )
+
 if [ -f "${DUNST_CONFIG_FILE}" ]; then
     printf "* Setting colors for dunst..."
     set_value_section "frame"            "color"      " = " "\"$notification_frame\""     "$DUNST_CONFIG_FILE"
@@ -10,5 +12,6 @@ if [ -f "${DUNST_CONFIG_FILE}" ]; then
     set_value_section "urgency_normal"   "foreground" " = " "\"$notification_medium_fg\"" "$DUNST_CONFIG_FILE"
     set_value_section "urgency_critical" "background" " = " "\"$notification_high_bg\""   "$DUNST_CONFIG_FILE"
     set_value_section "urgency_critical" "foreground" " = " "\"$notification_high_fg\""   "$DUNST_CONFIG_FILE"
+    $DUNST_RESTART_COMMAND &>/dev/null
     printf " done.\n"
 fi

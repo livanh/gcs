@@ -23,17 +23,18 @@ echo "ROUNDNESS=3" >> "${TMPFILE}"
 echo "SPACING=3" >> "${TMPFILE}"
 echo "GRADIENT=0.14" >> "${TMPFILE}"
 
+GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+
 oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
 rm "${TMPFILE}"
 
 if ps -e | grep xsettings >/dev/null; then
 
-
     set_value "Net\/ThemeName" " " "\"gcs-theme\"" "$HOME/.xsettingsd"
     
     set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "$HOME/.xsettingsd"
     
-    killall -SIGHUP xsettingsd
+    $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
     
     printf " done.\n"
     
