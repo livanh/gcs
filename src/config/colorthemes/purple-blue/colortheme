@@ -3,7 +3,6 @@ base_color=#040021
 text_color=#AAAAAA
 bg_color=#2D2C39
 fg_color=#BBBBBB
-#selected_bg_color=#63427D
 selected_bg_color=#3B7F90
 selected_fg_color=#FFFFFF
 
@@ -48,7 +47,7 @@ terminal_transparency="0.67"
 
 # text editors with syntax highlighting
 editor_syntax_enable=true
-editor_current_line_bg="#191919"
+editor_current_line_bg="#130E36"
 editor_margin_line_number_bg=
 editor_margin_line_number_fg=
 editor_margin_folding_bg=
