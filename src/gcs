@@ -74,7 +74,7 @@ load_color_theme() {
     #~ unset fg_color
     #~ unset selected_bg_color
     #~ unset selected_fg_color
-
+    
     # gtk color theme
     : ${gtk_base_color:=$base_color}
     : ${gtk_text_color:=$text_color}
@@ -104,6 +104,10 @@ load_color_theme() {
     : ${titlebar_focused_fg_color:=$selected_fg_color}
     : ${titlebar_unfocused_bg_color:=$base_color}
     : ${titlebar_unfocused_fg_color:=$text_color}
+    
+    # link colors
+    : ${link_color:=$selected_bg_color}
+    : ${link_visited_color:=$text_color}
     
     # tray bar colors
     : ${tray_bg:=$bg_color}
