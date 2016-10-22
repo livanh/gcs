@@ -2,6 +2,8 @@
 
 # TODO: set bold font on some styles
 
+which codeblocks >/dev/null || return
+
 # declare some constants
 CB_STYLE_CTR=0
 CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"

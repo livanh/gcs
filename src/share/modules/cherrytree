@@ -1,5 +1,7 @@
 #!/bin/sh
 
+which cherrytree >/dev/null || return
+
 : ${cherrytree_window_fg:=$text_color}
 : ${cherrytree_window_bg:=$base_color}
 : ${cherrytree_tree_fg:=$text_color}

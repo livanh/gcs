@@ -4,6 +4,8 @@
 # TODO: do not apply colors which are not defined
 # TODO: print messages only if some config file exist
 
+which conky >/dev/null || return
+
 CONKY_CONFIG_FILES=$(crudini --get ${CONFIG_FILE} conky config_files 2>/dev/null || echo "${HOME}/.conkyrc")
 eval conky_color0=$(crudini --get ${CONFIG_FILE} conky color0 2>/dev/null || echo ${text_color} )
 CONKY_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} conky restart_command 2>/dev/null || echo )

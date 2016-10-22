@@ -1,5 +1,7 @@
 #!/bin/sh
 
+which dunst >/dev/null || return
+
 DUNST_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} dunst restart_command 2>/dev/null || echo )
 
 DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"

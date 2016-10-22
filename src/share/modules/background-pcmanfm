@@ -3,6 +3,8 @@
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 # TODO: can not set background/text color from command line, prepare a patch for pcmanfm 
 
+which pcmanfm >/dev/null || return
+
 # read configuration from config file
 BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo true)"
 

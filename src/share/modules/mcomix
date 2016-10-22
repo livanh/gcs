@@ -1,5 +1,7 @@
 #!/bin/bash
 
+which mcomix >/dev/null || return
+
 set_color_mcomix() {
     
     if [ "$#" -ne 3 ]; then

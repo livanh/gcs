@@ -2,6 +2,8 @@
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
+which nitrogen >/dev/null || return
+
 # read configuration from config file
 NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} nitrogen enable 2>/dev/null || echo true)"
 

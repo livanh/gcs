@@ -2,6 +2,8 @@
 
 # FIXME: set_value_section doesn't work, why?
 
+which octave >/dev/null || return
+
 OCTAVE_CONFIG_FILE="$HOME/.config/octave/qt-settings"
 
 if [ "${editor_syntax_enable}" == "false" ]; then

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+which galculator >/dev/null || return
+
 : ${galculator_bg_color:=${base_color}}
 : ${galculator_result_color:=${text_color}}
 : ${galculator_stack_color:=${text_color}}

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+which meld >/dev/null || return
+
 # create default values
 MELD_ENABLE="true"
 MELD_DEFAULT_STYLE_FILE="/usr/share/meld/styles/meld-base.xml"

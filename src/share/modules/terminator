@@ -1,5 +1,7 @@
 #!/bin/sh
 
+which terminator >/dev/null || return
+
 # helper function to set a value under the "default" section of terminator's config file
 terminator_set_value_default_profile() {
     
