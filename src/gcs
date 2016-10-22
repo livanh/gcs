@@ -75,20 +75,6 @@ load_color_theme() {
     #~ unset selected_bg_color
     #~ unset selected_fg_color
     
-    # gtk color theme
-    : ${gtk_base_color:=$base_color}
-    : ${gtk_text_color:=$text_color}
-    : ${gtk_bg_color:=$bg_color}
-    : ${gtk_fg_color:=$fg_color}
-    : ${gtk_menu_bg_color:=$bg_color}
-    : ${gtk_menu_fg_color:=$fg_color}
-    : ${gtk_selected_bg_color:=$selected_bg_color}
-    : ${gtk_selected_fg_color:=$selected_fg_color}
-    : ${gtk_button_bg_color:=$bg_color}
-    : ${gtk_button_fg_color:=$fg_color}
-    : ${gtk_header_button_bg_color:=$bg_color}
-    : ${gtk_header_button_fg_color:=$fg_color}
-    
     #~ # icon and cursor theme
     #~ unset icon_theme_name
     #~ unset cursor_theme_name
