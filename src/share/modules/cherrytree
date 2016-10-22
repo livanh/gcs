@@ -1,10 +1,13 @@
 #!/bin/sh
 
-# TODO: add link colors
 : ${cherrytree_window_fg:=$text_color}
 : ${cherrytree_window_bg:=$base_color}
 : ${cherrytree_tree_fg:=$text_color}
 : ${cherrytree_tree_bg:=$base_color}
+: ${cherrytree_link_web:=$link_color}
+: ${cherrytree_link_node:=$link_color}
+: ${cherrytree_link_file:=$link_color}
+: ${cherrytree_link_directory:=$link_color}
 
 CHERRYTREE_CONFIG_FILE="$HOME/.config/cherrytree/config.cfg"
 if [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
@@ -13,5 +16,9 @@ if [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
     set_value "rt_def_bg"     " = " "${cherrytree_window_bg}"      "${CHERRYTREE_CONFIG_FILE}"
     set_value "tt_def_fg"     " = " "${cherrytree_tree_fg}"        "${CHERRYTREE_CONFIG_FILE}"
     set_value "tt_def_bg"     " = " "${cherrytree_tree_bg}"        "${CHERRYTREE_CONFIG_FILE}"
+    set_value "col_link_webs" " = " "${cherrytree_link_web}"       "${CHERRYTREE_CONFIG_FILE}"
+    set_value "col_link_node" " = " "${cherrytree_link_node}"      "${CHERRYTREE_CONFIG_FILE}"
+    set_value "col_link_file" " = " "${cherrytree_link_file}"      "${CHERRYTREE_CONFIG_FILE}"
+    set_value "col_link_fold" " = " "${cherrytree_link_directory}" "${CHERRYTREE_CONFIG_FILE}"
     printf " done.\n"
 fi
