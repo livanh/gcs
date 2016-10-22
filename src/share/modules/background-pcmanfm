@@ -12,7 +12,7 @@ if ! [ "${BACKGROUND_PCMANFM_ENABLE}" == "true" ]; then
     
 elif ! [ -f "${COLOR_THEME_DIR}/${wallpaper_image}" ]; then
     printf "* Not setting wallpaper with pcmanfm (image file not found: \"${COLOR_THEME_DIR}/${wallpaper_image}\").\n"
-elif ! pgrep -f "pcmanfm --desktop"; then
+elif ! pgrep -f "pcmanfm --desktop" >/dev/null; then
     printf "* Not setting wallpaper with pcmanfm (desktop manager is not active).\n"
 else
     printf "* Setting wallpaper with pcmanfm..."
