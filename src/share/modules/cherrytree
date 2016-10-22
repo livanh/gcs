@@ -21,4 +21,6 @@ if [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
     set_value "col_link_file" " = " "${cherrytree_link_file}"      "${CHERRYTREE_CONFIG_FILE}"
     set_value "col_link_fold" " = " "${cherrytree_link_directory}" "${CHERRYTREE_CONFIG_FILE}"
     printf " done.\n"
+else
+    printf "* Not setting colors for cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
 fi
