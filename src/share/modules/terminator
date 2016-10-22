@@ -1,14 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
 which terminator >/dev/null || return
 
 # helper function to set a value under the "default" section of terminator's config file
 terminator_set_value_default_profile() {
-    
+
     local key="$1"
     local value="$2"
     local file="$3"
-    
+
     sed -i "
     /\[profiles\]/{
     N
@@ -28,24 +28,18 @@ terminator_set_value_default_profile() {
     " "${file}"
 }
 
-# read configuration from config file, if existing
-[ -f "${CONFIG_DIR}/modules/terminator" ] && source "${CONFIG_DIR}/modules/terminator"
-
-# declare default values
 TERMINATOR_ENABLE_DEFAULT="true"
 TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
 
-# apply default values if appropriate
-TERMINATOR_ENABLE="${TERMINATOR_ENABLE:-${TERMINATOR_ENABLE_DEFAULT}}"
-TERMINATOR_CONFIG_FILE="${TERMINATOR_CONFIG_FILE:-${TERMINATOR_CONFIG_FILE_DEFAULT}}"
+TERMINATOR_ENABLE="$(crudini      --get ${CONFIG_FILE} terminator enable      2>/dev/null || echo "${TERMINATOR_ENABLE_DEFAULT}")"
+TERMINATOR_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
 
-# perform operations if possible
 if ! [ "${TERMINATOR_ENABLE}" == "true" ]; then
     printf "* Not setting colors for terminator (disabled from configuration).\n"
-    
+
 elif ! [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for terminator (target file not found: ${TERMINATOR_CONFIG_FILE}).\n"
-    
+    printf "* Not setting colors for terminator (configuration file not found: ${TERMINATOR_CONFIG_FILE}).\n"
+
 else
     printf "* Setting colors for terminator..."
     terminator_set_value_default_profile "background_color" "${terminal_bg_color}"  "${TERMINATOR_CONFIG_FILE}"

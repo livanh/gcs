@@ -3,30 +3,40 @@
 
 which i3 >/dev/null || return
 
-I3_CONFIG_FILE="$HOME/.config/i3/config"
-I3_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} i3wm restart_command 2>/dev/null || echo i3-msg reload)
+I3_ENABLE_DEFAULT="true"
+I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
+I3_RESTART_COMMAND_DEFAULT="i3-msg reload"
 
-if ! [ -f "${I3_CONFIG_FILE}" ]; then
+I3_ENABLE="$(crudini          --get ${CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
+I3_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
+I3_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
+
+if ! [ "${I3_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for i3 window manager (disabled from configuration).\n"
+
+elif ! [ -f "${I3_CONFIG_FILE}" ]; then
     printf "* Not setting colors for i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+
 elif ! i3 --get-socketpath &>/dev/null; then
     printf "* Not setting colors for i3 window manager (not currently active).\n"
+
 else
     printf "* Setting colors for i3 window manager..."
-    
+
     set_value "client\.focused"          " " "${titlebar_focused_bg_color}   ${titlebar_focused_bg_color}   ${titlebar_focused_fg_color}   ${titlebar_focused_bg_color}"   "${I3_CONFIG_FILE}"
     set_value "client\.focused_inactive" " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color} ${titlebar_unfocused_bg_color}" "${I3_CONFIG_FILE}"
     set_value "client\.unfocused"        " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color} ${titlebar_unfocused_bg_color}" "${I3_CONFIG_FILE}"
     set_value "client\.urgent"           " " "${titlebar_urgent_bg_color}    ${titlebar_urgent_bg_color}    ${titlebar_urgent_fg_color}    ${titlebar_urgent_bg_color}"    "${I3_CONFIG_FILE}"
-    
+
     set_value "separator"  " " " ${selected_bg_color}" "${I3_CONFIG_FILE}"
     set_value "background" " " " ${tray_bg}"           "${I3_CONFIG_FILE}"
     set_value "statusline" " " " ${tray_fg}"           "${I3_CONFIG_FILE}"
-    
+
     set_value "focused_workspace"  " " "${tray_focused_bg}   ${tray_focused_bg}   ${tray_focused_fg}"   "${I3_CONFIG_FILE}"
     set_value "active_workspace"   " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
     set_value "inactive_workspace" " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
     set_value "urgent_workspace"   " " "${tray_urgent_bg}    ${tray_urgent_bg}    ${tray_urgent_fg}"    "${I3_CONFIG_FILE}"
-    
-    $I3_RESTART_COMMAND &>/dev/null
+
+    ${I3_RESTART_COMMAND} &>/dev/null
     printf " done.\n"
 fi

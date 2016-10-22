@@ -6,27 +6,37 @@
 
 which conky >/dev/null || return
 
-CONKY_CONFIG_FILES=$(crudini --get ${CONFIG_FILE} conky config_files 2>/dev/null || echo "${HOME}/.conkyrc")
-eval conky_color0=$(crudini --get ${CONFIG_FILE} conky color0 2>/dev/null || echo ${text_color} )
-CONKY_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} conky restart_command 2>/dev/null || echo )
+CONKY_ENABLE_DEFAULT="true"
+CONKY_ENABLE="$(crudini --get ${CONFIG_FILE} conky enable 2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
+CONKY_RESTART_COMMAND_DEFAULT=""
 
-printf "* Setting colors for conky...\n"
-for i in ${CONKY_CONFIG_FILES}; do
-    
-    file="$i"
-    if [ ${file:0:1} == \" ]; then
-        file=${file:1}
-    fi
-    if [ ${file: -1} == \" ]; then
-        file=${file:0:-1}
-    fi
-    
-    if [ -f "${file}" ]; then
+CONKY_CONFIG_FILES="$(crudini    --get ${CONFIG_FILE} conky config_files    2>/dev/null || echo "${HOME}/.conkyrc")"
+eval conky_color0="$(crudini     --get ${CONFIG_FILE} conky color0          2>/dev/null || echo "${text_color}" )"
+CONKY_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} conky restart_command 2>/dev/null || echo "${CONKY_RESTART_COMMAND_DEFAULT}")"
+
+if ! [ "${CONKY_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for conky (disabled from configuration).\n"
+else
+    printf "* Setting colors for conky...\n"
+    for i in ${CONKY_CONFIG_FILES}; do
+        
+        file="$i"
+        if [ ${file:0:1} == \" ]; then
+            file=${file:1}
+        fi
+        if [ ${file: -1} == \" ]; then
+            file=${file:0:-1}
+        fi
+
         printf "  ${file}..."
-        set_value "default_color" " "  "${text_color:1}" "${file}"
-        set_value "color0" " " "${conky_color0:1}" "${file}"
-        printf " done.\n"
-    fi
-done
+        if [ -f "${file}" ]; then
+            set_value "default_color" " "  "${text_color:1}" "${file}"
+            set_value "color0" " " "${conky_color0:1}" "${file}"
+            printf " done.\n"
+        else
+            printf "not found!\n"
+        fi
+    done
 
-$CONKY_RESTART_COMMAND &>/dev/null
+    $CONKY_RESTART_COMMAND &>/dev/null
+fi

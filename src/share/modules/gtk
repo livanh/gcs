@@ -16,58 +16,69 @@
 gtk_roundness=$(crudini --get ${CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
 gtk_spacing=$(crudini   --get ${CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
 gtk_gradient=$(crudini  --get ${CONFIG_FILE} gtk gradient  2>/dev/null || echo 0.14)
-    
-printf "* Setting colors and icon theme for GTK+..."
 
-TMPFILE="/tmp/.oomox-theme"
+GTK_ENABLE_DEFAULT="true"
+GTK_ENABLE="$(crudini --get ${CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
 
-echo "NAME=gcs-theme" > "${TMPFILE}"
-echo "BG=${gtk_bg_color:1}" >> "${TMPFILE}"
-echo "FG=${gtk_fg_color:1}" >> "${TMPFILE}"
-echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${TMPFILE}"
-echo "MENU_FG=${gtk_menu_fg_color:1}" >> "${TMPFILE}"
-echo "SEL_BG=${gtk_selected_bg_color:1}" >> "${TMPFILE}"
-echo "SEL_FG=${gtk_selected_fg_color:1}" >> "${TMPFILE}"
-echo "TXT_BG=${gtk_base_color:1}" >> "${TMPFILE}"
-echo "TXT_FG=${gtk_text_color:1}" >> "${TMPFILE}"
-echo "BTN_BG=${gtk_button_bg_color:1}" >> "${TMPFILE}"
-echo "BTN_FG=${gtk_button_fg_color:1}" >> "${TMPFILE}"
-echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
-echo "HDR_BTN_FG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
-echo "GTK3_GENERATE_DARK=False" >> "${TMPFILE}"
-echo "ROUNDNESS=${gtk_roundness}" >> "${TMPFILE}"
-echo "SPACING=${gtk_spacing}" >> "${TMPFILE}"
-echo "GRADIENT=${gtk_gradient}" >> "${TMPFILE}"
+if ! [ "${GTK_ENABLE}" == "true" ]; then
+    printf "* Not setting colors and icon theme for GTK+ (disabled from configuration).\n"
 
+elif ! which oomox-cli >/dev/null; then 
+    printf "* Not setting colors and icon theme for GTK+ (oomox not installed).\n"
 
-oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
-rm "${TMPFILE}"
-
-if ps -e | grep xsettings >/dev/null; then
-
-    GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
-    GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
-    
-    set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
-    
-    set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
-    
-    $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
-    
-    printf " done.\n"
-    
-elif ps -e | grep gnome-session >/dev/null; then
-    
-    gtk_theme_name=$(gsettings get org.gnome.desktop.interface gtk-theme)
-    
-    gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
-    gsettings set org.gnome.desktop.interface gtk-color-scheme ""
-    
-    gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
-    
-    printf " done.\n"
-    
 else
-    printf " no supported XSettings manager found!\n"
-    # TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
+    printf "* Setting colors and icon theme for GTK+..."
+
+    TMPFILE="/tmp/.oomox-theme"
+
+    echo "NAME=gcs-theme" > "${TMPFILE}"
+    echo "BG=${gtk_bg_color:1}" >> "${TMPFILE}"
+    echo "FG=${gtk_fg_color:1}" >> "${TMPFILE}"
+    echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${TMPFILE}"
+    echo "MENU_FG=${gtk_menu_fg_color:1}" >> "${TMPFILE}"
+    echo "SEL_BG=${gtk_selected_bg_color:1}" >> "${TMPFILE}"
+    echo "SEL_FG=${gtk_selected_fg_color:1}" >> "${TMPFILE}"
+    echo "TXT_BG=${gtk_base_color:1}" >> "${TMPFILE}"
+    echo "TXT_FG=${gtk_text_color:1}" >> "${TMPFILE}"
+    echo "BTN_BG=${gtk_button_bg_color:1}" >> "${TMPFILE}"
+    echo "BTN_FG=${gtk_button_fg_color:1}" >> "${TMPFILE}"
+    echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
+    echo "HDR_BTN_FG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
+    echo "GTK3_GENERATE_DARK=False" >> "${TMPFILE}"
+    echo "ROUNDNESS=${gtk_roundness}" >> "${TMPFILE}"
+    echo "SPACING=${gtk_spacing}" >> "${TMPFILE}"
+    echo "GRADIENT=${gtk_gradient}" >> "${TMPFILE}"
+
+    oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
+    rm "${TMPFILE}"
+
+    if ps -e | grep xsettings >/dev/null; then
+
+        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
+
+        set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+
+        set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+
+        $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
+
+        printf " done.\n"
+
+    elif ps -e | grep gnome-session >/dev/null; then
+
+        gtk_theme_name=$(gsettings get org.gnome.desktop.interface gtk-theme)
+
+        gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
+        gsettings set org.gnome.desktop.interface gtk-color-scheme ""
+
+        gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+
+        printf " done.\n"
+
+    else
+        printf " no supported XSettings manager found!\n"
+        # TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
+    fi
+
 fi

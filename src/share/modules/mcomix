@@ -30,9 +30,19 @@ set_color_mcomix() {
     " "${file}"
 }
 
-MCOMIX_CONFIG_FILE="$HOME/.config/mcomix/preferences.conf"
+MCOMIX_ENABLE_DEFAULT="true"
+MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
 
-if [ -f "${MCOMIX_CONFIG_FILE}" ]; then
+MCOMIX_ENABLE="$(crudini      --get ${CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
+MCOMIX_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
+
+if ! [ "${MCOMIX_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for MComix (disabled from configuration).\n"
+
+elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for MComix (configuration file \"${MCOMIX_CONFIG_FILE}\" not found).\n"
+
+else
     printf "* Setting colors for MComix..."
     set_color_mcomix "bg colour"       "${base_color}" "${MCOMIX_CONFIG_FILE}"
     set_color_mcomix "thumb bg colour" "${bg_color}"   "${MCOMIX_CONFIG_FILE}"

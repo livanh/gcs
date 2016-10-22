@@ -1,11 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 
 which dunst >/dev/null || return
 
-DUNST_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} dunst restart_command 2>/dev/null || echo )
-
+DUNST_ENABLE_DEFAULT="true"
 DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"
-DUNST_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} dunst config_file 2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
+DUNST_RESTART_COMMAND_DEFAULT=""
+
+DUNST_ENABLE="$(crudini          --get ${CONFIG_FILE} dunst enable          2>/dev/null || echo "${DUNST_ENABLE_DEFAULT}")"
+DUNST_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} dunst config_file     2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
+DUNST_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} dunst restart_command 2>/dev/null || echo "${DUNST_RESTART_COMMAND_DEFAULT}")"
 
 : ${dunst_frame:=${notification_frame}}
 : ${dunst_urgency_low_bg:=${notification_low_bg}}
@@ -15,7 +18,13 @@ DUNST_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} dunst config_file 2>/dev/null 
 : ${dunst_urgency_critical_bg:=${notification_high_bg}}
 : ${dunst_urgency_critical_fg:=${notification_high_fg}}
 
-if [ -f "${DUNST_CONFIG_FILE}" ]; then
+if ! [ "${DUNST_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for dunst (disabled from configuration).\n"
+
+elif ! [ -f "${DUNST_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for dunst (configuration file \"${DUNST_CONFIG_FILE}\" not found).\n"
+
+else
     printf "* Setting colors for dunst..."
     set_value_section "frame"            "color"      " = " "\"${dunst_frame}\""               "${DUNST_CONFIG_FILE}"
     set_value_section "urgency_low"      "background" " = " "\"${dunst_urgency_low_bg}\""      "${DUNST_CONFIG_FILE}"
@@ -26,6 +35,4 @@ if [ -f "${DUNST_CONFIG_FILE}" ]; then
     set_value_section "urgency_critical" "foreground" " = " "\"${dunst_urgency_critical_fg}\"" "${DUNST_CONFIG_FILE}"
     $DUNST_RESTART_COMMAND &>/dev/null
     printf " done.\n"
-else
-    printf "* Not setting colors for dunst (config file \"${DUNST_CONFIG_FILE}\" not found).\n"
 fi

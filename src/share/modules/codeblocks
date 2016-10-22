@@ -12,25 +12,23 @@ CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 
 # helper function to set styles in Code::blocks config file
 codeblocks_add_style() {
-    
+
     if [ "$#" -ne 5 ]; then
         echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
         exit 2
     fi
-    
+
     local name="$1"
     local lang="$2"
     local fg_color="$3"
     local bg_color="$4"
     local file="$5"
-    
+
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}"                           --type elem -n "style${CB_STYLE_CTR}"  "${file}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"      --type elem -n "NAME"                  "${file}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
-    
+
     if [ "${fg_color}" != "default" ]; then
-    #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"
-    #else
         local fg_red="$(   printf "%d" 0x${fg_color:1:2})"
         local fg_green="$( printf "%d" 0x${fg_color:3:2})"
         local fg_blue="$(  printf "%d" 0x${fg_color:5:2})"
@@ -41,7 +39,7 @@ codeblocks_add_style() {
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "g"      --value "${fg_green}" "${file}"
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "b"      --value "${fg_blue}"  "${file}"
     fi
-    
+
     if [ "${bg_color}" != "default" ]; then
     #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
     #else
@@ -55,74 +53,70 @@ codeblocks_add_style() {
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "g"      --value "${bg_green}" "${file}"
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
     fi
-    
+
     CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
 }
 
 # helper function to set colors outside colorsets
 codeblocks_set_color (){
-    
+
     if [ "$#" -ne 3 ]; then
         echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
         exit 2
     fi
-    
+
     local path="$1"
     local color="$2"
     local file="$3"
-    
+
     local red="$(   printf "%d" 0x${color:1:2})"
     local green="$( printf "%d" 0x${color:3:2})"
     local blue="$(  printf "%d" 0x${color:5:2})"
-    
+
     xmlstarlet ed --inplace --update "${path}/colour/@r" --value "${red}"   "${file}"
     xmlstarlet ed --inplace --update "${path}/colour/@g" --value "${green}" "${file}"
     xmlstarlet ed --inplace --update "${path}/colour/@b" --value "${blue}"  "${file}"
 }
 
-
-# declare default values
 CODEBLOCKS_ENABLE_DEFAULT="true"
 CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 
-# apply default values if appropriate
-CODEBLOCKS_ENABLE="${CODEBLOCKS_ENABLE:-${CODEBLOCKS_ENABLE_DEFAULT}}"
-CODEBLOCKS_CONFIG_FILE="${CODEBLOCKS_CONFIG_FILE:-${CODEBLOCKS_CONFIG_FILE_DEFAULT}}"
+CODEBLOCKS_ENABLE="$(crudini      --get ${CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
+CODEBLOCKS_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
-# perform operations if possible
 if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Code::Blocks (disabled from configuration).\n"
-    
+
 elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for Code::Blocks (target file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
-    
+    printf "* Not setting colors for Code::Blocks (configuration file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
+
 elif [ "${editor_syntax_enable}" == "false" ]; then
     if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
         # set default colorset as active
         xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
     fi
-    
+
 else
     printf "* Setting colors for Code::Blocks..."
-    
+
     # clear colorset with same name, if any
     xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}"                                                             "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     # create new colorset
     xmlstarlet ed --inplace --subnode "${CB_PREFIX}"                  --type elem -n "${CB_COLORSET_NAME}"               "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "NAME"                              "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/NAME"    --type elem -n "str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     # apply C/C++ syntax highlighting
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "cc"                                "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc"      --type elem -n "NAME"                              "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc/NAME" --type elem -n "str" --value "C/C++"               "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     CB_STYLE_CTR=0
-    
+
     codeblocks_add_style "Default"   "cc" "${editor_fg}"          "${editor_bg}"          "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Selection" "cc" "${editor_selected_fg}" "${editor_selected_bg}" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     codeblocks_add_style "Number"                                "cc" "${editor_number}"          "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "User keyword"                          "cc" "${editor_class}"           "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "String"                                "cc" "${editor_string}"          "default"      "${CODEBLOCKS_CONFIG_FILE}"
@@ -137,16 +131,16 @@ else
     codeblocks_add_style "Character"                             "cc" "${editor_character}"       "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Preprocessor"                          "cc" "${editor_preprocessor}"    "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Matching brace highlight"              "cc" "${editor_brace_good}"      "${editor_bg}" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     codeblocks_add_style "Active line"                           "cc" "default" "${editor_current_line_bg}" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     # apply diff/patch syntax highlighting
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"                --type elem -n "diffpatch"                "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch"      --type elem -n "NAME"                     "${CODEBLOCKS_CONFIG_FILE}"
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch/NAME" --type elem -n "str" --value "Diff/Patch" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     CB_STYLE_CTR=0
-    
+
     codeblocks_add_style "Default"  "diffpatch" "${editor_fg}"           "${editor_bg}" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Comment"  "diffpatch" "${editor_comment}"      "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Command"  "diffpatch" "${editor_keyword}"      "default"      "${CODEBLOCKS_CONFIG_FILE}"
@@ -154,10 +148,10 @@ else
     codeblocks_add_style "Position" "diffpatch" "${editor_number}"       "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Deleted"  "diffpatch" "${editor_diff_removed}" "default"      "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_add_style "Added"    "diffpatch" "${editor_diff_added}"   "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     # set new colorset as active
     xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
-    
+
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${titlebar_focused_fg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
@@ -165,15 +159,12 @@ else
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${titlebar_unfocused_bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${titlebar_unfocused_fg_color}" "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${editor_comment}"              "${CODEBLOCKS_CONFIG_FILE}"
-    
-    
+
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${fg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
     codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${editor_long_line_marker}" "${CODEBLOCKS_CONFIG_FILE}"
-    
-    
-    
+
     printf " done.\n"
 fi

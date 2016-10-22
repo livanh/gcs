@@ -8,18 +8,26 @@ which galculator >/dev/null || return
 : ${galculator_module_active_color:=${selected_bg_color}}
 : ${galculator_module_inactive_color:=${unfocused_text_color}}
 
-GALCULATOR_CONFIG_FILE="$HOME/.config/galculator/galculator.conf"
-if [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
+GALCULATOR_ENABLE_DEFAULT="true"
+GALCULATOR_CONFIG_FILE_DEFAULT="$HOME/.config/galculator/galculator.conf"
 
+GALCULATOR_ENABLE="$(crudini      --get ${CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
+GALCULATOR_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
+
+if ! [ "${GALCULATOR_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for Galculator (disabled from configuration).\n"
+
+elif ! [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for Galculator (config file \"${GALCULATOR_CONFIG_FILE}\" not found).\n"
+
+else
     printf "* Setting colors for Galculator..."
-    
+
     set_value "display_bkg_color"             "=" "\"${galculator_bg_color}\""              "${GALCULATOR_CONFIG_FILE}"
     set_value "display_result_color"          "=" "\"${galculator_result_color}\""          "${GALCULATOR_CONFIG_FILE}"
     set_value "display_stack_color"           "=" "\"${galculator_stack_color}\""           "${GALCULATOR_CONFIG_FILE}"
     set_value "display_module_active_color"   "=" "\"${galculator_module_active_color}\""   "${GALCULATOR_CONFIG_FILE}"
     set_value "display_module_inactive_color" "=" "\"${galculator_module_inactive_color}\"" "${GALCULATOR_CONFIG_FILE}"
-    
+
     printf " done.\n"
-else
-    printf "* Not setting colors for Galculator (config file \"${GALCULATOR_CONFIG_FILE}\" not found).\n"
 fi

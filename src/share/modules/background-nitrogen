@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
 which nitrogen >/dev/null || return
 
-# read configuration from config file
-NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} nitrogen enable 2>/dev/null || echo true)"
+NITROGEN_ENABLE_DEFAULT="true"
+NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
 
-# perform operations if possible
 if ! [ "${NITROGEN_ENABLE}" == "true" ]; then
     printf "* Not setting wallpaper with nitrogen (disabled from configuration).\n"
     

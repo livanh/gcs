@@ -16,11 +16,23 @@
 # therefore I'm settings colors there
 
 which dmenu >/dev/null || return
+which i3 >/dev/null || return
 
-DMENU_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} dmenu restart_command 2>/dev/null || echo )
+DMENU_ENABLE_DEFAULT="false"
+I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
+DMENU_RESTART_COMMAND_DEFAULT=""
 
-I3_CONFIG_FILE="$HOME/.config/i3/config"
-if [ -f "${I3_CONFIG_FILE}" ]; then
+DMENU_ENABLE="$(crudini --get ${CONFIG_FILE} dmenu enable 2>/dev/null || echo "${DMENU_ENABLE_DEFAULT}")"
+I3_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} i3wm config_file 2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
+DMENU_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} dmenu restart_command 2>/dev/null || echo "${DMENU_RESTART_COMMAND_DEFAULT}")"
+
+if ! [ "${DMENU_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for dmenu (disabled from configuration).\n"
+
+elif ! [ -f "${I3_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for dmenu (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+
+else
     printf "* Setting colors for dmenu..."
     set_value 'set \$dmenu_normal_bg'   " " "${tray_bg}"         "${I3_CONFIG_FILE}"
     set_value 'set \$dmenu_normal_fg'   " " "${tray_fg}"         "${I3_CONFIG_FILE}"

@@ -1,9 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 
 which gpicview >/dev/null || return
 
-GPICVIEW_CONFIG_FILE="$HOME/.config/gpicview/gpicview.conf"
-if [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
+GPICVIEW_ENABLE_DEFAULT="true"
+GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
+
+GPICVIEW_ENABLE="$(crudini      --get ${CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
+GPICVIEW_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
+
+if ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for gpicview (disabled from configuration).\n"
+
+elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for gpicview (configuration file \"${GPICVIEW_CONFIG_FILE}\" not found).\n"
+
+else
     printf "* Setting colors for gpicview..."
     set_value "bg"      "=" "${base_color}" "${GPICVIEW_CONFIG_FILE}"
     set_value "bg_full" "=" "${base_color}" "${GPICVIEW_CONFIG_FILE}"

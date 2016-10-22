@@ -4,9 +4,16 @@
 
 which octave >/dev/null || return
 
-OCTAVE_CONFIG_FILE="$HOME/.config/octave/qt-settings"
+OCTAVE_ENABLE_DEFAULT="true"
+OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
 
-if [ "${editor_syntax_enable}" == "false" ]; then
+OCTAVE_ENABLE="$(crudini      --get ${CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
+OCTAVE_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
+
+if ! [ "${OCTAVE_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for Octave (disabled from configuration).\n"
+
+elif [ "${editor_syntax_enable}" == "false" ]; then
     if [ -f "${OCTAVE_CONFIG_FILE}" ]; then
         crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_b" "${terminal_bg_color}"
         crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_f" "${terminal_fg_color}"
@@ -45,17 +52,19 @@ if [ "${editor_syntax_enable}" == "false" ]; then
     set_value "Octave\\\\style8\\\\color" "=" "$(printf "%d" 0xFFAA00)" "${OCTAVE_CONFIG_FILE}"
     set_value "Octave\\\\style8\\\\paper" "=" "$(printf "%d" 0xFFFFFF)" "${OCTAVE_CONFIG_FILE}"
 
-elif [ -f "${OCTAVE_CONFIG_FILE}" ]; then
+elif ! [ -f "${OCTAVE_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for Octave (configuration \"${OCTAVE_CONFIG_FILE}\" not found).\n"
 
+else
     printf "* Setting colors for Octave..."
-    
+
     crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_b" "${terminal_bg_color}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_f" "${terminal_fg_color}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_s" "${selected_bg_color}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "terminal" "color_c" "${terminal_fg_color}"
-    
+
     crudini --set "${OCTAVE_CONFIG_FILE}" "editor" "highlight_current_line_color" "${editor_current_line_bg}"
-    
+
     # TODO: obseve these in practice
     crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_a" "${editor_class}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_f" "${editor_number}"
@@ -63,7 +72,7 @@ elif [ -f "${OCTAVE_CONFIG_FILE}" ]; then
     crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_h" "${editor_operator}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_i" "${editor_string}"
     crudini --set "${OCTAVE_CONFIG_FILE}" "workspaceview" "color_p" "${editor_preprocessor}"
-    
+
     set_value "Octave\\\\defaultcolor"    "=" "$(printf   "%d" 0x${editor_fg:1:6})"       "${OCTAVE_CONFIG_FILE}"
     set_value "Octave\\\\defaultpaper"    "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
     set_value "Octave\\\\style0\\\\color" "=" "$(printf   "%d" 0x${editor_fg:1:6})"       "${OCTAVE_CONFIG_FILE}"
@@ -86,5 +95,4 @@ elif [ -f "${OCTAVE_CONFIG_FILE}" ]; then
     set_value "Octave\\\\style8\\\\paper" "=" "$(printf   "%d" 0x${editor_bg:1:6})"       "${OCTAVE_CONFIG_FILE}"
 
     printf " done.\n"
-
 fi
