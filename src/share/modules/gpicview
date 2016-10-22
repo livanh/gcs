@@ -2,6 +2,9 @@
 
 which gpicview >/dev/null || return
 
+: ${gpicview_bg_color:=${base_color}}
+: ${gpicview_bg_full_color:=${base_color}}
+
 GPICVIEW_ENABLE_DEFAULT="true"
 GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
 
@@ -16,7 +19,7 @@ elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for gpicview..."
-    set_value "bg"      "=" "${base_color}" "${GPICVIEW_CONFIG_FILE}"
-    set_value "bg_full" "=" "${base_color}" "${GPICVIEW_CONFIG_FILE}"
+    set_value "bg"      "=" "${gpicview_bg_color}"      "${GPICVIEW_CONFIG_FILE}"
+    set_value "bg_full" "=" "${gpicview_bg_full_color}" "${GPICVIEW_CONFIG_FILE}"
     printf " done.\n"
 fi

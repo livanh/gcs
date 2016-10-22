@@ -30,6 +30,9 @@ set_color_mcomix() {
     " "${file}"
 }
 
+: ${mcomix_bg_color:=${base_color}}
+: ${mcomix_thumb_bg_color:=${bg_color}}
+
 MCOMIX_ENABLE_DEFAULT="true"
 MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
 
@@ -44,7 +47,7 @@ elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for MComix..."
-    set_color_mcomix "bg colour"       "${base_color}" "${MCOMIX_CONFIG_FILE}"
-    set_color_mcomix "thumb bg colour" "${bg_color}"   "${MCOMIX_CONFIG_FILE}"
+    set_color_mcomix "bg colour"       "${mcomix_bg_color}"       "${MCOMIX_CONFIG_FILE}"
+    set_color_mcomix "thumb bg colour" "${mcomix_thumb_bg_color}" "${MCOMIX_CONFIG_FILE}"
     printf " done.\n"
 fi

@@ -2,6 +2,9 @@
 
 which lxterminal >/dev/null || return
 
+: ${lxterminal_bg_color:=${terminal_bg_color}}
+: ${lxterminal_fg_color:=${terminal_fg_color}}
+
 LXTERMINAL_ENABLE_DEFAULT="true"
 LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/config/lxterminal/lxterminal.conf"
 
@@ -16,7 +19,7 @@ elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for LXTerminal..."
-    set_value "bgcolor" "=" "${terminal_bg_color}" "${LXTERMINAL_CONFIG_FILE}"
-    set_value "fgcolor" "=" "${terminal_fg_color}" "${LXTERMINAL_CONFIG_FILE}"
+    set_value "bgcolor" "=" "${lxterminal_bg_color}" "${LXTERMINAL_CONFIG_FILE}"
+    set_value "fgcolor" "=" "${lxterminal_fg_color}" "${LXTERMINAL_CONFIG_FILE}"
     printf " done.\n"
 fi

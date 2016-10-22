@@ -28,6 +28,12 @@ terminator_set_value_default_profile() {
     " "${file}"
 }
 
+: ${terminator_bg_color:=${terminal_bg_color}}
+: ${terminator_fg_color:=${terminal_fg_color}}
+: ${terminator_cursos_color:=${selected_fg_color}}
+: ${terminator_palette:=${terminal_palette_black}:${terminal_palette_red}:${terminal_palette_green}:${terminal_palette_yellow}:${terminal_palette_blue}:${terminal_palette_purple}:${terminal_palette_cyan}:${terminal_palette_white}:${terminal_palette_light_black}:${terminal_palette_light_red}:${terminal_palette_light_green}:${terminal_palette_light_yellow}:${terminal_palette_light_blue}:${terminal_palette_light_purple}:${terminal_palette_light_cyan}:${terminal_palette_light_white}}
+: ${terminator_transparency:=${terminal_transparency}}
+
 TERMINATOR_ENABLE_DEFAULT="true"
 TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
 
@@ -45,7 +51,6 @@ else
     terminator_set_value_default_profile "background_color" "${terminal_bg_color}"  "${TERMINATOR_CONFIG_FILE}"
     terminator_set_value_default_profile "foreground_color" "${terminal_fg_color}"  "${TERMINATOR_CONFIG_FILE}"
     terminator_set_value_default_profile "cursor_color"     "${terminal_fg_color}"  "${TERMINATOR_CONFIG_FILE}"
-    terminator_palette="${terminal_palette_black}:${terminal_palette_red}:${terminal_palette_green}:${terminal_palette_yellow}:${terminal_palette_blue}:${terminal_palette_purple}:${terminal_palette_cyan}:${terminal_palette_white}:${terminal_palette_light_black}:${terminal_palette_light_red}:${terminal_palette_light_green}:${terminal_palette_light_yellow}:${terminal_palette_light_blue}:${terminal_palette_light_purple}:${terminal_palette_light_cyan}:${terminal_palette_light_white}"
     terminator_set_value_default_profile "palette"          "${terminator_palette}" "${TERMINATOR_CONFIG_FILE}"
     if [ "${terminal_transparency}" != "" ]; then
         terminator_set_value_default_profile "background_type"     "transparent"              "${TERMINATOR_CONFIG_FILE}"

@@ -18,6 +18,11 @@
 which dmenu >/dev/null || return
 which i3 >/dev/null || return
 
+: ${dmenu_normal_bg:=${tray_bg}}
+: ${dmenu_normal_bg:=${tray_fg}}
+: ${dmenu_selected_bg:=${tray_focused_bg}}
+: ${dmenu_selected_fg:=${tray_focused_fg}}
+
 DMENU_ENABLE_DEFAULT="false"
 I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
 DMENU_RESTART_COMMAND_DEFAULT=""
@@ -34,10 +39,10 @@ elif ! [ -f "${I3_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for dmenu..."
-    set_value 'set \$dmenu_normal_bg'   " " "${tray_bg}"         "${I3_CONFIG_FILE}"
-    set_value 'set \$dmenu_normal_fg'   " " "${tray_fg}"         "${I3_CONFIG_FILE}"
-    set_value 'set \$dmenu_selected_bg' " " "${tray_focused_bg}" "${I3_CONFIG_FILE}"
-    set_value 'set \$dmenu_selected_fg' " " "${tray_focused_fg}" "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_normal_bg'   " " "${dmenu_normal_bg}"   "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_normal_fg'   " " "${dmenu_normal_bg}"   "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_selected_bg' " " "${dmenu_selected_bg}" "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_selected_fg' " " "${dmenu_selected_fg}" "${I3_CONFIG_FILE}"
     $DMENU_RESTART_COMMAND &>/dev/null
     printf " done.\n"
 fi
