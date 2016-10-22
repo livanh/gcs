@@ -40,7 +40,7 @@ elif ! [ -f "${I3_CONFIG_FILE}" ]; then
 else
     printf "* Setting colors for dmenu..."
     set_value 'set \$dmenu_normal_bg'   " " "${dmenu_normal_bg}"   "${I3_CONFIG_FILE}"
-    set_value 'set \$dmenu_normal_fg'   " " "${dmenu_normal_bg}"   "${I3_CONFIG_FILE}"
+    set_value 'set \$dmenu_normal_fg'   " " "${dmenu_normal_fg}"   "${I3_CONFIG_FILE}"
     set_value 'set \$dmenu_selected_bg' " " "${dmenu_selected_bg}" "${I3_CONFIG_FILE}"
     set_value 'set \$dmenu_selected_fg' " " "${dmenu_selected_fg}" "${I3_CONFIG_FILE}"
     $DMENU_RESTART_COMMAND &>/dev/null
