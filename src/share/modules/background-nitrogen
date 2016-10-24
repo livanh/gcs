@@ -5,7 +5,7 @@
 which nitrogen >/dev/null || return
 
 NITROGEN_ENABLE_DEFAULT="true"
-NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
+NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} background-nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
 
 if ! [ "${NITROGEN_ENABLE}" == "true" ]; then
     printf "* Not setting wallpaper with nitrogen (disabled from configuration).\n"
