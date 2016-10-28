@@ -3,6 +3,46 @@
 
 which i3 >/dev/null || return
 
+: ${i3_client_focused_border:=${titlebar_focused_bg_color}}
+: ${i3_client_focused_bg:=${titlebar_focused_bg_color}}
+: ${i3_client_focused_fg:=${titlebar_focused_fg_color}}
+: ${i3_client_focused_indicator:=${titlebar_focused_bg_color}}
+
+: ${i3_client_focused_inactive_border:=${titlebar_unfocused_bg_color}}
+: ${i3_client_focused_inactive_bg:=${titlebar_unfocused_bg_color}}
+: ${i3_client_focused_inactive_fg:=${titlebar_unfocused_fg_color}}
+: ${i3_client_focused_inactive_indicator:=${titlebar_unfocused_bg_color}}
+
+: ${i3_client_unfocused_border:=${titlebar_unfocused_bg_color}}
+: ${i3_client_unfocused_bg:=${titlebar_unfocused_bg_color}}
+: ${i3_client_unfocused_fg:=${titlebar_unfocused_fg_color}}
+: ${i3_client_unfocused_indicator:=${titlebar_unfocused_bg_color}}
+
+: ${i3_client_urgent_border:=${titlebar_urgent_bg_color}}
+: ${i3_client_urgent_bg:=${titlebar_urgent_bg_color}}
+: ${i3_client_urgent_fg:=${titlebar_urgent_fg_color}}
+: ${i3_client_urgent_indicator:=${titlebar_urgent_bg_color}}
+
+: ${i3_bar_separator:=${selected_bg_color}}
+: ${i3_bar_background:=${tray_bg}}
+: ${i3_bar_statusline:=${tray_fg}}
+
+: ${i3_bar_focused_workspace_border:=${tray_focused_bg}}
+: ${i3_bar_focused_workspace_bg:=${tray_focused_bg}}
+: ${i3_bar_focused_workspace_fg:=${tray_focused_fg}}
+
+: ${i3_bar_active_workspace_border:=${tray_unfocused_bg}}
+: ${i3_bar_active_workspace_bg:=${tray_unfocused_bg}}
+: ${i3_bar_active_workspace_fg:=${tray_unfocused_fg}}
+
+: ${i3_bar_inactive_workspace_border:=${tray_unfocused_bg}}
+: ${i3_bar_inactive_workspace_bg:=${tray_unfocused_bg}}
+: ${i3_bar_inactive_workspace_fg:=${tray_unfocused_fg}}
+
+: ${i3_bar_urgent_workspace_border:=${tray_urgent_bg}}
+: ${i3_bar_urgent_workspace_bg:=${tray_urgent_bg}}
+: ${i3_bar_urgent_workspace_fg:=${tray_urgent_fg}}
+
 I3_ENABLE_DEFAULT="true"
 I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
 I3_RESTART_COMMAND_DEFAULT="i3-msg reload"
@@ -23,19 +63,19 @@ elif ! i3 --get-socketpath &>/dev/null; then
 else
     printf "* Setting colors for i3 window manager..."
 
-    set_value "client\.focused"          " " "${titlebar_focused_bg_color}   ${titlebar_focused_bg_color}   ${titlebar_focused_fg_color}   ${titlebar_focused_bg_color}"   "${I3_CONFIG_FILE}"
-    set_value "client\.focused_inactive" " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color} ${titlebar_unfocused_bg_color}" "${I3_CONFIG_FILE}"
-    set_value "client\.unfocused"        " " "${titlebar_unfocused_bg_color} ${titlebar_unfocused_bg_color} ${titlebar_unfocused_fg_color} ${titlebar_unfocused_bg_color}" "${I3_CONFIG_FILE}"
-    set_value "client\.urgent"           " " "${titlebar_urgent_bg_color}    ${titlebar_urgent_bg_color}    ${titlebar_urgent_fg_color}    ${titlebar_urgent_bg_color}"    "${I3_CONFIG_FILE}"
+    set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_CONFIG_FILE}"
+    set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_CONFIG_FILE}"
+    set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_CONFIG_FILE}"
+    set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_CONFIG_FILE}"
 
-    set_value "separator"  " " " ${selected_bg_color}" "${I3_CONFIG_FILE}"
-    set_value "background" " " " ${tray_bg}"           "${I3_CONFIG_FILE}"
-    set_value "statusline" " " " ${tray_fg}"           "${I3_CONFIG_FILE}"
+    set_value "separator"  " " " ${i3_bar_separator}"  "${I3_CONFIG_FILE}"
+    set_value "background" " " " ${i3_bar_background}" "${I3_CONFIG_FILE}"
+    set_value "statusline" " " " ${i3_bar_statusline}" "${I3_CONFIG_FILE}"
 
-    set_value "focused_workspace"  " " "${tray_focused_bg}   ${tray_focused_bg}   ${tray_focused_fg}"   "${I3_CONFIG_FILE}"
-    set_value "active_workspace"   " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
-    set_value "inactive_workspace" " " "${tray_unfocused_bg} ${tray_unfocused_bg} ${tray_unfocused_fg}" "${I3_CONFIG_FILE}"
-    set_value "urgent_workspace"   " " "${tray_urgent_bg}    ${tray_urgent_bg}    ${tray_urgent_fg}"    "${I3_CONFIG_FILE}"
+    set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_CONFIG_FILE}"
+    set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_CONFIG_FILE}"
+    set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_CONFIG_FILE}"
+    set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_CONFIG_FILE}"
 
     ${I3_RESTART_COMMAND} &>/dev/null
     printf " done.\n"
