@@ -10,19 +10,29 @@ if ! [ "${CURSOR_THEME_ENABLE}" == "true" ]; then
     printf "* Not setting cursor theme (disabled from configuration).\n"
 
 elif [[ $cursor_theme_name ]]; then
+    cursor_theme_found="false"
+    for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons"; do
+        if [ -d "$i/$cursor_theme_name" ]; then
+            cursor_theme_found="true"
+        fi
+    done
+    
     printf "* Setting cursor theme: ${cursor_theme_name}..."
-    
-    cursor_theme_index="$HOME/.icons/default/index.theme"
-    if ! [ -f "${cursor_theme_index}" ]; then
-        mkdir -p "$HOME/.icons/default"
-        echo "[Icon Theme]" >  "${cursor_theme_index}"
-        echo "Name=Default" >> "${cursor_theme_index}"
-        echo "Comment=Default Cursor Theme" >> "${cursor_theme_index}"
-        echo "Inherits=" >> "${cursor_theme_index}"
+    if [ "${cursor_theme_found}" == "true" ]; then
+        cursor_theme_index="$HOME/.icons/default/index.theme"
+        if ! [ -f "${cursor_theme_index}" ]; then
+            mkdir -p "$HOME/.icons/default"
+            echo "[Icon Theme]" >  "${cursor_theme_index}"
+            echo "Name=Default" >> "${cursor_theme_index}"
+            echo "Comment=Default Cursor Theme" >> "${cursor_theme_index}"
+            echo "Inherits=" >> "${cursor_theme_index}"
+        fi
+        
+        set_value "Inherits" "=" "${cursor_theme_name}" "$HOME/.icons/default/index.theme"
+        [ -L "$HOME/.icons/default/cursors" ] && rm "$HOME/.icons/default/cursors"
+        ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "$HOME/.icons/default/cursors"
+        printf " done.\n"
+    else
+        printf " not found!\n"
     fi
-    
-    set_value "Inherits" "=" "${cursor_theme_name}" "$HOME/.icons/default/index.theme"
-    [ -L "$HOME/.icons/default/cursors" ] && rm "$HOME/.icons/default/cursors"
-    ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "$HOME/.icons/default/cursors"
-    printf " done.\n"
 fi
