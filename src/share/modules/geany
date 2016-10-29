@@ -2,6 +2,46 @@
 
 which geany >/dev/null || return
 
+: ${geany_bg:=${editor_bg}}
+: ${geany_fg:=${editor_fg}}
+: ${geany_selected_bg:=${editor_selected_bg}}
+: ${geany_selected_fg:=${editor_selected_fg}}
+: ${geany_frame_bg:=${editor_frame_bg}}
+: ${geany_frame_fg:=${editor_frame_fg}}
+: ${geany_current_line_bg:=${editor_current_line_bg}}
+: ${geany_indent_guide:=${editor_indent_guide}}
+
+: ${geany_number:=${editor_number}}
+: ${geany_class:=${editor_class}}
+: ${geany_string:=${editor_string}}
+: ${geany_operator:=${editor_operator}}
+: ${geany_comment:=${editor_comment}}
+: ${geany_error:=${editor_error}}
+: ${geany_keyword:=${editor_keyword}}
+: ${geany_character:=${editor_character}}
+: ${geany_preprocessor:=${editor_preprocessor}}
+: ${geany_brace_good:=${editor_brace_good}}
+: ${geany_white_space:=${editor_white_space}}
+
+: ${geany_margin_folding_bg:=${editor_frame_bg}}
+: ${geany_margin_folding_fg:=${editor_frame_fg}}
+: ${geany_fold_symbol_highlight:=${editor_frame_bg}}
+: ${geany_marker_search_bg:=${editor_selected_bg}}
+: ${geany_marker_search_fg:=${editor_selected_fg}}
+: ${geany_marker_mark_bg:=${editor_frame_bg}}
+: ${geany_marker_mark_fg:=${editor_frame_fg}}
+: ${geany_type:=${editor_section_header}}
+: ${geany_function_bg:=${editor_bg}}
+: ${geany_function_fg:=${editor_class}}
+: ${geany_parameter_bg:=${editor_bg}}
+: ${geany_parameter_fg:=${editor_class}}
+: ${geany_here_doc_bg:=${editor_bg}}
+: ${geany_here_doc_fg:=${editor_string}}
+
+: ${geany_diff_added:=${editor_diff_added}}
+: ${geany_diff_removed:=${editor_diff_removed}}
+: ${geany_diff_changed:=${editor_diff_changed}}
+
 GEANY_ENABLE_DEFAULT="true"
 GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
 
@@ -31,35 +71,45 @@ else
         destfile="$HOME/.config/geany/colorschemes/gcs.conf"
         cp "${geany_template_file}" "${destfile}"
 
-        set_value "editor_bg"              "=" "${editor_bg}"              "${destfile}"
-        set_value "editor_fg"              "=" "${editor_fg}"              "${destfile}"
-        set_value "editor_selected_bg"     "=" "${editor_selected_bg}"     "${destfile}"
-        set_value "editor_selected_fg"     "=" "${editor_selected_fg}"     "${destfile}"
-        set_value "editor_frame_bg"        "=" "${editor_frame_bg}"        "${destfile}"
-        set_value "editor_frame_fg"        "=" "${editor_frame_fg}"        "${destfile}"
-        set_value "editor_current_line_bg" "=" "${editor_current_line_bg}" "${destfile}"
-        set_value "editor_indent_guide"    "=" "${editor_indent_guide}"    "${destfile}"
-
-        set_value "editor_number"          "=" "${editor_number}"          "${destfile}"
-        set_value "editor_class"           "=" "${editor_class}"           "${destfile}"
-        set_value "editor_string"          "=" "${editor_string}"          "${destfile}"
-        set_value "editor_operator"        "=" "${editor_operator}"        "${destfile}"
-        set_value "editor_comment"         "=" "${editor_comment}"         "${destfile}"
-        set_value "editor_error"           "=" "${editor_error}"           "${destfile}"
-        set_value "editor_keyword"         "=" "${editor_keyword}"         "${destfile}"
-        set_value "editor_character"       "=" "${editor_character}"       "${destfile}"
-        set_value "editor_preprocessor"    "=" "${editor_preprocessor}"    "${destfile}"
-        set_value "editor_brace_good"      "=" "${editor_brace_good}"      "${destfile}"
-        set_value "editor_white_space"     "=" "${editor_white_space}"     "${destfile}"
+        set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
+        set_value "foreground"            "=" "${geany_fg}"                                                   "${destfile}"
+        set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${destfile}"
+        set_value "selected_fg"           "=" "${geany_selected_fg}"                                          "${destfile}"
+        set_value "frame_bg"              "=" "${geany_frame_bg}"                                             "${destfile}"
+        set_value "frame_fg"              "=" "${geany_frame_fg}"                                             "${destfile}"
         
-        set_value "editor_diff_added"      "=" "${editor_diff_added}"      "${destfile}"
-        set_value "editor_diff_removed"    "=" "${editor_diff_removed}"    "${destfile}"
-        set_value "editor_diff_changed"    "=" "${editor_diff_changed}"    "${destfile}"
+        set_value "current_line"          "=" ";${geany_current_line_bg};true"                                "${destfile}"
+        set_value "indent_guide"          "=" "${geany_indent_guide}"                                         "${destfile}"
 
-        set_value "color_scheme" "=" "gcs.conf"             "${GEANY_CONFIG_FILE}"
+        set_value "number"                "=" "${geany_number};;true"                                         "${destfile}"
+        set_value "class"                 "=" "${geany_class};;true"                                          "${destfile}"
+        set_value "string"                "=" "${geany_string}"                                               "${destfile}"
+        set_value "operator"              "=" "${geany_operator};;true"                                       "${destfile}"
+        set_value "comment"               "=" "${geany_comment}"                                              "${destfile}"
+        set_value "error"                 "=" "${geany_error}"                                                "${destfile}"
+        set_value "keyword"               "=" "${geany_keyword};;true"                                        "${destfile}"
+        set_value "character"             "=" "${geany_character}"                                            "${destfile}"
+        set_value "preprocessor"          "=" "${geany_preprocessor}"                                         "${destfile}"
+        set_value "brace_good"            "=" "${geany_brace_good};;true"                                     "${destfile}"
+        set_value "white_space"           "=" "${geany_white_space};;true"                                    "${destfile}"
+        
+        set_value "margin_folding"        "=" "${geany_margin_folding_fg};${geany_margin_folding_bg}"         "${destfile}"
+        set_value "fold_symbol_highlight" "=" "${geany_fold_symbol_highlight}"                                "${destfile}"
+        set_value "marker_search"         "=" "${geany_marker_search_fg};${geany_marker_search_bg};true;true" "${destfile}"
+        set_value "marker_mark"           "=" "${geany_marker_mark_fg};${geany_marker_mark_fg};false;false"   "${destfile}"
+        set_value "type"                  "=" "${geany_type};;true"                                           "${destfile}"
+        set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${destfile}"
+        set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${destfile}"
+        set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${destfile}"
+        
+        set_value "line_added"            "=" "${geany_diff_added}"                                           "${destfile}"
+        set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
+        set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
 
-        set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
-        set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
+        set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_CONFIG_FILE}"
+
+        set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_CONFIG_FILE}"
+        set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_CONFIG_FILE}"
 
         set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_CONFIG_FILE}"
 

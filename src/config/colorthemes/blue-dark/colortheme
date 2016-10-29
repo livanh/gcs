@@ -48,32 +48,12 @@ terminal_transparency="0.67"
 # text editors with syntax highlighting
 editor_syntax_enable=true
 editor_current_line_bg="#191919"
-editor_margin_line_number_bg=
-editor_margin_line_number_fg=
-editor_margin_folding_bg=
-editor_margin_folding_fg=
-editor_fold_symbol_highlight=
-editor_caret=
-# editor_marker_line
-# editor_marker_search
-# editor_marker_mark
-
 editor_comment=#444444
 editor_number=#E3DB28
-editor_type=
 editor_class=#007500
-editor_function=
-editor_parameter=
-editor_identifier=
 editor_string=#D26F2A
-# editor_backtick
-# editor_here_doc
-# editor_scalar
-editor_label=
 editor_preprocessor=#259F86
-editor_regex=
 editor_operator=#A820A8
-# editor_decorator
 
 editor_tag=
 editor_tag_unknown=

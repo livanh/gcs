@@ -4,6 +4,50 @@
 
 which codeblocks >/dev/null || return
 
+: ${codeblocks_c_default_fg:=${editor_fg}}
+: ${codeblocks_c_default_bg:=${editor_bg}}
+: ${codeblocks_c_selected_fg:=${editor_selected_fg}}
+: ${codeblocks_c_selected_bg:=${editor_selected_bg}}
+: ${codeblocks_c_number:=${editor_number}}
+: ${codeblocks_c_class:=${editor_class}}
+: ${codeblocks_c_string:=${editor_string}}
+: ${codeblocks_c_operator:=${editor_operator}}
+: ${codeblocks_c_comment:=${editor_comment}}
+: ${codeblocks_c_comment_line:=${editor_comment}}
+: ${codeblocks_c_comment_doc:=${editor_comment}}
+: ${codeblocks_c_comment_line_doc:=${editor_comment}}
+: ${codeblocks_c_comment_keyword_doc:=${editor_preprocessor}}
+: ${codeblocks_c_comment_keyword_error_doc:=${editor_error}}
+: ${codeblocks_c_keyword:=${editor_keyword}}
+: ${codeblocks_c_character:=${editor_character}}
+: ${codeblocks_c_preprocessor:=${editor_preprocessor}}
+: ${codeblocks_c_brace_good_fg:=${editor_brace_good}}
+: ${codeblocks_c_brace_good_bg:=${editor_bg}}
+: ${codeblocks_c_current_line:=${editor_current_line_bg}}
+
+: ${codeblocks_diff_default_fg:=${editor_fg}}
+: ${codeblocks_diff_default_bg:=${editor_bg}}
+: ${codeblocks_diff_comment:=${editor_comment}}
+: ${codeblocks_diff_command:=${editor_keyword}}
+: ${codeblocks_diff_header:=${editor_preprocessor}}
+: ${codeblocks_diff_position:=${editor_number}}
+: ${codeblocks_diff_deleted:=${editor_diff_removed}}
+: ${codeblocks_diff_added:=${editor_diff_added}}
+
+: ${codeblocks_active_caption_colour:=${titlebar_focused_bg_color}}
+: ${codeblocks_active_caption_gradient_colour:=${titlebar_focused_bg_color}}
+: ${codeblocks_active_caption_text_colour:=${titlebar_focused_fg_color}}
+: ${codeblocks_inactive_caption_colour:=${titlebar_unfocused_bg_color}}
+: ${codeblocks_inactive_caption_gradient_colour:=${titlebar_unfocused_bg_color}}
+: ${codeblocks_inactive_caption_text_colour:=${titlebar_unfocused_fg_color}}
+: ${codeblocks_project_tree_non_source_files:=${editor_comment}}
+
+: ${codeblocks_editor_margin_chrome:=${editor_frame_bg}}
+: ${codeblocks_editor_margin_chrome_highlight:=${editor_frame_bg}}
+: ${codeblocks_editor_linenumbers_bg:=${editor_frame_bg}}
+: ${codeblocks_editor_linenumbers_fg:=${editor_frame_fg}}
+: ${codeblocks_editor_gutter:=${editor_long_line_marker}}
+
 # declare some constants
 CB_STYLE_CTR=0
 CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
@@ -114,25 +158,24 @@ else
 
     CB_STYLE_CTR=0
 
-    codeblocks_add_style "Default"   "cc" "${editor_fg}"          "${editor_bg}"          "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Selection" "cc" "${editor_selected_fg}" "${editor_selected_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Default"   "cc" "${codeblocks_c_default_fg}"          "${codeblocks_c_default_bg}"          "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Selection" "cc" "${codeblocks_c_selected_fg}" "${codeblocks_c_selected_bg}" "${CODEBLOCKS_CONFIG_FILE}"
 
-    codeblocks_add_style "Number"                                "cc" "${editor_number}"          "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "User keyword"                          "cc" "${editor_class}"           "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "String"                                "cc" "${editor_string}"          "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Operator"                              "cc" "${editor_operator}"        "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment (normal)"                      "cc" "${editor_comment}"         "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment line (normal)"                 "cc" "${editor_comment}"         "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment (documentation)"               "cc" "${editor_comment}"         "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment line (documentation)"          "cc" "${editor_comment}"         "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment keyword (documentation)"       "cc" "${editor_preprocessor}"    "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment keyword error (documentation)" "cc" "${editor_error}"           "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Keyword"                               "cc" "${editor_keyword}"         "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Character"                             "cc" "${editor_character}"       "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Preprocessor"                          "cc" "${editor_preprocessor}"    "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Matching brace highlight"              "cc" "${editor_brace_good}"      "${editor_bg}" "${CODEBLOCKS_CONFIG_FILE}"
-
-    codeblocks_add_style "Active line"                           "cc" "default" "${editor_current_line_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Number"                                "cc" "${codeblocks_c_number}"                    "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "User keyword"                          "cc" "${codeblocks_c_class}"                     "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "String"                                "cc" "${codeblocks_c_string}"                    "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Operator"                              "cc" "${codeblocks_c_operator}"                  "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment (normal)"                      "cc" "${codeblocks_c_comment}"                   "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment line (normal)"                 "cc" "${codeblocks_c_comment_line}"              "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment (documentation)"               "cc" "${codeblocks_c_comment_doc}"               "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment line (documentation)"          "cc" "${codeblocks_c_comment_line_doc}"          "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment keyword (documentation)"       "cc" "${codeblocks_c_comment_keyword_doc}"       "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment keyword error (documentation)" "cc" "${codeblocks_c_comment_keyword_error_doc}" "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Keyword"                               "cc" "${codeblocks_c_keyword}"                   "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Character"                             "cc" "${codeblocks_c_character}"                 "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Preprocessor"                          "cc" "${codeblocks_c_preprocessor}"              "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Matching brace highlight"              "cc" "${codeblocks_c_brace_good_fg}"             "${codeblocks_c_brace_good_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Active line"                           "cc" "default"                                   "${codeblocks_c_current_line}"  "${CODEBLOCKS_CONFIG_FILE}"
 
     # apply diff/patch syntax highlighting
     xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"                --type elem -n "diffpatch"                "${CODEBLOCKS_CONFIG_FILE}"
@@ -141,30 +184,30 @@ else
 
     CB_STYLE_CTR=0
 
-    codeblocks_add_style "Default"  "diffpatch" "${editor_fg}"           "${editor_bg}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Comment"  "diffpatch" "${editor_comment}"      "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Command"  "diffpatch" "${editor_keyword}"      "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Header"   "diffpatch" "${editor_preprocessor}" "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Position" "diffpatch" "${editor_number}"       "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Deleted"  "diffpatch" "${editor_diff_removed}" "default"      "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_add_style "Added"    "diffpatch" "${editor_diff_added}"   "default"      "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Default"  "diffpatch" "${codeblocks_diff_default_fg}" "${codeblocks_diff_default_bg}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Comment"  "diffpatch" "${codeblocks_diff_comment}"    "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Command"  "diffpatch" "${codeblocks_diff_command}"    "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Header"   "diffpatch" "${codeblocks_diff_header}"     "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Position" "diffpatch" "${codeblocks_diff_position}"   "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Deleted"  "diffpatch" "${codeblocks_diff_deleted}"    "default"                       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_add_style "Added"    "diffpatch" "${codeblocks_diff_added}"      "default"                       "${CODEBLOCKS_CONFIG_FILE}"
 
     # set new colorset as active
     xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_CONFIG_FILE}"
 
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${titlebar_focused_bg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${titlebar_focused_fg_color}"   "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${titlebar_unfocused_bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${titlebar_unfocused_bg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${titlebar_unfocused_fg_color}" "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${editor_comment}"              "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${codeblocks_active_caption_colour}"            "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${codeblocks_active_caption_gradient_colour}"   "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${codeblocks_active_caption_text_colour}"       "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${codeblocks_inactive_caption_colour}"          "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${codeblocks_inactive_caption_gradient_colour}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${codeblocks_inactive_caption_text_colour}"     "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${codeblocks_project_tree_non_source_files}"    "${CODEBLOCKS_CONFIG_FILE}"
 
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${bg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${fg_color}"                "${CODEBLOCKS_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${editor_long_line_marker}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${codeblocks_editor_margin_chrome}"           "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${codeblocks_editor_margin_chrome_highlight}" "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${codeblocks_editor_linenumbers_bg}"          "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${codeblocks_editor_linenumbers_fg}"          "${CODEBLOCKS_CONFIG_FILE}"
+    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${codeblocks_editor_gutter}"                  "${CODEBLOCKS_CONFIG_FILE}"
 
     printf " done.\n"
 fi

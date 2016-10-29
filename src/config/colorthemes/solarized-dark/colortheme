@@ -62,32 +62,12 @@ terminal_transparency="1"
 # text editors with syntax highlighting
 editor_syntax_enable=true
 editor_current_line_bg=$base02
-editor_margin_line_number_bg=$base02
-editor_margin_line_number_fg=$base1
-editor_margin_folding_bg=$base02
-editor_margin_folding_fg=$base1
-editor_fold_symbol_highlight=$base02
-editor_caret=$base3
-# editor_marker_line
-# editor_marker_search
-# editor_marker_mark
-
 editor_comment=$base01
 editor_number=$cyan
-editor_type=$yellow
 editor_class=$yellow
-editor_function=$blue
-editor_parameter=$blue
-editor_identifier=$base0
 editor_string=$magenta
-# editor_backtick
-# editor_here_doc
-# editor_scalar
-editor_label=$base0
 editor_preprocessor=$orange
-editor_regex=$violet
 editor_operator=$base0
-# editor_decorator
 
 editor_tag=
 editor_tag_unknown=

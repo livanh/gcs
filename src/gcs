@@ -46,73 +46,73 @@ COLOR_THEME="$1"
 # (to reuse other variables, i.e. var=$var_2), dots (for filenames) and hyphens (for icon theme names).
 # Single or double quotes are permitted.
 load_color_theme() {
-    
+
     if [ "$#" -ne 1 ]; then
         echo "Error: load_color_theme() requires 1 argument!"
         exit 2
     fi
-    
+
     if ! [ -f "$1" ]; then
         echo "Error: color theme file \"$1\" not found!"
         return
     fi
-    
+
     # clear environment
     unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH' | /usr/bin/cut -d= -f1 );
     pid=$(ps -o ppid= -p $$)
     eval export $(cat /proc/${pid## }/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
-    
+
     # read color theme file
     eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "$1")
-    
+
     # apply default values to some variables by referencing other variables
-    
-    #~ # base colors
+
+    # base colors
     #~ unset base_color
     #~ unset text_color
     #~ unset bg_color
     #~ unset fg_color
     #~ unset selected_bg_color
     #~ unset selected_fg_color
-    
-    #~ # icon and cursor theme
+
+    # icon and cursor theme
     #~ unset icon_theme_name
     #~ unset cursor_theme_name
-    
-    #~ # error/warning
+
+    # error/warning
     #~ unset error_color
     #~ unset warning_bg_color
-    
-    #~ # window manager colors
-    : ${titlebar_urgent_bg_color:=$selected_bg_color}
-    : ${titlebar_urgent_fg_color:=$selected_fg_color}
-    : ${titlebar_focused_bg_color:=$selected_bg_color}
-    : ${titlebar_focused_fg_color:=$selected_fg_color}
-    : ${titlebar_unfocused_bg_color:=$base_color}
-    : ${titlebar_unfocused_fg_color:=$text_color}
-    
+
+    # window manager colors
+    : ${titlebar_urgent_bg_color:=${selected_bg_color}}
+    : ${titlebar_urgent_fg_color:=${selected_fg_color}}
+    : ${titlebar_focused_bg_color:=${selected_bg_color}}
+    : ${titlebar_focused_fg_color:=${selected_fg_color}}
+    : ${titlebar_unfocused_bg_color:=${base_color}}
+    : ${titlebar_unfocused_fg_color:=${text_color}}
+
     # link colors
-    : ${link_color:=$selected_bg_color}
-    : ${link_visited_color:=$text_color}
-    
+    : ${link_color:=${selected_bg_color}}
+    : ${link_visited_color:=${text_color}}
+
     # tray bar colors
-    : ${tray_bg:=$bg_color}
-    : ${tray_fg:=$fg_color}
-    : ${tray_urgent_bg:=$titlebar_urgent_bg_color}
-    : ${tray_urgent_fg:=$titlebar_urgent_fg_color}
-    : ${tray_focused_bg:=$titlebar_focused_bg_color}
-    : ${tray_focused_fg:=$titlebar_focused_fg_color}
-    : ${tray_unfocused_bg:=$bg_color}
-    : ${tray_unfocused_fg:=$fg_color}
-    
-    #~ # background
+    : ${tray_bg:=${bg_color}}
+    : ${tray_fg:=${fg_color}}
+    : ${tray_urgent_bg:=${titlebar_urgent_bg_color}}
+    : ${tray_urgent_fg:=${titlebar_urgent_fg_color}}
+    : ${tray_focused_bg:=${titlebar_focused_bg_color}}
+    : ${tray_focused_fg:=${titlebar_focused_fg_color}}
+    : ${tray_unfocused_bg:=${bg_color}}
+    : ${tray_unfocused_fg:=${fg_color}}
+
+    # background
     #~ unset wallpaper_image
     #~ unset wallpaper_mode
-    : ${wallpaper_bg_color:=$bg_color}
-    
-    #~ # terminal
-    : ${terminal_bg_color:=$fg_color}
-    : ${terminal_fg_color:=$bg_color}
+    : ${wallpaper_bg_color:=${bg_color}}
+
+    # terminal
+    : ${terminal_bg_color:=${fg_color}}
+    : ${terminal_fg_color:=${bg_color}}
     #~ unset terminal_palette_black
     #~ unset terminal_palette_red
     #~ unset terminal_palette_green
@@ -130,59 +130,42 @@ load_color_theme() {
     #~ unset terminal_palette_light_cyan
     #~ unset terminal_palette_light_white
     #~ unset terminal_transparency
-    
-    #~ # notifications
-    : ${notification_frame:=$selected_bg_color}
-    : ${notification_low_bg:=$bg_color}
-    : ${notification_low_fg:=$text_color}
-    : ${notification_medium_bg:=$selected_bg_color}
-    : ${notification_medium_fg:=$selected_fg_color}
-    : ${notification_high_bg:=$titlebar_urgent_bg_color}
-    : ${notification_high_fg:=$selected_fg_color}
-    
-    #~ # text editors with syntax highlighting
+
+    # notifications
+    : ${notification_frame:=${selected_bg_color}}
+    : ${notification_low_bg:=${bg_color}}
+    : ${notification_low_fg:=${text_color}}
+    : ${notification_medium_bg:=${selected_bg_color}}
+    : ${notification_medium_fg:=${selected_fg_color}}
+    : ${notification_high_bg:=${titlebar_urgent_bg_color}}
+    : ${notification_high_fg:=${selected_fg_color}}
+
+    # text editors with syntax highlighting
     : ${editor_syntax_enable:=false}
-    : ${editor_bg:=$base_color}
-    : ${editor_fg:=$text_color}
-    : ${editor_selected_bg:=$selected_bg_color}
-    : ${editor_selected_fg:=$selected_fg_color}
-    : ${editor_frame_bg:=$bg_color}
-    : ${editor_frame_fg:=$fg_color}
-    #~ unset editor_current_line_bg
-    #~ unset editor_margin_line_number_bg
-    #~ unset editor_margin_line_number_fg
-    #~ unset editor_margin_folding_bg
-    #~ unset editor_margin_folding_fg
-    #~ unset editor_fold_symbol_highlight
-    : ${editor_indent_guide:=$editor_string}
-    : ${editor_long_line_marker:=$editor_current_line_bg}
-    : ${editor_caret:=$text_color}
-    #~ # editor_marker_line
-    #~ # editor_marker_search
-    #~ # editor_marker_mark
-    : ${editor_white_space:=$editor_comment}
-    : ${editor_error:=$error_color}
-    : ${editor_brace_good:=$editor_string}
-    : ${editor_brace_bad:=$editor_error}
+    : ${editor_bg:=${base_color}}
+    : ${editor_fg:=${text_color}}
+    : ${editor_selected_bg:=${selected_bg_color}}
+    : ${editor_selected_fg:=${selected_fg_color}}
+    : ${editor_frame_bg:=${bg_color}}
+    : ${editor_frame_fg:=${fg_color}}
+    : ${editor_current_line_bg:=${bg_color}}
+    : ${editor_indent_guide:=${editor_string}}
+    : ${editor_long_line_marker:=${editor_current_line_bg}}
+    : ${editor_caret:=${text_color}}
+    : ${editor_error:=${error_color}}
+    : ${editor_brace_good:=${editor_string}}
+    : ${editor_brace_bad:=${error_color}}
 
     #~ unset editor_comment
+    : ${editor_white_space:=${editor_comment}}
     #~ unset editor_number
-    #~ unset editor_type
-    #~ unset editor_class
-    #~ unset editor_function
-    #~ unset editor_parameter
-    : ${editor_keyword:=$selected_bg_color}
-    #~ unset editor_identifier
     #~ unset editor_string
-    : ${editor_character:=$editor_number}
-    #~ # editor_backtick
-    #~ # editor_here_doc
-    #~ # editor_scalar
-    #~ unset editor_label
-    #~ unset editor_preprocessor
-    #~ unset editor_regex
+    : ${editor_keyword:=${selected_bg_color}}
     #~ unset editor_operator
-    #~ # editor_decorator
+    #~ unset editor_preprocessor
+    : ${editor_section_header:=${editor_preprocessor}}
+    #~ unset editor_class
+    : ${editor_character:=${editor_number}}
 
     #~ unset editor_tag
     #~ unset editor_tag_unknown
@@ -196,13 +179,7 @@ load_color_theme() {
     #~ unset editor_diff_removed
     #~ unset editor_diff_changed
 
-    #~ unset prompt_username_color
-    #~ unset prompt_hostname_color
-    #~ unset prompt_directory_color
-    #~ unset prompt_git_color
- 
 }
-
 
 # set the value of the key named $KEY (in text file $FILE) equal to $VALUE
 # assuming they are separated by $SEPARATOR
@@ -275,7 +252,6 @@ for i in "${MODULES_DIR_SYSTEM}/"* "${MODULES_DIR_LOCAL}/"* "${MODULES_DIR_USER}
         done
         MODULES+=("$i")
     fi
-    
 done
 
 # execute modules
