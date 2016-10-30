@@ -27,7 +27,7 @@ elif ! which oomox-cli >/dev/null; then
     printf "* Not setting colors and icon theme for GTK+ (oomox not installed).\n"
 
 else
-    printf "* Setting colors and icon theme for GTK+..."
+    printf "* Setting colors and icon theme for GTK+...\n"
 
     TMPFILE="/tmp/.oomox-theme"
 
@@ -52,27 +52,53 @@ else
     oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
     rm "${TMPFILE}"
 
+    icon_theme_found="false"
+    if ! [ -z "${icon_theme_name}" ]; then
+        for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons" "$HOME/.local/share/icons"; do
+            if [ -d "$i/$icon_theme_name" ]; then
+                icon_theme_found="true"
+            fi
+        done
+    fi
+
     if ps -e | grep xsettings >/dev/null; then
 
         GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
         GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
 
+        printf "  colors..."
         set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+        printf " done.\n"
 
-        set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+        if ! [ -z "${icon_theme_name}" ]; then
+            printf "  icon theme: ${icon_theme_name}..."
+            if [ "${icon_theme_found}" == "true" ]; then
+                set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+                printf " done.\n"
+            else
+                printf " not found!\n"
+            fi
+        fi
 
         $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
 
-        printf " done.\n"
 
     elif ps -e | grep gnome-session >/dev/null; then
 
-        gtk_theme_name=$(gsettings get org.gnome.desktop.interface gtk-theme)
-
+        printf "  colors..."
         gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
         gsettings set org.gnome.desktop.interface gtk-color-scheme ""
+        printf " done.\n"
 
-        gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+        if ! [ -z "${icon_theme_name}" ]; then
+            printf "  icon theme: ${icon_theme_name}..."
+            if [ "${icon_theme_found}" == "true" ]; then
+                gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+                printf " done.\n"
+            else
+                printf " not found!\n"
+            fi
+        fi
 
         printf " done.\n"
 
