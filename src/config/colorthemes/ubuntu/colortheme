@@ -12,7 +12,7 @@ gtk_menu_fg_color=#FFFFFF
 
 # icon and cursor theme
 icon_theme_name=Humanity
-cursor_theme_name=crystalblue
+cursor_theme_name=DMZ-White
 
 # error/warning
 error_color=#ec322f
