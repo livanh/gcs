@@ -6,7 +6,23 @@ fg_color=#000000
 selected_bg_color=#0A246A
 selected_fg_color=#FFFFFF
 
+# icon theme (download form https://github.com/paldepind/Gtk98Icons)
+icon_theme_name=Gtk98Icons
+
 # window manager colors
-titlebar_urgent_bg_color=#BA0000
+titlebar_urgent_bg_color=#808080
+titlebar_urgent_fg_color=#D4D0C8
 titlebar_unfocused_bg_color=#808080
 titlebar_unfocused_fg_color=#D4D0C8
+
+# background
+wallpaper_image=background.jpg
+wallpaper_mode=zoom-fill
+wallpaper_bg_color=$base_color
+
+# system tray
+tray_focused_bg=#EFEFEF
+tray_focused_fg=#000000
+i3_bar_focused_workspace_border=#404040
+tray_urgent_bg=#0A246A
+tray_urgent_fg=#FFFFFF

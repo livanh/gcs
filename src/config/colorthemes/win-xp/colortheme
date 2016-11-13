@@ -6,8 +6,11 @@ fg_color=#000000
 selected_bg_color=#316AC5
 selected_fg_color=#FFFFFF
 
-gtk_header_button_bg_color=#0ED50E
+gtk_header_button_bg_color=#FF7800
 gtk_header_button_fg_color=#FFFFFF
+
+# icon theme (download from https://www.gnome-look.org/content/show.php/YlmfOs+2.0+-n+GTK+3.10?content=165037)
+icon_theme_name=YlmfOS
 
 # window manager colors
 titlebar_urgent_bg_color=#FF7800
@@ -20,6 +23,7 @@ wallpaper_image=background.png
 wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 
+# system tray
 tray_bg=#0054e3
 tray_fg=#FFFFFF
 tray_urgent_bg=#FF7800
