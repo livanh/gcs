@@ -86,6 +86,7 @@ else
     elif ps -e | grep gnome-session >/dev/null; then
 
         printf "  colors..."
+        gsettings set org.gnome.desktop.interface gtk-theme ""
         gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
         gsettings set org.gnome.desktop.interface gtk-color-scheme ""
         printf " done.\n"

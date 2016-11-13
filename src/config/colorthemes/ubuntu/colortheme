@@ -9,6 +9,8 @@ selected_fg_color=#FFFFFF
 
 gtk_menu_bg_color=#3C3C3C
 gtk_menu_fg_color=#FFFFFF
+gtk_header_button_bg_color=#3C3C3C
+gtk_header_button_fg_color=#FFFFFF
 
 # icon and cursor theme
 icon_theme_name=Humanity
