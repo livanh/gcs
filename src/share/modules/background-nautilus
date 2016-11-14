@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
+
+which nautilus >/dev/null || return
+which gsettings >/dev/null || return
+
+BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
+BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
+
+if ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
+    printf "* Not setting wallpaper with nautilus (disabled from configuration).\n"
+    
+elif ! [ -f "${COLOR_THEME_DIR}/${wallpaper_image}" ]; then
+    printf "* Not setting wallpaper with nautilus (image file not found: \"${COLOR_THEME_DIR}/${wallpaper_image}\").\n"
+    
+elif ! pgrep "nautilus" >/dev/null; then
+    printf "* Not setting wallpaper with nautilus (desktop manager is not active).\n"
+    
+else
+    printf "* Setting wallpaper with nautilus..."
+    case "${wallpaper_mode}" in
+        centered)  gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+                   gsettings set org.gnome.desktop.background picture-options "centered";;
+        tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+                   gsettings set org.gnome.desktop.background picture-options "spanned";;
+        stretched) gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+                   gsettings set org.gnome.desktop.background picture-options "stretched";;
+        zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+                   gsettings set org.gnome.desktop.background picture-options "scaled";;
+        zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+                   gsettings set org.gnome.desktop.background picture-options "zoom";;
+    esac
+    printf " done.\n"
+fi
