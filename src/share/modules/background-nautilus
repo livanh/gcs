@@ -19,6 +19,9 @@ elif ! pgrep "nautilus" >/dev/null; then
     
 else
     printf "* Setting wallpaper with nautilus..."
+    gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+    gsettings set org.gnome.desktop.background color-shading-type "solid"
+    gsettings set org.gnome.desktop.background primary-color "${wallpaper_bg_color}"
     case "${wallpaper_mode}" in
         centered)  gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
                    gsettings set org.gnome.desktop.background picture-options "centered";;
