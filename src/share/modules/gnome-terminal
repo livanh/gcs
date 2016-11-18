@@ -1,0 +1,39 @@
+#!/bin/bash
+
+which gnome-terminal >/dev/null || return
+
+: ${gnome_terminal_bg_color:=${terminal_bg_color}}
+: ${gnome_terminal_fg_color:=${terminal_fg_color}}
+
+GNOME_TERMINAL_ENABLE_DEFAULT="true"
+GNOME_TERMINAL_PROFILE_DEFAULT="Default"
+
+GNOME_TERMINAL_ENABLE="$(crudini  --get ${CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
+GNOME_TERMINAL_PROFILE="$(crudini --get ${CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
+
+GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
+
+if ! [ "${GNOME_TERMINAL_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for GNOME Terminal (disabled from configuration).\n"
+
+elif ! which dconf >/dev/null; then
+    printf "* Not setting colors for GNOME Terminal (dconf not found).\n"
+
+else
+    printf "* Setting colors for GNOME Terminal..."
+    shopt -s lastpipe
+    dconf dump "${GNOME_TERMINAL_DCONF_PATH}/" \
+    | awk '/\[:/||/visible-name=/' \
+    | while read i; do
+        if [ "${i:0:1}" == "[" ]; then
+            gnome_terminal_profile_id="${i:1:-1}"
+        elif [ "${i}" == "${GNOME_TERMINAL_PROFILE}" ]; then
+            break
+        fi
+    done
+    shopt -u lastpipe
+    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/use-theme-colors" "false"
+    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/background-color" "'${gnome_terminal_bg_color}'"
+    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/foreground-color" "'${gnome_terminal_fg_color}'"
+    printf " done.\n"
+fi
