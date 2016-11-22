@@ -11,7 +11,7 @@ gtk_menu_bg_color=#3C3C3C
 gtk_menu_fg_color=#FFFFFF
 
 # icon and cursor theme
-icon_theme_name=Humanity
+icon_theme_name=Humanity-Dark
 cursor_theme_name=DMZ-White
 
 # error/warning
@@ -33,7 +33,7 @@ tray_unfocused_fg=$gtk_menu_fg_color
 
 # background
 wallpaper_image=background.png
-wallpaper_mode=centered
+wallpaper_mode=zoom-fill
 wallpaper_bg_color=#000000
 
 # terminal
