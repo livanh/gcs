@@ -19,7 +19,7 @@ green=#859900
 # base color theme
 base_color=$base3
 text_color=$base00
-bg_color=$base2
+bg_color=#EDECEB
 fg_color=$base01
 selected_bg_color=$base03
 selected_fg_color=$base0
@@ -27,6 +27,9 @@ selected_fg_color=$base0
 # error/warning
 error_color=$red
 warning_bg_color=$orange
+
+# icon theme
+icon_theme_name=Humanity-Dark-Graphite
 
 # window manager colors
 titlebar_urgent_bg_color=$red
