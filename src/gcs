@@ -38,7 +38,7 @@ if [ "$#" -ne 1 ]; then
         -mindepth 1 -maxdepth 1 -type d -printf "\t%f\n" 2>/dev/null | sort | uniq
     exit 1
 fi
-COLOR_THEME="$1"
+COLOR_THEME_NAME="$1"
 
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
@@ -52,9 +52,22 @@ load_color_theme() {
         exit 2
     fi
 
-    if ! [ -f "$1" ]; then
-        echo "Error: color theme file \"$1\" not found!"
-        return
+    COLOR_THEME_FILES=()
+    COLOR_THEME_DIRS=()
+
+    if  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}")
+    fi
+
+    if  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}")
+    fi
+
+    if [ -f "${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${THEMES_DIR_USER}/${COLOR_THEME_NAME}")
     fi
 
     # clear environment
@@ -63,7 +76,9 @@ load_color_theme() {
     eval export $(cat /proc/${pid## }/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
 
     # read color theme file
-    eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "$1")
+    for color_theme_file in ${COLOR_THEME_FILES[@]}; do
+        eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${color_theme_file}")
+    done
 
     # apply default values to some variables by referencing other variables
 
@@ -223,21 +238,15 @@ set_value_section() {
 }
 
 
-if [ -f "${THEMES_DIR_USER}/${COLOR_THEME}/colortheme" ]; then
-    COLOR_THEME_FILE="${THEMES_DIR_USER}/${COLOR_THEME}/colortheme"
-    COLOR_THEME_DIR="${THEMES_DIR_USER}/${COLOR_THEME}"
-elif  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME}/colortheme" ]; then
-    COLOR_THEME_FILE="${THEMES_DIR_LOCAL}/${COLOR_THEME}/colortheme"
-    COLOR_THEME_DIR="${THEMES_DIR_LOCAL}/${COLOR_THEME}"
-elif  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME}/colortheme" ]; then
-    COLOR_THEME_FILE="${THEMES_DIR_SYSTEM}/${COLOR_THEME}/colortheme"
-    COLOR_THEME_DIR="${THEMES_DIR_SYSTEM}/${COLOR_THEME}"
+if [ -f "${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
+elif  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
+elif  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
 else
-    echo "Error: theme \"${COLOR_THEME}\" not found!"
+    echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
     exit 2
 fi
 
-echo "Applying color theme ${COLOR_THEME}"
+echo "Applying color theme ${COLOR_THEME_NAME}"
 
 # create an array of modules to execute
 MODULES=()
@@ -255,9 +264,9 @@ for i in "${MODULES_DIR_SYSTEM}/"* "${MODULES_DIR_LOCAL}/"* "${MODULES_DIR_USER}
 done
 
 # execute modules
-for i in ${MODULES[@]}; do
+for module_file in ${MODULES[@]}; do
     # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
-    load_color_theme "${COLOR_THEME_FILE}"
+    load_color_theme "${COLOR_THEME_NAME}"
     # Load a module
-    . "$i"
+    . "${module_file}"
 done

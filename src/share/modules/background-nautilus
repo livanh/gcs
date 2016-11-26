@@ -8,11 +8,17 @@ which gsettings >/dev/null || return
 BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
 BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
 
+for i in ${COLOR_THEME_DIRS[@]}; do
+    if [ -f "$i/${wallpaper_image}" ]; then
+        wallpaper_file="$i/${wallpaper_image}"
+    fi
+done
+
 if ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
     printf "* Not setting wallpaper with nautilus (disabled from configuration).\n"
     
-elif ! [ -f "${COLOR_THEME_DIR}/${wallpaper_image}" ]; then
-    printf "* Not setting wallpaper with nautilus (image file not found: \"${COLOR_THEME_DIR}/${wallpaper_image}\").\n"
+elif ! [ -f "${wallpaper_file}" ]; then
+    printf "* Not setting wallpaper with nautilus (image file not found: \"${wallpaper_image}\").\n"
     
 elif ! pgrep "nautilus" >/dev/null; then
     printf "* Not setting wallpaper with nautilus (desktop manager is not active).\n"
@@ -23,15 +29,15 @@ else
     gsettings set org.gnome.desktop.background color-shading-type "solid"
     gsettings set org.gnome.desktop.background primary-color "${wallpaper_bg_color}"
     case "${wallpaper_mode}" in
-        centered)  gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        centered)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
                    gsettings set org.gnome.desktop.background picture-options "centered";;
-        tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
                    gsettings set org.gnome.desktop.background picture-options "spanned";;
-        stretched) gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        stretched) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
                    gsettings set org.gnome.desktop.background picture-options "stretched";;
-        zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
                    gsettings set org.gnome.desktop.background picture-options "scaled";;
-        zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
                    gsettings set org.gnome.desktop.background picture-options "zoom";;
     esac
     printf " done.\n"

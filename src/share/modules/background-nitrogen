@@ -7,20 +7,26 @@ which nitrogen >/dev/null || return
 NITROGEN_ENABLE_DEFAULT="true"
 NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} background-nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
 
+for i in ${COLOR_THEME_DIRS[@]}; do
+    if [ -f "$i/${wallpaper_image}" ]; then
+        wallpaper_file="$i/${wallpaper_image}"
+    fi
+done
+
 if ! [ "${NITROGEN_ENABLE}" == "true" ]; then
     printf "* Not setting wallpaper with nitrogen (disabled from configuration).\n"
     
-elif ! [ -f "${COLOR_THEME_DIR}/${wallpaper_image}" ]; then
-    printf "* Not setting wallpaper with nitrogen (image file not found: \"${COLOR_THEME_DIR}/${wallpaper_image}\").\n"
+elif ! [ -f "${wallpaper_file}" ]; then
+    printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"
     
 else
     printf "* Setting wallpaper with nitrogen..."
     case "${wallpaper_mode}" in
-        centered)  nitrogen --save --set-centered "${COLOR_THEME_DIR}/${wallpaper_image}" --set-color=${wallpaper_bg_color};;
-        tiled)     nitrogen --save --set-tiled "${COLOR_THEME_DIR}/${wallpaper_image}";;
-        stretched) nitrogen --save --set-scaled "${COLOR_THEME_DIR}/${wallpaper_image}";;
-        zoom-fit)  nitrogen --save --set-zoom "${COLOR_THEME_DIR}/${wallpaper_image}" --set-color=${wallpaper_bg_color};;
-        zoom-fill) nitrogen --save --set-zoom-fill "${COLOR_THEME_DIR}/${wallpaper_image}";;
+        centered)  nitrogen --save --set-centered "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
+        tiled)     nitrogen --save --set-tiled "${wallpaper_file}";;
+        stretched) nitrogen --save --set-scaled "${wallpaper_file}";;
+        zoom-fit)  nitrogen --save --set-zoom "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
+        zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
     esac
     printf " done.\n"
 fi
