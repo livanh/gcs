@@ -43,7 +43,7 @@ else
     echo "BTN_BG=${gtk_button_bg_color:1}" >> "${TMPFILE}"
     echo "BTN_FG=${gtk_button_fg_color:1}" >> "${TMPFILE}"
     echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
-    echo "HDR_BTN_FG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
+    echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${TMPFILE}"
     echo "GTK3_GENERATE_DARK=False" >> "${TMPFILE}"
     echo "ROUNDNESS=${gtk_roundness}" >> "${TMPFILE}"
     echo "SPACING=${gtk_spacing}" >> "${TMPFILE}"
