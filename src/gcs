@@ -77,7 +77,7 @@ load_color_theme() {
 
     # read color theme file
     for color_theme_file in ${COLOR_THEME_FILES[@]}; do
-        eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$.-]+|\"[[:alnum:]_#$.-]+\"|'[[:alnum:]_#$.-]+')$" "${color_theme_file}")
+        eval $(egrep "^[[:alnum:]_]+=([[:alnum:]_#$\{\}.-]+|\"[[:alnum:]_#$\{\}.-]+\"|'[[:alnum:]_#$\{\}.-]+')$" "${color_theme_file}")
     done
 
     # apply default values to some variables by referencing other variables
