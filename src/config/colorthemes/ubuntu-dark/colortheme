@@ -32,7 +32,7 @@ tray_unfocused_bg=$gtk_menu_bg_color
 tray_unfocused_fg=$gtk_menu_fg_color
 
 # background
-wallpaper_image=background.png
+wallpaper_image=wallpaper.png
 wallpaper_mode=zoom-fill
 wallpaper_bg_color=#000000
 

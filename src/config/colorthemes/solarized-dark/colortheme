@@ -37,7 +37,7 @@ titlebar_unfocused_bg_color=$bg_color
 titlebar_unfocused_fg_color=$fg_color
 
 # background
-wallpaper_image=background.png
+wallpaper_image=wallpaper.png
 wallpaper_mode=tiled
 wallpaper_bg_color=$base_color
 

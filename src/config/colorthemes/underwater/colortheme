@@ -1,13 +1,13 @@
 # base color theme
-base_color=#000000
+base_color=#040021
 text_color=#AAAAAA
-bg_color=#333333
+bg_color=#2D2C39
 fg_color=#BBBBBB
-selected_bg_color=#205FC6
+selected_bg_color=#3B7F90
 selected_fg_color=#FFFFFF
 
 # icon and cursor theme
-icon_theme_name=Humanity-Dark-Blue
+icon_theme_name=Humanity-Dark-Teal
 cursor_theme_name=crystalblue
 
 # error/warning
@@ -16,11 +16,11 @@ warning_bg_color=#faad3d
 
 # window manager colors
 titlebar_urgent_bg_color=#BA0000
-titlebar_unfocused_bg_color=#001644
+titlebar_unfocused_bg_color=#193D45
 titlebar_unfocused_fg_color=$text_color
 
 # background
-wallpaper_image=background.png
+wallpaper_image=wallpaper.jpg
 wallpaper_mode=centered
 wallpaper_bg_color=$base_color
 
@@ -47,7 +47,7 @@ terminal_transparency="0.67"
 
 # text editors with syntax highlighting
 editor_syntax_enable=true
-editor_current_line_bg="#191919"
+editor_current_line_bg="#130E36"
 editor_comment=#444444
 editor_number=#E3DB28
 editor_class=#007500

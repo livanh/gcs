@@ -20,8 +20,8 @@ titlebar_unfocused_bg_color=#2B5618
 titlebar_unfocused_fg_color=#AAAAAA
 
 # background
-wallpaper_image=background.png
-wallpaper_mode=centered
+wallpaper_image=wallpaper.jpg
+wallpaper_mode=zoom-fill
 
 
 # terminal
@@ -43,7 +43,7 @@ terminal_palette_light_blue="#5555ff"
 terminal_palette_light_purple="#ff55ff"
 terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
-terminal_transparency="0"
+terminal_transparency="0.67"
 
 # text editors with syntax highlighting
 editor_syntax_enable=true

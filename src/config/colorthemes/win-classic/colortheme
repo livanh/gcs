@@ -16,7 +16,7 @@ titlebar_unfocused_bg_color=#808080
 titlebar_unfocused_fg_color=#D4D0C8
 
 # background
-wallpaper_image=background.jpg
+wallpaper_image=wallpaper.jpg
 wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 

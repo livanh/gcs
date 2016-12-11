@@ -3,25 +3,25 @@ base_color=#000000
 text_color=#AAAAAA
 bg_color=#333333
 fg_color=#BBBBBB
-selected_bg_color=#FF1A00
+selected_bg_color=#205FC6
 selected_fg_color=#FFFFFF
 
 # icon and cursor theme
-icon_theme_name=Humanity-Dark-Red
-cursor_theme_name=crystalred
+icon_theme_name=Humanity-Dark-Blue
+cursor_theme_name=crystalblue
 
 # error/warning
 error_color=#ec322f
 warning_bg_color=#faad3d
 
 # window manager colors
-titlebar_urgent_bg_color=#FF5A00
-titlebar_unfocused_bg_color=#6E0002
+titlebar_urgent_bg_color=#BA0000
+titlebar_unfocused_bg_color=#001644
 titlebar_unfocused_fg_color=$text_color
 
 # background
-wallpaper_image=background.png
-wallpaper_mode=centered
+wallpaper_image=wallpaper.png
+wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 
 # terminal
