@@ -1,5 +1,34 @@
 #!/bin/bash
 
+mix_hex_colors(){
+
+    if [ "$#" -ne 3 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
+    fi
+
+    color1="${1}"
+    color2="${2}"
+    balance="${3}"
+
+    r1="$(printf "%d" 0x${color1:1:2})"
+    g1="$(printf "%d" 0x${color1:3:2})"
+    b1="$(printf "%d" 0x${color1:5:2})"
+    r2="$(printf "%d" 0x${color2:1:2})"
+    g2="$(printf "%d" 0x${color2:3:2})"
+    b2="$(printf "%d" 0x${color2:5:2})"
+
+    r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
+    g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
+    b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
+    LC_ALL=C r="$(printf "%.0f" "${r}")"
+    LC_ALL=C g="$(printf "%.0f" "${g}")"
+    LC_ALL=C b="$(printf "%.0f" "${b}")"
+
+    printf "#%x%x%x" "${r}" "${g}" "${b}"
+}
+
+
 : ${gtk_base_color:=${base_color}}
 : ${gtk_text_color:=${text_color}}
 : ${gtk_bg_color:=${bg_color}}
@@ -12,6 +41,15 @@
 : ${gtk_button_fg_color:=${fg_color}}
 : ${gtk_header_button_bg_color:=${bg_color}}
 : ${gtk_header_button_fg_color:=${fg_color}}
+
+: ${unity_titlebar_focused_bg_color:=${titlebar_focused_bg_color}}
+: ${unity_titlebar_focused_fg_color:=${titlebar_focused_fg_color}}
+: ${unity_titlebar_unfocused_bg_color:=${titlebar_unfocused_bg_color}}
+: ${unity_titlebar_unfocused_fg_color:=${titlebar_unfocused_fg_color}}
+: ${unity_titlebar_button_hover_original:=#f0544c}
+: ${unity_titlebar_button_hover:=$(mix_hex_colors "${titlebar_focused_fg_color}" "${titlebar_focused_bg_color}" 0.5)}
+: ${unity_titlebar_button_pressed_original:=#f0544c}
+: ${unity_titlebar_button_pressed:=$(mix_hex_colors "${titlebar_focused_fg_color}" "${titlebar_focused_bg_color}" 0.25)}
 
 gtk_roundness=$(crudini --get ${CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
 gtk_spacing=$(crudini   --get ${CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
@@ -51,6 +89,61 @@ else
 
     oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
     rm "${TMPFILE}"
+
+    echo "
+UnityDecoration.top {
+  background-image: none;
+  background-color: ${unity_titlebar_focused_bg_color};
+  border-color: ${unity_titlebar_focused_bg_color};
+  color: ${unity_titlebar_focused_fg_color};
+}
+UnityDecoration.top:backdrop {
+  background-image: none;
+  background-color: ${unity_titlebar_unfocused_bg_color};
+  border-color: ${unity_titlebar_unfocused_bg_color};
+  color: ${unity_titlebar_unfocused_fg_color};
+}
+UnityDecoration.left, UnityDecoration.right, UnityDecoration.bottom {
+  background-image: none;
+  background-color: ${unity_titlebar_focused_bg_color};
+}
+UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.bottom:backdrop {
+  background-image: none;
+  background-color: ${unity_titlebar_unfocused_bg_color};
+}
+" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
+    cp "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css" "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/sheet_style_close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_unfocused_prelight.svg"
+
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/sheet_style_close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_unfocused_pressed.svg"
+
 
     icon_theme_found="false"
     if ! [ -z "${icon_theme_name}" ]; then
