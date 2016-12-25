@@ -1,0 +1,47 @@
+#!/bin/bash
+
+which xfce4-notifyd-config >/dev/null || return
+
+XFCE4_NOTIFYD_ENABLE_DEFAULT="true"
+XFCE4_NOTIFYD_RESTART_COMMAND_DEFAULT=""
+
+XFCE4_NOTIFYD_ENABLE="$(crudini          --get ${CONFIG_FILE} xfce4_notifyd enable          2>/dev/null || echo "${XFCE4_NOTIFYD_ENABLE_DEFAULT}")"
+XFCE4_NOTIFYD_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} xfce4_notifyd restart_command 2>/dev/null || echo "${XFCE4_NOTIFYD_RESTART_COMMAND_DEFAULT}")"
+
+: ${xfce4_notifyd_frame:=${notification_frame}}
+: ${xfce4_notifyd_urgency_low_bg:=${notification_low_bg}}
+: ${xfce4_notifyd_urgency_low_fg:=${notification_low_fg}}
+: ${xfce4_notifyd_urgency_normal_bg:=${notification_medium_bg}}
+: ${xfce4_notifyd_urgency_normal_fg:=${notification_medium_fg}}
+: ${xfce4_notifyd_urgency_critical_bg:=${notification_high_bg}}
+: ${xfce4_notifyd_urgency_critical_fg:=${notification_high_fg}}
+
+if ! [ "${XFCE4_NOTIFYD_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for xfce4-notifyd (disabled from configuration).\n"
+
+else
+    printf "* Setting colors for xfce4-notifyd..."
+    mkdir -p "${HOME}/.themes/gcs-theme/xfce-notify-4.0"
+    echo "
+#XfceNotifyWindow {
+    background-color: ${notification_low_bg};
+    color: ${notification_low_fg};
+    border: 1px solid ${xfce4_notifyd_frame};
+}
+
+#XfceNotifyWindow label#summary {
+    font-weight: Bold;
+}
+" > "${HOME}/.themes/gcs-theme/xfce-notify-4.0/gtk.css"
+    xfconf-query -c xfce4-notifyd -p /theme -s "gcs-theme"
+
+    #~ set_value_section "frame"            "color"      " = " "\"${xfce4_notifyd_frame}\""               "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_low"      "background" " = " "\"${xfce4_notifyd_urgency_low_bg}\""      "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_low"      "foreground" " = " "\"${xfce4_notifyd_urgency_low_fg}\""      "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_normal"   "background" " = " "\"${xfce4_notifyd_urgency_normal_bg}\""   "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_normal"   "foreground" " = " "\"${xfce4_notifyd_urgency_normal_fg}\""   "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_critical" "background" " = " "\"${xfce4_notifyd_urgency_critical_bg}\"" "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    #~ set_value_section "urgency_critical" "foreground" " = " "\"${xfce4_notifyd_urgency_critical_fg}\"" "${XFCE4_NOTIFYD_CONFIG_FILE}"
+    $XFCE4_NOTIFYD_RESTART_COMMAND &>/dev/null
+    printf " done.\n"
+fi
