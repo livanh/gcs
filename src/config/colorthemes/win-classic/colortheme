@@ -26,3 +26,8 @@ tray_focused_fg=#000000
 i3_bar_focused_workspace_border=#404040
 tray_urgent_bg=#0A246A
 tray_urgent_fg=#FFFFFF
+
+# notifications
+notification_border_color=#000000
+notification_bg_color=#ffffe1
+notification_fg_color=#000000

@@ -10,13 +10,13 @@ DUNST_ENABLE="$(crudini          --get ${CONFIG_FILE} dunst enable          2>/d
 DUNST_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} dunst config_file     2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
 DUNST_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} dunst restart_command 2>/dev/null || echo "${DUNST_RESTART_COMMAND_DEFAULT}")"
 
-: ${dunst_frame:=${notification_frame}}
-: ${dunst_urgency_low_bg:=${notification_low_bg}}
-: ${dunst_urgency_low_fg:=${notification_low_fg}}
-: ${dunst_urgency_normal_bg:=${notification_medium_bg}}
-: ${dunst_urgency_normal_fg:=${notification_medium_fg}}
-: ${dunst_urgency_critical_bg:=${notification_high_bg}}
-: ${dunst_urgency_critical_fg:=${notification_high_fg}}
+: ${dunst_frame:=${selected_bg_color}}
+: ${dunst_urgency_low_bg:=${notification_bg_color}}
+: ${dunst_urgency_low_fg:=${notification_fg_color}}
+: ${dunst_urgency_normal_bg:=${selected_bg_color}}
+: ${dunst_urgency_normal_fg:=${selected_fg_color}}
+: ${dunst_urgency_critical_bg:=${titlebar_urgent_bg_color}}
+: ${dunst_urgency_critical_fg:=${selected_fg_color}}
 
 if ! [ "${DUNST_ENABLE}" == "true" ]; then
     printf "* Not setting colors for dunst (disabled from configuration).\n"

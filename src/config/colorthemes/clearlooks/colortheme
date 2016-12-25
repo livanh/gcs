@@ -13,3 +13,8 @@ titlebar_unfocused_fg_color=#1A1A1A
 
 # icon theme
 icon_theme_name=Adwaita
+
+# notifications
+notification_border_color=#F5F5B5
+notification_bg_color=#F5F5B5
+notification_fg_color=#000000

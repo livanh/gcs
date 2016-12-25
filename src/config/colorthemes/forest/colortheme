@@ -23,7 +23,6 @@ titlebar_unfocused_fg_color=#AAAAAA
 wallpaper_image=wallpaper.jpg
 wallpaper_mode=zoom-fill
 
-
 # terminal
 terminal_bg_color=$bg_color
 terminal_fg_color=$text_color

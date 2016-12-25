@@ -147,13 +147,9 @@ load_color_theme() {
     #~ unset terminal_transparency
 
     # notifications
-    : ${notification_frame:=${selected_bg_color}}
-    : ${notification_low_bg:=${bg_color}}
-    : ${notification_low_fg:=${text_color}}
-    : ${notification_medium_bg:=${selected_bg_color}}
-    : ${notification_medium_fg:=${selected_fg_color}}
-    : ${notification_high_bg:=${titlebar_urgent_bg_color}}
-    : ${notification_high_fg:=${selected_fg_color}}
+    : ${notification_border_color:=${bg_color}}
+    : ${notification_bg_color:=${bg_color}}
+    : ${notification_fg_color:=${fg_color}}
 
     # text editors with syntax highlighting
     : ${editor_syntax_enable:=false}
