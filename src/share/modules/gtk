@@ -90,6 +90,7 @@ else
     oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
     rm "${TMPFILE}"
 
+    unity_decoration_temp="/tmp/.unity_decoration_temp.css"
     echo "
 UnityDecoration.top {
   background-image: none;
@@ -111,8 +112,10 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
   background-image: none;
   background-color: ${unity_titlebar_unfocused_bg_color};
 }
-" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
-    cp "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css" "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+" > "${unity_decoration_temp}"
+    cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
+    cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+#    cp "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css" "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
 
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_dash_prelight.svg"
