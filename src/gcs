@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: enable or disable modules with a config file
-# TODO: create per-module configuration in config files
 
 MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
 MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
