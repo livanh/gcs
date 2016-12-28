@@ -28,8 +28,9 @@ selected_fg_color=$base00
 error_color=$red
 warning_bg_color=$orange
 
-# icon theme
+# icon and cursor theme
 icon_theme_name=Humanity-Dark-Graphite
+cursor_theme_name=DMZ-Black
 
 # window manager colors
 titlebar_urgent_bg_color=$red

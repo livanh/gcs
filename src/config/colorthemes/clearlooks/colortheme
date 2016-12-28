@@ -11,8 +11,9 @@ titlebar_urgent_bg_color=#BA0000
 titlebar_unfocused_bg_color=#EDECEB
 titlebar_unfocused_fg_color=#1A1A1A
 
-# icon theme
+# icon and cursor theme
 icon_theme_name=Adwaita
+cursor_theme_name=DMZ-White
 
 # notifications
 notification_border_color=#F5F5B5

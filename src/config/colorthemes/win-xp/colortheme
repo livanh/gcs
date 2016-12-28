@@ -12,6 +12,9 @@ gtk_header_button_fg_color=#FFFFFF
 # icon theme (download from https://www.gnome-look.org/content/show.php/YlmfOs+2.0+-n+GTK+3.10?content=165037)
 icon_theme_name=YlmfOS
 
+# cursor theme (download from https://www.gnome-look.org/content/show.php/Cursor+XP?content=77833)
+cursor_theme_name=xp
+
 # window manager colors
 titlebar_urgent_bg_color=#FF7800
 titlebar_focused_bg_color=#0054e3

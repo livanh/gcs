@@ -9,6 +9,9 @@ selected_fg_color=#FFFFFF
 # icon theme (download form https://github.com/paldepind/Gtk98Icons)
 icon_theme_name=Gtk98Icons
 
+# cursor theme (download from https://www.gnome-look.org/content/show.php/Cursor+XP?content=77833)
+cursor_theme_name=xp
+
 # window manager colors
 titlebar_urgent_bg_color=#808080
 titlebar_urgent_fg_color=#D4D0C8

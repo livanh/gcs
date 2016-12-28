@@ -4,7 +4,7 @@
 #TODO allow cursor themes in $HOME/.icons and/or $HOME/.local/share/icons too
 
 CURSOR_THEME_ENABLE_DEFAULT="true"
-CURSOR_THEME_ENABLE="$(crudini      --get ${CONFIG_FILE} curssor-theme enable      2>/dev/null || echo "${CURSOR_THEME_ENABLE_DEFAULT}")"
+CURSOR_THEME_ENABLE="$(crudini      --get ${CONFIG_FILE} cursor-theme enable      2>/dev/null || echo "${CURSOR_THEME_ENABLE_DEFAULT}")"
 
 if ! [ "${CURSOR_THEME_ENABLE}" == "true" ]; then
     printf "* Not setting cursor theme (disabled from configuration).\n"

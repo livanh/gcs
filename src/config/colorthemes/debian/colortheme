@@ -16,8 +16,9 @@ wallpaper_image=wallpaper.png
 wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 
-# icon theme
+# icon and cursor theme
 icon_theme_name=Humanity-Light-Pink
+cursor_theme_name=DMZ-White
 
 # notifications
 notification_border_color=#F5F5B5

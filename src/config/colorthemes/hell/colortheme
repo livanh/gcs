@@ -8,7 +8,7 @@ selected_fg_color=#FFFFFF
 
 # icon and cursor theme
 icon_theme_name=Humanity-Dark-Red
-cursor_theme_name=crystalred
+cursor_theme_name=redglass
 
 # error/warning
 error_color=#ec322f
