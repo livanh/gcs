@@ -23,6 +23,11 @@ which i3 >/dev/null || return
 : ${i3_client_urgent_fg:=${titlebar_urgent_fg_color}}
 : ${i3_client_urgent_indicator:=${titlebar_urgent_bg_color}}
 
+: ${i3_client_placeholder_border:=${bg_color}}
+: ${i3_client_placeholder_bg:=${bg_color}}
+: ${i3_client_placeholder_fg:=${fg_color}}
+: ${i3_client_placeholder_indicator:=${bg_color}}
+
 : ${i3_bar_separator:=${selected_bg_color}}
 : ${i3_bar_background:=${tray_bg}}
 : ${i3_bar_statusline:=${tray_fg}}
@@ -67,6 +72,7 @@ else
     set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_CONFIG_FILE}"
     set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_CONFIG_FILE}"
     set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_CONFIG_FILE}"
+    set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_CONFIG_FILE}"
 
     set_value "separator"  " " " ${i3_bar_separator}"  "${I3_CONFIG_FILE}"
     set_value "background" " " " ${i3_bar_background}" "${I3_CONFIG_FILE}"
