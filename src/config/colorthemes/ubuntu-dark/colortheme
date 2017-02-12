@@ -70,9 +70,9 @@ editor_current_line_bg="#45002F"
 editor_comment=#444444
 editor_number=#E3DB28
 editor_class=#007500
-editor_string=#108903
+editor_string=#2B71EB
 editor_preprocessor=#259F86
-editor_operator=#A820A8
+editor_operator=#E23232
 
 editor_tag=
 editor_tag_unknown=
