@@ -180,7 +180,7 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
         $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
 
 
-    elif ps -e | grep gnome-session >/dev/null; then
+    elif ps -e | grep gnome-settings- >/dev/null; then
 
         printf "  colors..."
         gsettings set org.gnome.desktop.interface gtk-theme ""
