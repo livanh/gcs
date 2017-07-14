@@ -64,3 +64,6 @@ terminal_palette_light_purple="#ff55ff"
 terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
 terminal_transparency="1"
+
+conky_default_color="#F2F1F0"
+conky_own_window_colour="#4C4C4C"
