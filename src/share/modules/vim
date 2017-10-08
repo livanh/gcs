@@ -37,6 +37,8 @@ elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
 else
     printf "* Setting colors for Vim GUI..."
 
+    [ -d "$HOME/.vim/colors" ] || mkdir -p "$HOME/.vim/colors"
+
     echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
     echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
     echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
