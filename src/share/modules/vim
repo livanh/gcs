@@ -1,0 +1,69 @@
+#!/bin/bash
+
+which vim>/dev/null || return
+
+: ${vim_normal_fg_color:=${editor_fg}}
+: ${vim_normal_bg_color:=${editor_bg}}
+: ${vim_linenr_fg_color:=${editor_frame_fg}}
+: ${vim_linenr_bg_color:=${editor_frame_bg}}
+: ${vim_white_space_color:=${editor_white_space}}
+: ${vim_current_line_bg:=${editor_current_line_bg}}
+: ${vim_selected_fg:=${editor_selected_fg}}
+: ${vim_selected_bg:=${editor_selected_bg}}
+: ${vim_comment:=${editor_comment}}
+: ${vim_string:=${editor_string}}
+: ${vim_operator:=${editor_operator}}
+: ${vim_keyword:=${editor_keyword}}
+: ${vim_preprocessor:=${editor_preprocessor}}
+: ${vim_identifier:=${editor_class}}
+: ${vim_type:=${editor_class}}
+: ${vim_character:=${editor_character}}
+: ${vim_number:=${editor_number}}
+
+VIM_ENABLE_DEFAULT="true"
+VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
+VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/ryd.vim"
+
+VIM_ENABLE="$(crudini           --get ${CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
+VIM_CONFIG_FILE="$(crudini      --get ${CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
+VIM_COLORSCHEME_FILE="$(crudini --get ${CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
+
+if ! [ "${VIM_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for Vim (disabled from configuration).\n"
+
+elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for Vim (config file \"${VIM_CONFIG_FILE}\" not found).\n"
+
+else
+    printf "* Setting colors for Vim GUI..."
+
+    echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
+    echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
+    echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
+    echo "endif" >> "${VIM_COLORSCHEME_FILE}"
+
+    echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi cursorLineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi NonText guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"            >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi SpecialKey guifg=${vim_white_space_color}"                                    >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi CursorLine guifg=NONE guibg=${vim_current_line_bg}"                           >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Cursor guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Visual guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Comment guifg=${vim_comment}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi String guifg=${vim_string}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Operator guifg=${vim_operator}"                                               >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Statement guifg=${vim_keyword}"                                               >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi PreProc guifg=${vim_preprocessor}"                                            >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Identifier guifg=${vim_identifier}"                                           >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Type guifg=${vim_identifier}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
+    echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+
+    for server in $(vim --serverlist); do
+        vim --servername ${server} --remote-send ":colorscheme ryd<CR>"
+    done
+
+    printf " done.\n"
+fi
