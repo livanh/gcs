@@ -41,6 +41,7 @@ mix_hex_colors(){
 : ${gtk_button_fg_color:=${fg_color}}
 : ${gtk_header_button_bg_color:=${bg_color}}
 : ${gtk_header_button_fg_color:=${fg_color}}
+: ${gtk_selected_tab_color:=${selected_bg_color}}
 
 : ${unity_titlebar_focused_bg_color:=${titlebar_focused_bg_color}}
 : ${unity_titlebar_focused_fg_color:=${titlebar_focused_fg_color}}
@@ -147,6 +148,48 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
     sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_dash_pressed.svg"
     sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_focused_pressed.svg"
     sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_unfocused_pressed.svg"
+
+
+    sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
+
+    gtk3_tabs_temp="/tmp/.gtk3-tabs-temp"
+    echo "
+.notebook tab.top:active {
+  border-top-color: ${gtk_selected_tab_color};
+}
+.notebook tab.right:active {
+  border-right-color: ${gtk_selected_tab_color};
+}
+.notebook tab.bottom:active {
+  border-bottom-color: ${gtk_selected_tab_color};
+}
+.notebook tab.left:active {
+  border-left-color: ${gtk_selected_tab_color};
+}
+" > "${gtk3_tabs_temp}"
+    cat "${gtk3_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
+    rm "${gtk3_tabs_temp}"
+
+    gtk3_20_tabs_temp="/tmp/.gtk3.20-tabs-temp"
+    echo "
+notebook > header.top > tabs > tab:checked {
+  border-top-color: ${gtk_selected_tab_color};
+}       
+notebook > header.bottom > tabs > tab:checked {
+  border-bottom-color: ${gtk_selected_tab_color};
+}
+notebook > header.right > tabs > tab:checked {
+  border-right-color: ${gtk_selected_tab_color};
+}
+notebook > header.left > tabs > tab:checked {
+  border-left-color: ${gtk_selected_tab_color};
+}
+notebook > header > tabs > tab button.flat:active, notebook > header > tabs > tab button.flat:active:hover {
+  color: ${gtk_selected_tab_color};
+}
+" > "${gtk3_20_tabs_temp}"
+    cat "${gtk3_20_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+    rm "${gtk3_20_tabs_temp}"
 
 
     icon_theme_found="false"
