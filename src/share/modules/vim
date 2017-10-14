@@ -22,7 +22,7 @@ which vim>/dev/null || return
 
 VIM_ENABLE_DEFAULT="true"
 VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
-VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/ryd.vim"
+VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/gcs.vim"
 
 VIM_ENABLE="$(crudini           --get ${CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
 VIM_CONFIG_FILE="$(crudini      --get ${CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
@@ -64,7 +64,7 @@ else
     echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
     for server in $(vim --serverlist); do
-        vim --servername ${server} --remote-send ":colorscheme ryd<CR>"
+        vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
     done
 
     printf " done.\n"
