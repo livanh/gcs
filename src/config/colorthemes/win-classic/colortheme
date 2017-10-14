@@ -6,8 +6,8 @@ fg_color=#000000
 selected_bg_color=#0A246A
 selected_fg_color=#FFFFFF
 
-# icon theme (download form https://github.com/paldepind/Gtk98Icons)
-icon_theme_name=Gtk98Icons
+# icon theme (download from https://www.gnome-look.org/p/1012363/)
+icon_theme_name=Classic95
 
 # cursor theme (download from https://www.gnome-look.org/content/show.php/Cursor+XP?content=77833)
 cursor_theme_name=xp
