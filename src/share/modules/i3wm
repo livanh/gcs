@@ -50,7 +50,7 @@ which i3 >/dev/null || return
 
 I3_ENABLE_DEFAULT="true"
 I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
-I3_RESTART_COMMAND_DEFAULT="i3-msg reload"
+I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
 
 I3_ENABLE="$(crudini          --get ${CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
 I3_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
