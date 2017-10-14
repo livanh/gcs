@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
-# TODO: can not set background/text color from command line, prepare a patch for pcmanfm 
 
 which pcmanfm >/dev/null || return
 
@@ -33,5 +32,11 @@ else
         zoom-fit)  pcmanfm --wallpaper-mode=fit     --set-wallpaper "${wallpaper_file}";;
         zoom-fill) pcmanfm --wallpaper-mode=crop    --set-wallpaper "${wallpaper_file}";;
     esac
+
+    # these require a patched version of PCManFM: https://github.com/livanh/pcmanfm (master-with improvements branch)
+    pcmanfm --wallpaper-bg-color ${wallpaper_bg_color}
+    pcmanfm --desktop-text-color ${wallpaper_text_color}
+    pcmanfm --desktop-shadow-color ${wallpaper_shadow_color}
+
     printf " done.\n"
 fi

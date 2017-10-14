@@ -122,6 +122,8 @@ load_color_theme() {
     #~ unset wallpaper_image
     #~ unset wallpaper_mode
     : ${wallpaper_bg_color:=${bg_color}}
+    : ${wallpaper_text_color:=${text_color}}
+    : ${wallpaper_shadow_color:=${bg_color}}
 
     # terminal
     : ${terminal_bg_color:=${fg_color}}

@@ -3,8 +3,9 @@
 
 which conky >/dev/null || return
 
-: ${conky_default_color:=${text_color}}
-: ${conky_own_window_colour:=${base_color}}
+: ${conky_default_color:=${wallpaper_text_color}}
+: ${conky_shade_color:=${wallpaper_shadow_color}}
+: ${conky_own_window_colour:=${wallpaper_bg_color}}
 
 #
 # color0 through color9 can be set in the theme or in the configuration file.
@@ -48,6 +49,7 @@ else
         printf "  ${file}..."
         if [ -f "${file}" ]; then
             set_value "default_color"     " "  "${conky_default_color:1}"     "${file}"
+            set_value "default_shade_color" " "  "${conky_shade_color:1}" "${file}"
             set_value "own_window_colour" " "  "${conky_own_window_colour:1}" "${file}"
             
             [ -z "${conky_color0}" ] || set_value "color0" " " "${conky_color0:1}" "${file}"
