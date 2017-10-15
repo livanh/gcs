@@ -35,7 +35,7 @@ elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
     printf "* Not setting colors for Vim (config file \"${VIM_CONFIG_FILE}\" not found).\n"
 
 elif [ "${editor_syntax_enable}" == "false" ]; then
-    sed "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
+    sed -i "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
 
     for server in $(vim --serverlist); do
         vim --servername ${server} --remote-send ":colorscheme default<CR>"
@@ -70,7 +70,7 @@ else
     echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
     echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
-    sed "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
+    sed -i "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
 
     for server in $(vim --serverlist); do
         vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
