@@ -1,0 +1,45 @@
+#!/bin/bash
+
+which rofi >/dev/null || return
+
+ROFI_ENABLE_DEFAULT="true"
+ROFI_CONFIG_FILE_DEFAULT="$HOME/.config/rofi/config"
+ROFI_RESTART_COMMAND_DEFAULT=""
+
+ROFI_ENABLE="$(crudini          --get ${CONFIG_FILE} rofi enable          2>/dev/null || echo "${ROFI_ENABLE_DEFAULT}")"
+ROFI_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} rofi config_file     2>/dev/null || echo "${ROFI_CONFIG_FILE_DEFAULT}")"
+ROFI_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} rofi restart_command 2>/dev/null || echo "${ROFI_RESTART_COMMAND_DEFAULT}")"
+
+: ${rofi_normal_bg:=${base_color}}
+: ${rofi_normal_fg:=${text_color}}
+: ${rofi_normal_bg_alt:=${base_color}}
+: ${rofi_normal_highlight_bg:=${selected_bg_color}}
+: ${rofi_normal_highlight:=${selected_fg_color}}
+: ${rofi_urgent_bg:=${base_color}}
+: ${rofi_urgent_fg:=${text_color}}
+: ${rofi_urgent_bg_alt:=${base_color}}
+: ${rofi_urgent_highlight_bg:=${selected_bg_color}}
+: ${rofi_urgent_highlight:=${selected_fg_color}}
+: ${rofi_active_bg:=${base_color}}
+: ${rofi_active_fg:=${text_color}}
+: ${rofi_active_bg_alt:=${base_color}}
+: ${rofi_active_highlight_bg:=${selected_bg_color}}
+: ${rofi_active_highlight:=${selected_fg_color}}
+: ${rofi_window_bg_border:=${bg_color}}
+: ${rofi_window_separator:=${bg_color}}
+
+if ! [ "${ROFI_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for rofi (disabled from configuration).\n"
+
+elif ! [ -f "${ROFI_CONFIG_FILE}" ]; then
+    printf "* Not setting colors for rofi (configuration file \"${ROFI_CONFIG_FILE}\" not found).\n"
+
+else
+    printf "* Setting colors for dunst..."
+    set_value "rofi.color-normal" ": " "${rofi_normal_bg},${rofi_normal_fg},${rofi_normal_bg_alt},${rofi_normal_highlight_bg},${rofi_normal_highlight}" "${ROFI_CONFIG_FILE}"
+    set_value "rofi.color-urgent" ": " "${rofi_urgent_bg},${rofi_urgent_fg},${rofi_urgent_bg_alt},${rofi_urgent_highlight_bg},${rofi_urgent_highlight}" "${ROFI_CONFIG_FILE}"
+    set_value "rofi.color-active" ": " "${rofi_active_bg},${rofi_active_fg},${rofi_active_bg_alt},${rofi_active_highlight_bg},${rofi_active_highlight}" "${ROFI_CONFIG_FILE}"
+    set_value "rofi.color-window" ": " "${rofi_window_bg_border},${rofi_window_separator}"   "${ROFI_CONFIG_FILE}"
+    $ROFI_RESTART_COMMAND &>/dev/null
+    printf " done.\n"
+fi
