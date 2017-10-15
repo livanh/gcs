@@ -234,6 +234,10 @@ set_value_section() {
     rm $tmp_file
 }
 
+remove_lock_file() {
+    rm "${LOCK_FILE}"
+}
+
 
 if [ -f "${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
 elif  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
@@ -250,6 +254,7 @@ fi
 
 echo "Applying color theme ${COLOR_THEME_NAME}"
 touch "${LOCK_FILE}"
+trap "remove_lock_file; exit 1" INT
 
 # create an array of modules to execute
 MODULES=()
@@ -274,5 +279,5 @@ for module_file in ${MODULES[@]}; do
     . "${module_file}"
 done
 
-rm "${LOCK_FILE}"
+remove_lock_file
 
