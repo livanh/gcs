@@ -50,7 +50,7 @@ else
     echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
     echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
     echo "endif" >> "${VIM_COLORSCHEME_FILE}"
-    echo "let colors_name = \"name\"" >> "${VIM_COLORSCHEME_FILE}"
+    echo "let colors_name = \"gcs\"" >> "${VIM_COLORSCHEME_FILE}"
 
     echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
     echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
