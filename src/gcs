@@ -27,6 +27,7 @@ THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
 THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
 
 CONFIG_FILE="${CONFIG_DIR}/gcs.conf"
+LOCK_FILE="/tmp/.gcs_lock"
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <color_theme_name>"
@@ -242,7 +243,13 @@ else
     exit 2
 fi
 
+if [ -f "${LOCK_FILE}" ]; then
+    echo "Error: lockfile \"${LOCK_FILE}\" exists, exiting."
+    exit 3
+fi
+
 echo "Applying color theme ${COLOR_THEME_NAME}"
+touch "${LOCK_FILE}"
 
 # create an array of modules to execute
 MODULES=()
@@ -266,3 +273,6 @@ for module_file in ${MODULES[@]}; do
     # Load a module
     . "${module_file}"
 done
+
+rm "${LOCK_FILE}"
+
