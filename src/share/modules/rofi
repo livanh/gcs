@@ -35,7 +35,7 @@ elif ! [ -f "${ROFI_CONFIG_FILE}" ]; then
     printf "* Not setting colors for rofi (configuration file \"${ROFI_CONFIG_FILE}\" not found).\n"
 
 else
-    printf "* Setting colors for dunst..."
+    printf "* Setting colors for rofi..."
     set_value "rofi.color-normal" ": " "${rofi_normal_bg},${rofi_normal_fg},${rofi_normal_bg_alt},${rofi_normal_highlight_bg},${rofi_normal_highlight}" "${ROFI_CONFIG_FILE}"
     set_value "rofi.color-urgent" ": " "${rofi_urgent_bg},${rofi_urgent_fg},${rofi_urgent_bg_alt},${rofi_urgent_highlight_bg},${rofi_urgent_highlight}" "${ROFI_CONFIG_FILE}"
     set_value "rofi.color-active" ": " "${rofi_active_bg},${rofi_active_fg},${rofi_active_bg_alt},${rofi_active_highlight_bg},${rofi_active_highlight}" "${ROFI_CONFIG_FILE}"
