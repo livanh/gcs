@@ -1,0 +1,66 @@
+#!/bin/bash
+
+XRESOURCES_ENABLE_DEFAULT="true"
+XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
+XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
+XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT=""
+
+XRESOURCES_ENABLE="$(crudini              --get ${CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
+XRESOURCES_CONFIG_FILE="$(crudini         --get ${CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
+XRESOURCES_RESTART_COMMAND="$(crudini     --get ${CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+
+: ${xresources_bg_color:=${bg_color}}
+: ${xresources_fg_color:=${fg_color}}
+: ${xresources_base_color:=${base_color}}
+: ${xresources_text_color:=${text_color}}
+: ${xresources_selected_bg_color:=${selected_bg_color}}
+: ${xresources_selected_fg_color:=${selected_fg_color}}
+: ${xresources_titlebar_focused_bg_color:=${titlebar_focused_bg_color}}
+: ${xresources_titlebar_focused_fg_color:=${titlebar_focused_fg_color}}
+: ${xresources_titlebar_unfocused_bg_color:=${titlebar_unfocused_bg_color}}
+: ${xresources_titlebar_unfocused_fg_color:=${titlebar_unfocused_fg_color}}
+: ${xresources_titlebar_urgent_bg_color:=${titlebar_urgent_bg_color}}
+: ${xresources_titlebar_urgent_fg_color:=${titlebar_urgent_fg_color}}
+: ${xresources_tray_bg_color:=${tray_bg_color}}
+: ${xresources_tray_fg_color:=${tray_fg_color}}
+: ${xresources_tray_focused_bg_color:=${tray_focused_bg_color}}
+: ${xresources_tray_focused_fg_color:=${tray_focused_fg_color}}
+: ${xresources_tray_unfocused_bg_color:=${tray_unfocused_bg_color}}
+: ${xresources_tray_unfocused_fg_color:=${tray_unfocused_fg_color}}
+: ${xresources_tray_urgent_bg_color:=${tray_urgent_bg_color}}
+: ${xresources_tray_urgent_fg_color:=${tray_urgent_fg_color}}
+
+if ! [ "${XRESOURCES_ENABLE}" == "true" ]; then
+    printf "* Not setting Xresources colors (disabled from configuration).\n"
+
+else
+    [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"
+
+    printf "* Setting Xresources colors..."
+
+    set_value "gcs.bg_color"                    ": " "${xresources_bg_color}"                    "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.fg_color"                    ": " "${xresources_fg_color}"                    "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.base_color"                  ": " "${xresources_base_color}"                  "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.text_color"                  ": " "${xresources_text_color}"                  "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.selected_fg_color"           ": " "${xresources_selected_fg_color}"           "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.selected_bg_color"           ": " "${xresources_selected_bg_color}"           "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_focused_bg_color"   ": " "${xresources_titlebar_focused_bg_color}"   "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_focused_fg_color"   ": " "${xresources_titlebar_focused_fg_color}"   "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_unfocused_bg_color" ": " "${xresources_titlebar_unfocused_bg_color}" "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_unfocused_fg_color" ": " "${xresources_titlebar_unfocused_fg_color}" "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_urgent_bg_color"    ": " "${xresources_titlebar_urgent_bg_color}"    "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.titlebar_urgent_fg_color"    ": " "${xresources_titlebar_urgent_fg_color}"    "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_bg_color"               ": " "${xresources_tray_bg_color}"               "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_fg_color"               ": " "${xresources_tray_fg_color}"               "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_focused_bg_color"       ": " "${xresources_tray_focused_bg_color}"       "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_focused_fg_color"       ": " "${xresources_tray_focused_fg_color}"       "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_unfocused_bg_color"     ": " "${xresources_tray_unfocused_bg_color}"     "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_unfocused_fg_color"     ": " "${xresources_tray_unfocused_fg_color}"     "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_urgent_bg_color"        ": " "${xresources_tray_urgent_bg_color}"        "${XRESOURCES_CONFIG_FILE}"
+    set_value "gcs.tray_urgent_fg_color"        ": " "${xresources_tray_urgent_fg_color}"        "${XRESOURCES_CONFIG_FILE}"
+
+    $XRESOURCES_RESTART_COMMAND "${XRESOURCES_CONFIG_FILE}" &>/dev/null
+    $XRESOURCES_ADDITIONAL_COMMANDS &>/dev/null
+    printf " done.\n"
+fi
