@@ -18,10 +18,10 @@
 which dmenu >/dev/null || return
 which i3 >/dev/null || return
 
-: ${dmenu_normal_bg:=${tray_bg}}
-: ${dmenu_normal_fg:=${tray_fg}}
-: ${dmenu_selected_bg:=${tray_focused_bg}}
-: ${dmenu_selected_fg:=${tray_focused_fg}}
+: ${dmenu_normal_bg:=${tray_bg_color}}
+: ${dmenu_normal_fg:=${tray_fg_color}}
+: ${dmenu_selected_bg:=${tray_focused_bg_color}}
+: ${dmenu_selected_fg:=${tray_focused_fg_color}}
 
 DMENU_ENABLE_DEFAULT="false"
 I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"

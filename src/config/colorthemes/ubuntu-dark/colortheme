@@ -24,12 +24,12 @@ titlebar_unfocused_bg_color=$gtk_menu_bg_color
 titlebar_unfocused_fg_color=#687b78
 
 # tray bar colors
-tray_bg=$gtk_menu_bg_color
-tray_fg=$gtk_menu_fg_color
-tray_focused_bg=$selected_bg_color
-tray_focused_fg=$gtk_menu_fg_color
-tray_unfocused_bg=$gtk_menu_bg_color
-tray_unfocused_fg=$gtk_menu_fg_color
+tray_bg_color=$gtk_menu_bg_color
+tray_fg_color=$gtk_menu_fg_color
+tray_focused_bg_color=$selected_bg_color
+tray_focused_fg_color=$gtk_menu_fg_color
+tray_unfocused_bg_color=$gtk_menu_bg_color
+tray_unfocused_fg_color=$gtk_menu_fg_color
 
 # notifications
 notification_border_color=#131313

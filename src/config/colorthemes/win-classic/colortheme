@@ -24,11 +24,11 @@ wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 
 # system tray
-tray_focused_bg=#EFEFEF
-tray_focused_fg=#000000
+tray_focused_bg_color=#EFEFEF
+tray_focused_fg_color=#000000
 i3_bar_focused_workspace_border=#404040
-tray_urgent_bg=#0A246A
-tray_urgent_fg=#FFFFFF
+tray_urgent_bg_color=#0A246A
+tray_urgent_fg_color=#FFFFFF
 
 # notifications
 notification_border_color=#000000

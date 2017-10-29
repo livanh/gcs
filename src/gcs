@@ -110,14 +110,14 @@ load_color_theme() {
     : ${link_visited_color:=${text_color}}
 
     # tray bar colors
-    : ${tray_bg:=${bg_color}}
-    : ${tray_fg:=${fg_color}}
-    : ${tray_urgent_bg:=${titlebar_urgent_bg_color}}
-    : ${tray_urgent_fg:=${titlebar_urgent_fg_color}}
-    : ${tray_focused_bg:=${titlebar_focused_bg_color}}
-    : ${tray_focused_fg:=${titlebar_focused_fg_color}}
-    : ${tray_unfocused_bg:=${bg_color}}
-    : ${tray_unfocused_fg:=${fg_color}}
+    : ${tray_bg_color:=${bg_color}}
+    : ${tray_fg_color:=${fg_color}}
+    : ${tray_focused_bg_color:=${titlebar_focused_bg_color}}
+    : ${tray_focused_fg_color:=${titlebar_focused_fg_color}}
+    : ${tray_unfocused_bg_color:=${bg_color}}
+    : ${tray_unfocused_fg_color:=${fg_color}}
+    : ${tray_urgent_bg_color:=${titlebar_urgent_bg_color}}
+    : ${tray_urgent_fg_color:=${titlebar_urgent_fg_color}}
 
     # background
     #~ unset wallpaper_image

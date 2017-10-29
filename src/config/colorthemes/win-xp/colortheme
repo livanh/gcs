@@ -28,12 +28,12 @@ wallpaper_mode=zoom-fill
 wallpaper_bg_color=$base_color
 
 # system tray
-tray_bg=#0054e3
-tray_fg=#FFFFFF
-tray_urgent_bg=#FF7800
-tray_focused_bg=#0ED50E
-tray_unfocused_bg=#0054e3
-tray_unfocused_fg=#FFFFFF
+tray_bg_color=#0054e3
+tray_fg_color=#FFFFFF
+tray_urgent_bg_color=#FF7800
+tray_focused_bg_color=#0ED50E
+tray_unfocused_bg_color=#0054e3
+tray_unfocused_fg_color=#FFFFFF
 
 # notifications
 notification_border_color=#000000
