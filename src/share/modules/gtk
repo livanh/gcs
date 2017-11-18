@@ -52,12 +52,12 @@ mix_hex_colors(){
 : ${unity_titlebar_button_pressed_original:=#f0544c}
 : ${unity_titlebar_button_pressed:=$(mix_hex_colors "${titlebar_focused_fg_color}" "${titlebar_focused_bg_color}" 0.25)}
 
-gtk_roundness=$(crudini --get ${CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
-gtk_spacing=$(crudini   --get ${CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
-gtk_gradient=$(crudini  --get ${CONFIG_FILE} gtk gradient  2>/dev/null || echo 0.14)
+gtk_roundness=$(crudini --get ${GCS_CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
+gtk_spacing=$(crudini   --get ${GCS_CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
+gtk_gradient=$(crudini  --get ${GCS_CONFIG_FILE} gtk gradient  2>/dev/null || echo 0.14)
 
 GTK_ENABLE_DEFAULT="true"
-GTK_ENABLE="$(crudini --get ${CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
+GTK_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
 
 if ! [ "${GTK_ENABLE}" == "true" ]; then
     printf "* Not setting colors and icon theme for GTK+ (disabled from configuration).\n"
@@ -203,8 +203,8 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
     if ps -e | grep xsettings >/dev/null; then
 
-        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
-        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
+        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
 
         printf "  colors..."
         set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"

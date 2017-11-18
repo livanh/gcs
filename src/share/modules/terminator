@@ -37,8 +37,8 @@ terminator_set_value_default_profile() {
 TERMINATOR_ENABLE_DEFAULT="true"
 TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
 
-TERMINATOR_ENABLE="$(crudini      --get ${CONFIG_FILE} terminator enable      2>/dev/null || echo "${TERMINATOR_ENABLE_DEFAULT}")"
-TERMINATOR_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
+TERMINATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} terminator enable      2>/dev/null || echo "${TERMINATOR_ENABLE_DEFAULT}")"
+TERMINATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${TERMINATOR_ENABLE}" == "true" ]; then
     printf "* Not setting colors for terminator (disabled from configuration).\n"

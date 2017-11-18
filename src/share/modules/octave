@@ -43,8 +43,8 @@ which octave >/dev/null || return
 OCTAVE_ENABLE_DEFAULT="true"
 OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
 
-OCTAVE_ENABLE="$(crudini      --get ${CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
-OCTAVE_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
+OCTAVE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
+OCTAVE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${OCTAVE_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Octave (disabled from configuration).\n"

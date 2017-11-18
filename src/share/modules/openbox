@@ -6,9 +6,9 @@ OPENBOX_ENABLE_DEFAULT="true"
 OPENBOX_CONFIG_FILE_DEFAULT="$HOME/.config/openbox/rc.xml"
 OPENBOX_RESTART_COMMAND_DEFAULT="openbox --reconfigure"
 
-OPENBOX_ENABLE="$(crudini          --get ${CONFIG_FILE} openbox enable          2>/dev/null || echo "${OPENBOX_ENABLE_DEFAULT}")"
-OPENBOX_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} openbox config_file     2>/dev/null || echo "${OPENBOX_CONFIG_FILE_DEFAULT}")"
-OPENBOX_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} openbox restart_command 2>/dev/null || echo "${OPENBOX_RESTART_COMMAND_DEFAULT}")"
+OPENBOX_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} openbox enable          2>/dev/null || echo "${OPENBOX_ENABLE_DEFAULT}")"
+OPENBOX_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} openbox config_file     2>/dev/null || echo "${OPENBOX_CONFIG_FILE_DEFAULT}")"
+OPENBOX_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} openbox restart_command 2>/dev/null || echo "${OPENBOX_RESTART_COMMAND_DEFAULT}")"
 
 OPENBOX_NAMESPACE="http://openbox.org/3.4/rc"
 OPENBOX_THEME_NAME_PATH="/o:openbox_config/o:theme/o:name"

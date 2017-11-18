@@ -11,8 +11,8 @@ which galculator >/dev/null || return
 GALCULATOR_ENABLE_DEFAULT="true"
 GALCULATOR_CONFIG_FILE_DEFAULT="$HOME/.config/galculator/galculator.conf"
 
-GALCULATOR_ENABLE="$(crudini      --get ${CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
-GALCULATOR_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
+GALCULATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
+GALCULATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GALCULATOR_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Galculator (disabled from configuration).\n"

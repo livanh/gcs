@@ -5,7 +5,7 @@
 which pcmanfm >/dev/null || return
 
 BACKGROUND_PCMANFM_ENABLE_DEFAULT="true"
-BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo "${BACKGROUND_PCMANFM_ENABLE_DEFAULT}")"
+BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo "${BACKGROUND_PCMANFM_ENABLE_DEFAULT}")"
 
 for i in ${COLOR_THEME_DIRS[@]}; do
     if [ -f "$i/${wallpaper_image}" ]; then

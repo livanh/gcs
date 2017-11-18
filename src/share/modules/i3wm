@@ -52,9 +52,9 @@ I3_ENABLE_DEFAULT="true"
 I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
 I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
 
-I3_ENABLE="$(crudini          --get ${CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
-I3_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
-I3_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
+I3_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
+I3_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
+I3_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
 
 if ! [ "${I3_ENABLE}" == "true" ]; then
     printf "* Not setting colors for i3 window manager (disabled from configuration).\n"

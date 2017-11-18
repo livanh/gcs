@@ -36,8 +36,8 @@ set_color_mcomix() {
 MCOMIX_ENABLE_DEFAULT="true"
 MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
 
-MCOMIX_ENABLE="$(crudini      --get ${CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
-MCOMIX_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
+MCOMIX_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
+MCOMIX_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${MCOMIX_ENABLE}" == "true" ]; then
     printf "* Not setting colors for MComix (disabled from configuration).\n"

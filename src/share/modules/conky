@@ -13,24 +13,24 @@ which conky >/dev/null || return
 # By default, no default color is assumed/modified, since the meaning of the colors depends on the specific
 # conky configuration
 #
-eval conky_color0="$(crudini --get ${CONFIG_FILE} conky color0 2>/dev/null || echo "${conky_color0}" )"
-eval conky_color1="$(crudini --get ${CONFIG_FILE} conky color1 2>/dev/null || echo "${conky_color1}" )"
-eval conky_color2="$(crudini --get ${CONFIG_FILE} conky color2 2>/dev/null || echo "${conky_color2}" )"
-eval conky_color3="$(crudini --get ${CONFIG_FILE} conky color3 2>/dev/null || echo "${conky_color3}" )"
-eval conky_color4="$(crudini --get ${CONFIG_FILE} conky color4 2>/dev/null || echo "${conky_color4}" )"
-eval conky_color5="$(crudini --get ${CONFIG_FILE} conky color5 2>/dev/null || echo "${conky_color5}" )"
-eval conky_color6="$(crudini --get ${CONFIG_FILE} conky color6 2>/dev/null || echo "${conky_color6}" )"
-eval conky_color7="$(crudini --get ${CONFIG_FILE} conky color7 2>/dev/null || echo "${conky_color7}" )"
-eval conky_color8="$(crudini --get ${CONFIG_FILE} conky color8 2>/dev/null || echo "${conky_color8}" )"
-eval conky_color9="$(crudini --get ${CONFIG_FILE} conky color9 2>/dev/null || echo "${conky_color9}" )"
+eval conky_color0="$(crudini --get ${GCS_CONFIG_FILE} conky color0 2>/dev/null || echo "${conky_color0}" )"
+eval conky_color1="$(crudini --get ${GCS_CONFIG_FILE} conky color1 2>/dev/null || echo "${conky_color1}" )"
+eval conky_color2="$(crudini --get ${GCS_CONFIG_FILE} conky color2 2>/dev/null || echo "${conky_color2}" )"
+eval conky_color3="$(crudini --get ${GCS_CONFIG_FILE} conky color3 2>/dev/null || echo "${conky_color3}" )"
+eval conky_color4="$(crudini --get ${GCS_CONFIG_FILE} conky color4 2>/dev/null || echo "${conky_color4}" )"
+eval conky_color5="$(crudini --get ${GCS_CONFIG_FILE} conky color5 2>/dev/null || echo "${conky_color5}" )"
+eval conky_color6="$(crudini --get ${GCS_CONFIG_FILE} conky color6 2>/dev/null || echo "${conky_color6}" )"
+eval conky_color7="$(crudini --get ${GCS_CONFIG_FILE} conky color7 2>/dev/null || echo "${conky_color7}" )"
+eval conky_color8="$(crudini --get ${GCS_CONFIG_FILE} conky color8 2>/dev/null || echo "${conky_color8}" )"
+eval conky_color9="$(crudini --get ${GCS_CONFIG_FILE} conky color9 2>/dev/null || echo "${conky_color9}" )"
 
 CONKY_ENABLE_DEFAULT="true"
 CONKY_CONFIG_FILES_DEFAULT="$HOME/.conkyrc"
 CONKY_RESTART_COMMAND_DEFAULT=""
 
-CONKY_ENABLE="$(crudini --get ${CONFIG_FILE} conky enable 2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
-CONKY_CONFIG_FILES="$(crudini    --get ${CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
-CONKY_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} conky restart_command 2>/dev/null || echo "${CONKY_RESTART_COMMAND_DEFAULT}")"
+CONKY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} conky enable          2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
+CONKY_CONFIG_FILES="$(crudini    --get ${GCS_CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
+CONKY_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} conky restart_command 2>/dev/null || echo "${CONKY_RESTART_COMMAND_DEFAULT}")"
 
 if ! [ "${CONKY_ENABLE}" == "true" ]; then
     printf "* Not setting colors for conky (disabled from configuration).\n"

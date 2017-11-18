@@ -37,7 +37,7 @@ MELD_ENABLE_DEFAULT="true"
 MELD_DEFAULT_STYLE_FILE="/usr/share/meld/styles/meld-base.xml"
 MELD_DESTINATION_STYLE_FILE="${HOME}/.local/share/gtksourceview-3.0/styles/gcs-theme-meld.xml"
 
-MELD_ENABLE="$(crudini --get ${CONFIG_FILE} meld enable 2>/dev/null || echo "${MELD_ENABLE_DEFAULT}")"
+MELD_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} meld enable 2>/dev/null || echo "${MELD_ENABLE_DEFAULT}")"
 
 if ! [ "${MELD_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Meld (disabled from configuration).\n"

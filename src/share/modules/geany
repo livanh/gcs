@@ -45,8 +45,8 @@ which geany >/dev/null || return
 GEANY_ENABLE_DEFAULT="true"
 GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
 
-GEANY_ENABLE="$(crudini      --get ${CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
-GEANY_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
+GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
+GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GEANY_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Geany (disabled from configuration).\n"

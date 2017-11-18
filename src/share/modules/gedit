@@ -50,7 +50,7 @@ which gedit >/dev/null || return
 : ${gedit_xml_entity:=${editor_class}}
 
 GEDIT_ENABLE_DEFAULT="true"
-GEDIT_ENABLE="$(crudini      --get ${CONFIG_FILE} gedit enable      2>/dev/null || echo "${GEDIT_ENABLE_DEFAULT}")"
+GEDIT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gedit enable      2>/dev/null || echo "${GEDIT_ENABLE_DEFAULT}")"
 
 if ! [ "${GEDIT_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Geany (disabled from configuration).\n"

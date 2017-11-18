@@ -5,7 +5,7 @@
 which nitrogen >/dev/null || return
 
 NITROGEN_ENABLE_DEFAULT="true"
-NITROGEN_ENABLE="$(crudini --get ${CONFIG_FILE} background-nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
+NITROGEN_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
 
 for i in ${COLOR_THEME_DIRS[@]}; do
     if [ -f "$i/${wallpaper_image}" ]; then

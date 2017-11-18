@@ -24,9 +24,9 @@ VIM_ENABLE_DEFAULT="true"
 VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
 VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/gcs.vim"
 
-VIM_ENABLE="$(crudini           --get ${CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
-VIM_CONFIG_FILE="$(crudini      --get ${CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
-VIM_COLORSCHEME_FILE="$(crudini --get ${CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
+VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
+VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
+VIM_COLORSCHEME_FILE="$(crudini --get ${GCS_CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
 
 if ! [ "${VIM_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Vim (disabled from configuration).\n"

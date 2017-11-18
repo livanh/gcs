@@ -5,10 +5,10 @@ XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
 XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
 XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT=""
 
-XRESOURCES_ENABLE="$(crudini              --get ${CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
-XRESOURCES_CONFIG_FILE="$(crudini         --get ${CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
-XRESOURCES_RESTART_COMMAND="$(crudini     --get ${CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
-XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+XRESOURCES_ENABLE="$(crudini              --get ${GCS_CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
+XRESOURCES_CONFIG_FILE="$(crudini         --get ${GCS_CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
+XRESOURCES_RESTART_COMMAND="$(crudini     --get ${GCS_CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${GCS_CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
 
 : ${xresources_bg_color:=${bg_color}}
 : ${xresources_fg_color:=${fg_color}}

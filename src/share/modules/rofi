@@ -6,9 +6,9 @@ ROFI_ENABLE_DEFAULT="true"
 ROFI_CONFIG_FILE_DEFAULT="$HOME/.config/rofi/config"
 ROFI_RESTART_COMMAND_DEFAULT=""
 
-ROFI_ENABLE="$(crudini          --get ${CONFIG_FILE} rofi enable          2>/dev/null || echo "${ROFI_ENABLE_DEFAULT}")"
-ROFI_CONFIG_FILE="$(crudini     --get ${CONFIG_FILE} rofi config_file     2>/dev/null || echo "${ROFI_CONFIG_FILE_DEFAULT}")"
-ROFI_RESTART_COMMAND="$(crudini --get ${CONFIG_FILE} rofi restart_command 2>/dev/null || echo "${ROFI_RESTART_COMMAND_DEFAULT}")"
+ROFI_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} rofi enable          2>/dev/null || echo "${ROFI_ENABLE_DEFAULT}")"
+ROFI_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} rofi config_file     2>/dev/null || echo "${ROFI_CONFIG_FILE_DEFAULT}")"
+ROFI_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} rofi restart_command 2>/dev/null || echo "${ROFI_RESTART_COMMAND_DEFAULT}")"
 
 : ${rofi_normal_bg:=${base_color}}
 : ${rofi_normal_fg:=${text_color}}

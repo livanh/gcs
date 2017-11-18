@@ -14,8 +14,8 @@ which cherrytree >/dev/null || return
 CHERRYTREE_ENABLE_DEFAULT="true"
 CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
 
-CHERRYTREE_ENABLE="$(crudini      --get ${CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
-CHERRYTREE_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
+CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
+CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${CHERRYTREE_ENABLE}" == "true" ]; then
     printf "* Not setting colors for cherrytree (disabled from configuration).\n"

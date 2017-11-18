@@ -8,8 +8,8 @@ which gnome-terminal >/dev/null || return
 GNOME_TERMINAL_ENABLE_DEFAULT="true"
 GNOME_TERMINAL_PROFILE_DEFAULT="Default"
 
-GNOME_TERMINAL_ENABLE="$(crudini  --get ${CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
-GNOME_TERMINAL_PROFILE="$(crudini --get ${CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
+GNOME_TERMINAL_ENABLE="$(crudini  --get ${GCS_CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
+GNOME_TERMINAL_PROFILE="$(crudini --get ${GCS_CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
 
 GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
 

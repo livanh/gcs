@@ -125,8 +125,8 @@ codeblocks_set_color (){
 CODEBLOCKS_ENABLE_DEFAULT="true"
 CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 
-CODEBLOCKS_ENABLE="$(crudini      --get ${CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
-CODEBLOCKS_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
+CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
+CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Code::Blocks (disabled from configuration).\n"

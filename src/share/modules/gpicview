@@ -8,8 +8,8 @@ which gpicview >/dev/null || return
 GPICVIEW_ENABLE_DEFAULT="true"
 GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
 
-GPICVIEW_ENABLE="$(crudini      --get ${CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
-GPICVIEW_CONFIG_FILE="$(crudini --get ${CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
+GPICVIEW_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
+GPICVIEW_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
     printf "* Not setting colors for gpicview (disabled from configuration).\n"

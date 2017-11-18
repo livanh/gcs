@@ -18,16 +18,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
-MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
-MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
-CONFIG_DIR="$HOME/.config/gcs"
-THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
-THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
-THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+GCS_MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
+GCS_MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
+GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
+GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
+GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
+GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
 
-CONFIG_FILE="${CONFIG_DIR}/gcs.conf"
-LOCK_FILE="/tmp/.gcs_lock"
+GCS_CONFIG_DIR="$HOME/.config/gcs"
+GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
+GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
+GCS_LOCK_FILE="${GCS_TMP_DIR}/.gcs_lock"
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <color_theme_name>"
@@ -54,19 +55,19 @@ load_color_theme() {
     COLOR_THEME_FILES=()
     COLOR_THEME_DIRS=()
 
-    if  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then
-        COLOR_THEME_FILES+=("${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme")
-        COLOR_THEME_DIRS+=("${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}")
+    if  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}")
     fi
 
-    if  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then
-        COLOR_THEME_FILES+=("${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme")
-        COLOR_THEME_DIRS+=("${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}")
+    if  [ -f "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}")
     fi
 
-    if [ -f "${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then
-        COLOR_THEME_FILES+=("${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme")
-        COLOR_THEME_DIRS+=("${THEMES_DIR_USER}/${COLOR_THEME_NAME}")
+    if [ -f "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then
+        COLOR_THEME_FILES+=("${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme")
+        COLOR_THEME_DIRS+=("${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}")
     fi
 
     # clear environment
@@ -235,31 +236,31 @@ set_value_section() {
 }
 
 remove_lock_file() {
-    rm "${LOCK_FILE}"
+    rm "${GCS_LOCK_FILE}"
 }
 
 
-if [ -f "${THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
-elif  [ -f "${THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
-elif  [ -f "${THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
+if [ -f "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
+elif  [ -f "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
+elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
 else
     echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
     exit 2
 fi
 
-if [ -f "${LOCK_FILE}" ]; then
-    echo "Error: lockfile \"${LOCK_FILE}\" exists, exiting."
+if [ -f "${GCS_LOCK_FILE}" ]; then
+    echo "Error: lockfile \"${GCS_LOCK_FILE}\" exists, exiting."
     exit 3
 fi
 
 echo "Applying color theme ${COLOR_THEME_NAME}"
-touch "${LOCK_FILE}"
+touch "${GCS_LOCK_FILE}"
 trap "remove_lock_file; exit 1" INT
 
 # create an array of modules to execute
 MODULES=()
 
-for i in "${MODULES_DIR_SYSTEM}/"* "${MODULES_DIR_LOCAL}/"* "${MODULES_DIR_USER}/"*; do
+for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
     if [ -x "$i" ]; then
         MODULE_NAME="${i##/*/}"
         for j in ${!MODULES[@]}; do
