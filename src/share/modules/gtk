@@ -91,7 +91,18 @@ else
     echo "SPACING=${gtk_spacing}" >> "${TMPFILE}"
     echo "GRADIENT=${gtk_gradient}" >> "${TMPFILE}"
 
-    oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
+
+    if [ "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ] && \
+        [ "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ] && \
+        [ "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ]; then
+        rm -r "${HOME}/.themes/gcs-theme" &>/dev/null
+        cp -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" "${HOME}/.themes/gcs-theme"
+    else
+        oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
+        mkdir -p "${HOME}/.cache/gcs/gtk-themes"
+        rm -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" &>/dev/null
+        cp -r "${HOME}/.themes/gcs-theme" "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}"
+    fi
     rm "${TMPFILE}"
 
     unity_decoration_temp="/tmp/.unity_decoration_temp.css"
@@ -218,6 +229,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 " > "${gtk3_20_tooltip_temp}"
     cat "${gtk3_20_tooltip_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
     rm "${gtk3_20_tooltip_temp}"
+
 
 
     icon_theme_found="false"
