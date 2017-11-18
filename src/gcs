@@ -34,7 +34,6 @@ while getopts "m:" opt; do
   case $opt in
     m)
       FORCED_MODULE="$OPTARG"
-      #echo forced module: $OPTARG
       shift
       shift
       ;;
@@ -292,7 +291,7 @@ for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODUL
         MODULE_NAME="${i##/*/}"
 
         if ! [ -z "${FORCED_MODULE}" ]; then
-            if ! [ "$MODULE_NAME" == "telegram" ]; then
+            if ! [ "$MODULE_NAME" == "${FORCED_MODULE}" ]; then
                 continue
             fi
         fi
