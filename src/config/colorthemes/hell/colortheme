@@ -5,6 +5,7 @@ bg_color=#333333
 fg_color=#BBBBBB
 selected_bg_color=#FF1A00
 selected_fg_color=#FFFFFF
+accent_color=#FF5C5C
 
 # icon and cursor theme
 icon_theme_name=Humanity-Dark-Red

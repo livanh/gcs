@@ -89,6 +89,7 @@ load_color_theme() {
     #~ unset fg_color
     #~ unset selected_bg_color
     #~ unset selected_fg_color
+    : ${accent_color:=${selected_bg_color}}
 
     # icon and cursor theme
     #~ unset icon_theme_name
