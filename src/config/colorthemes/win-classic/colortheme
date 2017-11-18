@@ -1,10 +1,11 @@
 # base color theme
 base_color=#FFFFFF
 text_color=#000000
-bg_color=#D4D0C8
+bg_color=#CCCCCC
 fg_color=#000000
 selected_bg_color=#0A246A
 selected_fg_color=#FFFFFF
+tooltip_bg_color=#FFFFCC
 
 # icon theme (download from https://www.gnome-look.org/p/1012363/)
 icon_theme_name=Classic95

@@ -5,6 +5,7 @@ bg_color=#ECE9D8
 fg_color=#000000
 selected_bg_color=#316AC5
 selected_fg_color=#FFFFFF
+tooltip_bg_color=#FFFFCC
 
 gtk_header_button_bg_color=#FF7800
 gtk_header_button_fg_color=#FFFFFF
