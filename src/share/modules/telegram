@@ -1,0 +1,111 @@
+#!/bin/bash
+
+: ${telegram_windowFg:=${fg_color}}
+: ${telegram_windowBg:=${bg_color}}
+: ${telegram_windowBgOver=${selected_bg_color}}
+: ${telegram_filterInputInactiveBg=${base_color}}
+: ${telegram_windowFgActive=${selected_fg_color}}
+: ${telegram_windowBgActive=${selected_bg_color}}
+: ${telegram_dialogsBgActive=${selected_bg_color}}
+: ${telegram_filterInputBorderFg=${accent_color}}
+: ${telegram_searchedBarBg=${selected_bg_color}}
+: ${telegram_searchedBarFg=${selected_fg_color}}
+: ${telegram_dialogsNameFg=${fg_color}}
+: ${telegram_dialogsNameFgOver=${selected_fg_color}}
+: ${telegram_dialogsTextFgOver=${selected_fg_color}}
+: ${telegram_dialogsTextFgService=${accent_color}}
+: ${telegram_dialogsTextFgServiceOver=${selected_fg_color}}
+: ${telegram_windowBgRipple=${selected_fg_color}}
+: ${telegram_activeButtonBgRipple=${selected_fg_color}}
+: ${telegram_historyLinkInFg=${accent_color}}
+: ${telegram_windowActiveTextFg=${accent_color}}
+: ${telegram_activeLineFg=${accent_color}}
+: ${telegram_msgOutBg=${bg_color}}
+: ${telegram_msgOutFg=${fg_color}}
+: ${telegram_dialogsSentIconFg=${accent_color}}
+: ${telegram_dialogsSentIconFgActive=${selected_fg_color}}
+: ${telegram_dialogsSentIconFgOver=${selected_fg_color}}
+: ${telegram_windowSubTextFg=${fg_color}}
+: ${telegram_msgOutDateFg=${accent_color}}
+: ${telegram_msgInDateFg=${accent_color}}
+
+TELEGRAM_ENABLE_DEFAULT="true"
+TELEGRAM_CONFIG_DIR_DEFAULT="$HOME/.TelegramDesktop"
+TELEGRAM_BINARY_DEFAULT="/opt/telegram/telegram"
+TELEGRAM_RESTART_COMMAND_DEFAULT=""
+
+TELEGRAM_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} telegram enable          2>/dev/null || echo "${TELEGRAM_ENABLE_DEFAULT}")"
+TELEGRAM_CONFIG_DIR="$(crudini      --get ${GCS_CONFIG_FILE} telegram config_file     2>/dev/null || echo "${TELEGRAM_CONFIG_DIR_DEFAULT}")"
+TELEGRAM_BINARY="$(crudini          --get ${GCS_CONFIG_FILE} telegram binary          2>/dev/null || echo "${TELEGRAM_BINARY_DEFAULT}")"
+TELEGRAM_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} telegram restart_command 2>/dev/null || echo "${TELEGRAM_RESTART_COMMAND_DEFAULT}")"
+
+which "${TELEGRAM_BINARY}" >/dev/null || return
+
+if ! [ "${TELEGRAM_ENABLE}" == "true" ]; then
+    printf "* Not setting colors for Telegram (disabled from configuration).\n"
+
+elif ! [ -d "${TELEGRAM_CONFIG_DIR}" ]; then
+    printf "* Not setting colors for Telegram (configuration directory ${TELEGRAM_CONFIG_FILE} not found).\n"
+
+else
+    printf "* Setting colors for Telegram..."
+    
+    TELEGRAM_TMP_DIR="${GCS_TMP_DIR}/telegram"
+    mkdir "${TELEGRAM_TMP_DIR}"
+    TELEGRAM_PALETTE_FILE="${TELEGRAM_TMP_DIR}/colors.tdesktop-theme"
+    touch "${TELEGRAM_PALETTE_FILE}"
+    TELEGRAM_THEME_FILE="${TELEGRAM_CONFIG_DIR}/gcs.tdesktop-theme"
+
+    set_value "windowBg"     ": " "${telegram_windowBg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowFg"     ": " "${telegram_windowFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowBgOver"     ": " "${telegram_windowBgOver};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "filterInputInactiveBg"     ": " "${telegram_filterInputInactiveBg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowFgActive"     ": " "${telegram_windowFgActive};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowBgActive"     ": " "${telegram_windowBgActive};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsBgActive"     ": " "${telegram_dialogsBgActive};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "filterInputBorderFg"     ": " "${telegram_filterInputBorderFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "searchedBarBg"     ": " "${telegram_searchedBarBg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "searchedBarFg"     ": " "${telegram_searchedBarFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsNameFg"     ": " "${telegram_dialogsNameFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsNameFgOver"     ": " "${telegram_dialogsNameFgOver};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsTextFgOver"     ": " "${telegram_dialogsTextFgOver};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsTextFgService"     ": " "${telegram_dialogsTextFgService};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsTextFgServiceOver"     ": " "${telegram_dialogsTextFgServiceOver};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowBgRipple"     ": " "${telegram_windowBgRipple};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "activeButtonBgRipple"     ": " "${telegram_activeButtonBgRipple};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyLinkInFg"     ": " "${telegram_historyLinkInFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowActiveTextFg"     ": " "${telegram_windowActiveTextFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "activeLineFg"     ": " "${telegram_activeLineFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgOutBg"     ": " "${telegram_msgOutBg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgOutFg"     ": " "${telegram_msgOutFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsSentIconFg"     ": " "${telegram_dialogsSentIconFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsSentIconFgActive"     ": " "${telegram_dialogsSentIconFgActive};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "dialogsSentIconFgOver"     ": " "${telegram_dialogsSentIconFgOver};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "windowSubTextFg"     ": " "${telegram_windowSubTextFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgOutDateFg"     ": " "${telegram_msgOutDateFg};"      "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgInDateFg"     ": " "${telegram_msgInDateFg};"      "${TELEGRAM_PALETTE_FILE}"
+
+    for i in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "$i/${wallpaper_image}" ]; then
+            wallpaper_file="$i/${wallpaper_image}"
+        fi
+    done
+
+    if [ -f "${wallpaper_file}" ]; then
+        if [ "${wallpaper_mode}" == "tiled" ]; then
+            TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/tiled.${wallpaper_file##*.}"
+        else
+            TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/background.${wallpaper_file##*.}"
+        fi
+        cp "${wallpaper_file}" "${TELEGRAM_WALLPAPER_FILE}"
+        [ -f "${TELEGRAM_THEME_FILE}" ] && rm "${TELEGRAM_THEME_FILE}"
+        zip -j "${TELEGRAM_THEME_FILE}" "${TELEGRAM_PALETTE_FILE}" "${TELEGRAM_WALLPAPER_FILE}" &>/dev/null
+    else
+        mv "${TELEGRAM_PALETTE_FILE}" "${TELEGRAM_THEME_FILE}"
+    fi
+
+    eval ${TELEGRAM_RESTART_COMMAND} &>/dev/null
+
+    printf " done.\n"
+fi
+
