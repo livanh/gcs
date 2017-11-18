@@ -28,7 +28,7 @@ GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
 GCS_CONFIG_DIR="$HOME/.config/gcs"
 GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
 GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
-GCS_LOCK_FILE="${GCS_TMP_DIR}/.gcs_lock"
+GCS_LOCK_FILE="/tmp/.gcs_lock"
 
 while getopts "m:" opt; do
   case $opt in
@@ -311,4 +311,6 @@ for module_file in ${MODULES[@]}; do
 done
 
 remove_lock_file
+
+rm -r "${GCS_TMP_DIR}" &>/dev/null
 
