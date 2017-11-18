@@ -30,8 +30,30 @@ GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
 GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
 GCS_LOCK_FILE="${GCS_TMP_DIR}/.gcs_lock"
 
+while getopts "m:" opt; do
+  case $opt in
+    m)
+      FORCED_MODULE="$OPTARG"
+      #echo forced module: $OPTARG
+      shift
+      shift
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
+done
+
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <color_theme_name>"
+    echo "Usage: $0 [options] <color_theme_name>"
+    echo
+    echo "Available options:"
+    echo -e "\t-m <module>\texecute only one module"
     echo
     echo "Avilable color themes:"
     find "${HOME}/.config/gcs/colorthemes" "/usr/local/share/gcs/colorthemes" "/usr/share/gcs/colorthemes" \
@@ -264,6 +286,13 @@ MODULES=()
 for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
     if [ -x "$i" ]; then
         MODULE_NAME="${i##/*/}"
+
+        if ! [ -z "${FORCED_MODULE}" ]; then
+            if ! [ "$MODULE_NAME" == "telegram" ]; then
+                continue
+            fi
+        fi
+
         for j in ${!MODULES[@]}; do
             if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
                 MODULES[$j]=''
