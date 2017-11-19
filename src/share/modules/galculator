@@ -15,12 +15,29 @@ GALCULATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} galculator enable    
 GALCULATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GALCULATOR_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for Galculator (disabled from configuration).\n"
+    printf "* Ignoring Galculator (disabled from configuration).\n"
 
 elif ! [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for Galculator (config file \"${GALCULATOR_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring Galculator (config file \"${GALCULATOR_CONFIG_FILE}\" not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of Galculator configuration file..."
+
+    GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
+    mkdir -p "${GALCULATOR_BACKUP_DIR}"
+    cp "${GALCULATOR_CONFIG_FILE}" "${GALCULATOR_BACKUP_DIR}/galculator.conf"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of Galculator configuration file..."
+
+    GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
+    [ -f "${GALCULATOR_BACKUP_DIR}/galculator.conf" ] && cp "${GALCULATOR_BACKUP_DIR}/galculator.conf" "${GALCULATOR_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for Galculator..."
 
     GALCULATOR_TMP_DIR="${GCS_TMP_DIR}/galculator"
@@ -37,4 +54,6 @@ else
     mv "${GALCULATOR_TMP_CONFIG_FILE}" "${GALCULATOR_CONFIG_FILE}"
 
     printf " done.\n"
+
 fi
+

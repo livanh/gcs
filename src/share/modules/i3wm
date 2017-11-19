@@ -57,15 +57,32 @@ I3_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} i3wm config_file     2>/d
 I3_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
 
 if ! [ "${I3_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for i3 window manager (disabled from configuration).\n"
+    printf "* Ignoring i3 window manager (disabled from configuration).\n"
 
 elif ! [ -f "${I3_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
 
 elif ! i3 --get-socketpath &>/dev/null; then
     printf "* Not setting colors for i3 window manager (not currently active).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of i3 window manager configuration file..."
+
+    I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
+    mkdir -p "${I3_BACKUP_DIR}"
+    cp "${I3_CONFIG_FILE}" "${I3_BACKUP_DIR}/config"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of i3 window manager configuration file..."
+
+    I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
+    [ -f "${I3_BACKUP_DIR}/config" ] && cp "${I3_BACKUP_DIR}/config" "${I3_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for i3 window manager..."
 
     I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
@@ -93,4 +110,6 @@ else
     ${I3_RESTART_COMMAND} &>/dev/null
 
     printf " done.\n"
+
 fi
+

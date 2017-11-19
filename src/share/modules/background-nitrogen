@@ -14,19 +14,30 @@ for i in ${COLOR_THEME_DIRS[@]}; do
 done
 
 if ! [ "${NITROGEN_ENABLE}" == "true" ]; then
-    printf "* Not setting wallpaper with nitrogen (disabled from configuration).\n"
-    
-elif ! [ -f "${wallpaper_file}" ]; then
-    printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"
-    
-else
-    printf "* Setting wallpaper with nitrogen..."
-    case "${wallpaper_mode}" in
-        centered)  nitrogen --save --set-centered "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
-        tiled)     nitrogen --save --set-tiled "${wallpaper_file}";;
-        stretched) nitrogen --save --set-scaled "${wallpaper_file}";;
-        zoom-fit)  nitrogen --save --set-zoom "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
-        zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
-    esac
-    printf " done.\n"
+    printf "* Ignoring wallpaper for nitrogen (disabled from configuration).\n"
+
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Backup/restore not supported with nitrogen.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Backup/restore not supported with nitrogen.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    if ! [ -f "${wallpaper_file}" ]; then
+        printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"
+
+    else
+        printf "* Setting wallpaper with nitrogen..."
+        case "${wallpaper_mode}" in
+            centered)  nitrogen --save --set-centered "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
+            tiled)     nitrogen --save --set-tiled "${wallpaper_file}";;
+            stretched) nitrogen --save --set-scaled "${wallpaper_file}";;
+            zoom-fit)  nitrogen --save --set-zoom "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
+            zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
+        esac
+        printf " done.\n"
+
+    fi
+
 fi
+

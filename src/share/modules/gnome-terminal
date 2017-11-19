@@ -14,12 +14,18 @@ GNOME_TERMINAL_PROFILE="$(crudini --get ${GCS_CONFIG_FILE} gnome-terminal profil
 GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
 
 if ! [ "${GNOME_TERMINAL_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for GNOME Terminal (disabled from configuration).\n"
+    printf "* Ignoring GNOME Terminal (disabled from configuration).\n"
 
 elif ! which dconf >/dev/null; then
-    printf "* Not setting colors for GNOME Terminal (dconf not found).\n"
+    printf "* Ignoring GNOME Terminal (dconf not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Backup/restore not supported with GNOME terminal.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Backup/restore not supported with GNOME terminal.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for GNOME Terminal..."
     shopt -s lastpipe
     dconf dump "${GNOME_TERMINAL_DCONF_PATH}/" \
@@ -36,4 +42,6 @@ else
     dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/background-color" "'${gnome_terminal_bg_color}'"
     dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/foreground-color" "'${gnome_terminal_fg_color}'"
     printf " done.\n"
+
 fi
+

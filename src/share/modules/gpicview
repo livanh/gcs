@@ -12,12 +12,29 @@ GPICVIEW_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gpicview enable      2>
 GPICVIEW_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for gpicview (disabled from configuration).\n"
+    printf "* Ignoring gpicview (disabled from configuration).\n"
 
 elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for gpicview (configuration file \"${GPICVIEW_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring gpicview (configuration file \"${GPICVIEW_CONFIG_FILE}\" not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of gpicview configuration file..."
+
+    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
+    mkdir -p "${GPICVIEW_BACKUP_DIR}"
+    cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_BACKUP_DIR}/gpicview.conf"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of gpicview configuration file..."
+
+    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
+    [ -f "${GPICVIEW_BACKUP_DIR}/gpicview.conf" ] && cp "${GPICVIEW_BACKUP_DIR}/gpicview.conf" "${GPICVIEW_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for gpicview..."
 
     GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"

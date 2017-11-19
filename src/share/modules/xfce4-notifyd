@@ -13,9 +13,15 @@ XFCE4_NOTIFYD_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} xfce4_notifyd 
 : ${xfce4_notifyd_fg_color:=${notification_fg_color}}
 
 if ! [ "${XFCE4_NOTIFYD_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for xfce4-notifyd (disabled from configuration).\n"
+    printf "* Ignoring xfce4-notifyd (disabled from configuration).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Backup/restore not supported with xfce4-notifyd.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Backup/restore not supported with xfce4-notifyd.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for xfce4-notifyd..."
     mkdir -p "${HOME}/.themes/gcs-theme/xfce-notify-4.0"
     echo "
@@ -33,4 +39,6 @@ else
 
     $XFCE4_NOTIFYD_RESTART_COMMAND &>/dev/null
     printf " done.\n"
+
 fi
+

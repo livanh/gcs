@@ -12,12 +12,29 @@ LXTERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} lxterminal enable    
 LXTERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} lxterminal config_file 2>/dev/null || echo "${LXTERMINAL_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${LXTERMINAL_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for LXTerminal (disabled from configuration).\n"
+    printf "* Ignoring LXTerminal (disabled from configuration).\n"
 
 elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for LXTerminal (configuration file \"${LXTERMINAL_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring LXTerminal (configuration file \"${LXTERMINAL_CONFIG_FILE}\" not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of LXTerminal configuration file..."
+
+    LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
+    mkdir -p "${LXTERMINAL_BACKUP_DIR}"
+    cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of LXTerminal configuration file..."
+
+    LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
+    [ -f "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" ] && cp "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" "${LXTERMINAL_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for LXTerminal..."
 
     LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
@@ -31,4 +48,6 @@ else
     mv "${LXTERMINAL_TMP_CONFIG_FILE}" "${LXTERMINAL_CONFIG_FILE}"
 
     printf " done.\n"
+
 fi
+

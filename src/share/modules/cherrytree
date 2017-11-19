@@ -18,12 +18,29 @@ CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable    
 CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${CHERRYTREE_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for cherrytree (disabled from configuration).\n"
+    printf "* Ignoring cherrytree (disabled from configuration).\n"
 
 elif ! [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
+    printf "* Ignoring cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of cherrytree configuration file..."
+
+    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
+    mkdir -p "${CHERRYTREE_BACKUP_DIR}"
+    cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_BACKUP_DIR}/config.cfg"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of cherrytree configuration file..."
+
+    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
+    [ -f "${CHERRYTREE_BACKUP_DIR}/config.cfg" ] && cp "${CHERRYTREE_BACKUP_DIR}/config.cfg" "${CHERRYTREE_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for cherrytree..."
 
     CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
@@ -44,3 +61,4 @@ else
 
     printf " done.\n"
 fi
+

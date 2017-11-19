@@ -29,54 +29,77 @@ VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>
 VIM_COLORSCHEME_FILE="$(crudini --get ${GCS_CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
 
 if ! [ "${VIM_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for Vim (disabled from configuration).\n"
+    printf "* Ignoring Vim (disabled from configuration).\n"
 
 elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for Vim (config file \"${VIM_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring Vim (config file \"${VIM_CONFIG_FILE}\" not found).\n"
 
-elif [ "${editor_syntax_enable}" == "false" ]; then
-    sed -i "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of Vim configuration file..."
 
-    for server in $(vim --serverlist); do
-        vim --servername ${server} --remote-send ":colorscheme default<CR>"
-    done
-
-else
-    printf "* Setting colors for Vim GUI..."
-
-    [ -d "$HOME/.vim/colors" ] || mkdir -p "$HOME/.vim/colors"
-
-    echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
-    echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
-    echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
-    echo "endif" >> "${VIM_COLORSCHEME_FILE}"
-    echo "let colors_name = \"gcs\"" >> "${VIM_COLORSCHEME_FILE}"
-
-    echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi cursorLineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi NonText guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"            >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi SpecialKey guifg=${vim_white_space_color}"                                    >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi CursorLine guifg=NONE guibg=${vim_current_line_bg}"                           >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Cursor guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Visual guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Comment guifg=${vim_comment}"                                                 >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi String guifg=${vim_string}"                                                   >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Operator guifg=${vim_operator}"                                               >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Statement guifg=${vim_keyword}"                                               >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi PreProc guifg=${vim_preprocessor}"                                            >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Identifier guifg=${vim_identifier}"                                           >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Type guifg=${vim_identifier}"                                                 >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
-    echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
-
-    sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
-    rm "${VIM_CONFIG_FILE}.gcs-bak"
-
-    for server in $(vim --serverlist); do
-        vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
-    done
+    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
+    mkdir -p "${VIM_BACKUP_DIR}"
+    cp "${VIM_CONFIG_FILE}" "${VIM_BACKUP_DIR}/vimrc"
 
     printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of Vim configuration file..."
+
+    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
+    [ -f "${VIM_BACKUP_DIR}/vimrc" ] && cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    if [ "${editor_syntax_enable}" == "false" ]; then
+        sed -i".gcs-bak" "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
+        rm "${VIM_CONFIG_FILE}.gcs-bak"
+
+        for server in $(vim --serverlist); do
+            vim --servername ${server} --remote-send ":colorscheme default<CR>"
+        done
+
+    else
+        printf "* Setting colors for Vim GUI..."
+
+        [ -d "$HOME/.vim/colors" ] || mkdir -p "$HOME/.vim/colors"
+
+        echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
+        echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
+        echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
+        echo "endif" >> "${VIM_COLORSCHEME_FILE}"
+        echo "let colors_name = \"gcs\"" >> "${VIM_COLORSCHEME_FILE}"
+
+        echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi cursorLineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi NonText guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"            >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi SpecialKey guifg=${vim_white_space_color}"                                    >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi CursorLine guifg=NONE guibg=${vim_current_line_bg}"                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Cursor guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Visual guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Comment guifg=${vim_comment}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi String guifg=${vim_string}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Operator guifg=${vim_operator}"                                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Statement guifg=${vim_keyword}"                                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PreProc guifg=${vim_preprocessor}"                                            >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Identifier guifg=${vim_identifier}"                                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Type guifg=${vim_identifier}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+
+        sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
+        rm "${VIM_CONFIG_FILE}.gcs-bak"
+
+        for server in $(vim --serverlist); do
+            vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
+        done
+
+        printf " done.\n"
+
+    fi
+
 fi
+

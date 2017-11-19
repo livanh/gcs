@@ -42,12 +42,18 @@ TELEGRAM_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} telegram restart_co
 which "${TELEGRAM_BINARY}" >/dev/null || return
 
 if ! [ "${TELEGRAM_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for Telegram (disabled from configuration).\n"
+    printf "* Ignoring Telegram (disabled from configuration).\n"
 
 elif ! [ -d "${TELEGRAM_CONFIG_DIR}" ]; then
-    printf "* Not setting colors for Telegram (configuration directory ${TELEGRAM_CONFIG_FILE} not found).\n"
+    printf "* Ignoring Telegram (configuration directory ${TELEGRAM_CONFIG_FILE} not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Backup/restore not supported with Telegram.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Backup/restore not supported with Telegram.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for Telegram..."
     
     TELEGRAM_TMP_DIR="${GCS_TMP_DIR}/telegram"

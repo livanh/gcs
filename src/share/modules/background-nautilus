@@ -15,30 +15,43 @@ for i in ${COLOR_THEME_DIRS[@]}; do
 done
 
 if ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
-    printf "* Not setting wallpaper with nautilus (disabled from configuration).\n"
-    
-elif ! [ -f "${wallpaper_file}" ]; then
-    printf "* Not setting wallpaper with nautilus (image file not found: \"${wallpaper_image}\").\n"
-    
-elif ! pgrep "nautilus" >/dev/null; then
-    printf "* Not setting wallpaper with nautilus (desktop manager is not active).\n"
-    
-else
-    printf "* Setting wallpaper with nautilus..."
-    gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
-    gsettings set org.gnome.desktop.background color-shading-type "solid"
-    gsettings set org.gnome.desktop.background primary-color "${wallpaper_bg_color}"
-    case "${wallpaper_mode}" in
-        centered)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                   gsettings set org.gnome.desktop.background picture-options "centered";;
-        tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                   gsettings set org.gnome.desktop.background picture-options "spanned";;
-        stretched) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                   gsettings set org.gnome.desktop.background picture-options "stretched";;
-        zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                   gsettings set org.gnome.desktop.background picture-options "scaled";;
-        zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                   gsettings set org.gnome.desktop.background picture-options "zoom";;
-    esac
-    printf " done.\n"
+    printf "* Ignoring wallpaper for nautilus (disabled from configuration).\n"
+
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Backup/restore not supported with nautilus wallpaper.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Backup/restore not supported with nautilus wallpaper.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    if ! [ -f "${wallpaper_file}" ]; then
+        printf "* Not setting wallpaper with nautilus (image file not found: \"${wallpaper_image}\").\n"
+
+    elif ! pgrep "nautilus" >/dev/null; then
+        printf "* Not setting wallpaper with nautilus (desktop manager is not active).\n"
+
+    else
+        printf "* Setting wallpaper with nautilus..."
+
+        gsettings set org.gnome.desktop.background picture-uri "file://${COLOR_THEME_DIR}/${wallpaper_image}"
+        gsettings set org.gnome.desktop.background color-shading-type "solid"
+        gsettings set org.gnome.desktop.background primary-color "${wallpaper_bg_color}"
+
+        case "${wallpaper_mode}" in
+            centered)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
+                       gsettings set org.gnome.desktop.background picture-options "centered";;
+            tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
+                       gsettings set org.gnome.desktop.background picture-options "spanned";;
+            stretched) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
+                       gsettings set org.gnome.desktop.background picture-options "stretched";;
+            zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
+                       gsettings set org.gnome.desktop.background picture-options "scaled";;
+            zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
+                       gsettings set org.gnome.desktop.background picture-options "zoom";;
+        esac
+        printf " done.\n"
+
+    fi
+
 fi
+

@@ -41,12 +41,29 @@ TERMINATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} terminator enable    
 TERMINATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${TERMINATOR_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for terminator (disabled from configuration).\n"
+    printf "* Ignoting terminator (disabled from configuration).\n"
 
 elif ! [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for terminator (configuration file not found: ${TERMINATOR_CONFIG_FILE}).\n"
+    printf "* Ignoring terminator (configuration file not found: ${TERMINATOR_CONFIG_FILE}).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of terminator configuration file..."
+
+    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
+    mkdir -p "${TERMINATOR_BACKUP_DIR}"
+    cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_BACKUP_DIR}/config"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of terminator configuration file..."
+
+    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
+    [ -f "${TERMINATOR_BACKUP_DIR}/config" ] && cp "${TERMINATOR_BACKUP_DIR}/config" "${TERMINATOR_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for terminator..."
 
     TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
@@ -68,4 +85,6 @@ else
     mv "${TERMINATOR_TMP_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}"
 
     printf " done.\n"
+
 fi
+

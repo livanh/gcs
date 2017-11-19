@@ -19,12 +19,29 @@ DUNST_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} dunst restart_command 
 : ${dunst_urgency_critical_fg:=${selected_fg_color}}
 
 if ! [ "${DUNST_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for dunst (disabled from configuration).\n"
+    printf "* Ignoring dunst (disabled from configuration).\n"
 
 elif ! [ -f "${DUNST_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for dunst (configuration file \"${DUNST_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring dunst (configuration file \"${DUNST_CONFIG_FILE}\" not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of dunst configuration file..."
+
+    DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
+    mkdir -p "${DUNST_BACKUP_DIR}"
+    cp "${DUNST_CONFIG_FILE}" "${DUNST_BACKUP_DIR}/dunstrc"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of dunst configuration file..."
+
+    DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
+    [ -f "${DUNST_BACKUP_DIR}/dunstrc" ] && cp "${DUNST_BACKUP_DIR}/dunstrc" "${DUNST_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for dunst..."
 
     DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
@@ -45,4 +62,6 @@ else
     $DUNST_RESTART_COMMAND &>/dev/null
 
     printf " done.\n"
+
 fi
+

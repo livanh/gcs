@@ -129,92 +129,113 @@ CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable    
 CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for Code::Blocks (disabled from configuration).\n"
+    printf "* Ignoring Code::Blocks (disabled from configuration).\n"
 
 elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for Code::Blocks (configuration file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
+    printf "* Ignoring Code::Blocks (configuration file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
 
-elif [ "${editor_syntax_enable}" == "false" ]; then
-    if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
-        # set default colorset as active
-        xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
-    fi
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of Code::Blocks configuration file..."
 
-else
-    printf "* Setting colors for Code::Blocks..."
-
-    CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
-    CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
-    mkdir "${CODEBLOCKS_TMP_DIR}"
-    cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    # clear colorset with same name, if any
-    xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}"                                                             "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    # create new colorset
-    xmlstarlet ed --inplace --subnode "${CB_PREFIX}"                  --type elem -n "${CB_COLORSET_NAME}"               "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "NAME"                              "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/NAME"    --type elem -n "str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    # apply C/C++ syntax highlighting
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "cc"                                "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc"      --type elem -n "NAME"                              "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc/NAME" --type elem -n "str" --value "C/C++"               "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    CB_STYLE_CTR=0
-
-    codeblocks_add_style "Default"                               "cc" "${codeblocks_c_default_fg}"               "${codeblocks_c_default_bg}"     "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Selection"                             "cc" "${codeblocks_c_selected_fg}"               "${codeblocks_c_selected_bg}"   "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    codeblocks_add_style "Number"                                "cc" "${codeblocks_c_number}"                    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "User keyword"                          "cc" "${codeblocks_c_class}"                     "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "String"                                "cc" "${codeblocks_c_string}"                    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Operator"                              "cc" "${codeblocks_c_operator}"                  "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment (normal)"                      "cc" "${codeblocks_c_comment}"                   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment line (normal)"                 "cc" "${codeblocks_c_comment_line}"              "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment (documentation)"               "cc" "${codeblocks_c_comment_doc}"               "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment line (documentation)"          "cc" "${codeblocks_c_comment_line_doc}"          "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment keyword (documentation)"       "cc" "${codeblocks_c_comment_keyword_doc}"       "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment keyword error (documentation)" "cc" "${codeblocks_c_comment_keyword_error_doc}" "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Keyword"                               "cc" "${codeblocks_c_keyword}"                   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Character"                             "cc" "${codeblocks_c_character}"                 "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Preprocessor"                          "cc" "${codeblocks_c_preprocessor}"              "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Matching brace highlight"              "cc" "${codeblocks_c_brace_good_fg}"             "${codeblocks_c_brace_good_bg}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Active line"                           "cc" "default"                                   "${codeblocks_c_current_line}"  "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    # apply diff/patch syntax highlighting
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"                --type elem -n "diffpatch"                "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch"      --type elem -n "NAME"                     "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch/NAME" --type elem -n "str" --value "Diff/Patch" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    CB_STYLE_CTR=0
-
-    codeblocks_add_style "Default"  "diffpatch" "${codeblocks_diff_default_fg}" "${codeblocks_diff_default_bg}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Comment"  "diffpatch" "${codeblocks_diff_comment}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Command"  "diffpatch" "${codeblocks_diff_command}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Header"   "diffpatch" "${codeblocks_diff_header}"     "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Position" "diffpatch" "${codeblocks_diff_position}"   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Deleted"  "diffpatch" "${codeblocks_diff_deleted}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_add_style "Added"    "diffpatch" "${codeblocks_diff_added}"      "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    # set new colorset as active
-    xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${codeblocks_active_caption_colour}"            "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${codeblocks_active_caption_gradient_colour}"   "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${codeblocks_active_caption_text_colour}"       "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${codeblocks_inactive_caption_colour}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${codeblocks_inactive_caption_gradient_colour}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${codeblocks_inactive_caption_text_colour}"     "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${codeblocks_project_tree_non_source_files}"    "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${codeblocks_editor_margin_chrome}"           "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${codeblocks_editor_margin_chrome_highlight}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${codeblocks_editor_linenumbers_bg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${codeblocks_editor_linenumbers_fg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
-    codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${codeblocks_editor_gutter}"                  "${CODEBLOCKS_TMP_CONFIG_FILE}"
-
-    mv "${CODEBLOCKS_TMP_CONFIG_FILE}" "${CODEBLOCKS_CONFIG_FILE}"
+    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
+    mkdir -p "${CODEBLOCKS_BACKUP_DIR}"
+    cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_BACKUP_DIR}/default.conf"
 
     printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of Code::Blocks configuration file..."
+
+    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
+    [ -f "${CODEBLOCKS_BACKUP_DIR}/default.conf" ] && cp "${CODEBLOCKS_BACKUP_DIR}/default.conf" "${CODEBLOCKS_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    if [ "${editor_syntax_enable}" == "false" ]; then
+        if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
+            # set default colorset as active
+            xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
+        fi
+    else
+        printf "* Setting colors for Code::Blocks..."
+
+        CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
+        CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
+        mkdir "${CODEBLOCKS_TMP_DIR}"
+        cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        # clear colorset with same name, if any
+        xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}"                                                             "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        # create new colorset
+        xmlstarlet ed --inplace --subnode "${CB_PREFIX}"                  --type elem -n "${CB_COLORSET_NAME}"               "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "NAME"                              "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/NAME"    --type elem -n "str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        # apply C/C++ syntax highlighting
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"         --type elem -n "cc"                                "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc"      --type elem -n "NAME"                              "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/cc/NAME" --type elem -n "str" --value "C/C++"               "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        CB_STYLE_CTR=0
+
+        codeblocks_add_style "Default"                               "cc" "${codeblocks_c_default_fg}"               "${codeblocks_c_default_bg}"     "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Selection"                             "cc" "${codeblocks_c_selected_fg}"               "${codeblocks_c_selected_bg}"   "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        codeblocks_add_style "Number"                                "cc" "${codeblocks_c_number}"                    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "User keyword"                          "cc" "${codeblocks_c_class}"                     "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "String"                                "cc" "${codeblocks_c_string}"                    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Operator"                              "cc" "${codeblocks_c_operator}"                  "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment (normal)"                      "cc" "${codeblocks_c_comment}"                   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment line (normal)"                 "cc" "${codeblocks_c_comment_line}"              "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment (documentation)"               "cc" "${codeblocks_c_comment_doc}"               "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment line (documentation)"          "cc" "${codeblocks_c_comment_line_doc}"          "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment keyword (documentation)"       "cc" "${codeblocks_c_comment_keyword_doc}"       "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment keyword error (documentation)" "cc" "${codeblocks_c_comment_keyword_error_doc}" "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Keyword"                               "cc" "${codeblocks_c_keyword}"                   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Character"                             "cc" "${codeblocks_c_character}"                 "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Preprocessor"                          "cc" "${codeblocks_c_preprocessor}"              "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Matching brace highlight"              "cc" "${codeblocks_c_brace_good_fg}"             "${codeblocks_c_brace_good_bg}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Active line"                           "cc" "default"                                   "${codeblocks_c_current_line}"  "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        # apply diff/patch syntax highlighting
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}"                --type elem -n "diffpatch"                "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch"      --type elem -n "NAME"                     "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/diffpatch/NAME" --type elem -n "str" --value "Diff/Patch" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        CB_STYLE_CTR=0
+
+        codeblocks_add_style "Default"  "diffpatch" "${codeblocks_diff_default_fg}" "${codeblocks_diff_default_bg}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Comment"  "diffpatch" "${codeblocks_diff_comment}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Command"  "diffpatch" "${codeblocks_diff_command}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Header"   "diffpatch" "${codeblocks_diff_header}"     "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Position" "diffpatch" "${codeblocks_diff_position}"   "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Deleted"  "diffpatch" "${codeblocks_diff_deleted}"    "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_add_style "Added"    "diffpatch" "${codeblocks_diff_added}"      "default"                       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        # set new colorset as active
+        xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "${CB_COLORSET_NAME}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_COLOUR"            "${codeblocks_active_caption_colour}"            "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_GRADIENT_COLOUR"   "${codeblocks_active_caption_gradient_colour}"   "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/ACTIVE_CAPTION_TEXT_COLOUR"       "${codeblocks_active_caption_text_colour}"       "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_COLOUR"          "${codeblocks_inactive_caption_colour}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_GRADIENT_COLOUR" "${codeblocks_inactive_caption_gradient_colour}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/INACTIVE_CAPTION_TEXT_COLOUR"     "${codeblocks_inactive_caption_text_colour}"     "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/app/environment/aui/PROJECT_TREE_NON_SOURCE_FILES"    "${codeblocks_project_tree_non_source_files}"    "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME"           "${codeblocks_editor_margin_chrome}"           "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_MARGIN_CHROME_HIGHLIGHT" "${codeblocks_editor_margin_chrome_highlight}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${codeblocks_editor_linenumbers_bg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${codeblocks_editor_linenumbers_fg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${codeblocks_editor_gutter}"                  "${CODEBLOCKS_TMP_CONFIG_FILE}"
+
+        mv "${CODEBLOCKS_TMP_CONFIG_FILE}" "${CODEBLOCKS_CONFIG_FILE}"
+
+        printf " done.\n"
+
+    fi
+
 fi
+

@@ -29,12 +29,29 @@ ROFI_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} rofi restart_command 2>
 : ${rofi_window_separator:=${bg_color}}
 
 if ! [ "${ROFI_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for rofi (disabled from configuration).\n"
+    printf "* Ignoring rofi (disabled from configuration).\n"
 
 elif ! [ -f "${ROFI_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for rofi (configuration file \"${ROFI_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring rofi (configuration file \"${ROFI_CONFIG_FILE}\" not found).\n"
 
-else
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of rofi configuration file..."
+
+    ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
+    mkdir -p "${ROFI_BACKUP_DIR}"
+    cp "${ROFI_CONFIG_FILE}" "${ROFI_BACKUP_DIR}/config"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of rofi configuration file..."
+
+    ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
+    [ -f "${ROFI_BACKUP_DIR}/config" ] && cp "${ROFI_BACKUP_DIR}/config" "${ROFI_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for rofi..."
 
     ROFI_TMP_DIR="${GCS_TMP_DIR}/rofi"
@@ -52,4 +69,6 @@ else
     $ROFI_RESTART_COMMAND &>/dev/null
 
     printf " done.\n"
+
 fi
+

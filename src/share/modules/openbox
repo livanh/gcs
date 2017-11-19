@@ -34,15 +34,32 @@ OPENBOX_THEME_FILE="${HOME}/.themes/gcs-theme/openbox-3/themerc"
 
 
 if ! [ "${OPENBOX_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for openbox (disabled from configuration).\n"
+    printf "* Ignoring openbox (disabled from configuration).\n"
 
 elif ! [ -f "${OPENBOX_CONFIG_FILE}" ]; then
-    printf "* Not setting colors for openbox (configuration file \"${OPENBOX_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring openbox (configuration file \"${OPENBOX_CONFIG_FILE}\" not found).\n"
+
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of openbox configuration file..."
+
+    OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
+    mkdir -p "${OPENBOX_BACKUP_DIR}"
+    cp "${OPENBOX_CONFIG_FILE}" "${OPENBOX_BACKUP_DIR}/rc.xml"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of openbox configuration file..."
+
+    OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
+    [ -f "${OPENBOX_BACKUP_DIR}/rc.xml" ] && cp "${OPENBOX_BACKUP_DIR}/rc.xml" "${OPENBOX_CONFIG_FILE}"
+
+    printf " done.\n"
 
 elif ! pgrep openbox &>/dev/null; then
     printf "* Not setting colors for openbox (not active).\n"
 
-else
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for openbox..."
 
     set_value "window.active.title.bg.color:" " " "${openbox_window_active_title_bg_color}" "${OPENBOX_THEME_FILE}"
@@ -68,4 +85,6 @@ else
 
     $OPENBOX_RESTART_COMMAND &>/dev/null
     printf " done.\n"
+
 fi
+

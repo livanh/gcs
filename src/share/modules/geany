@@ -49,87 +49,107 @@ GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/n
 GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
 
 if ! [ "${GEANY_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for Geany (disabled from configuration).\n"
-
-elif [ "${editor_syntax_enable}" == "false" ]; then
-
-    GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
-    GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
-    mkdir "${GEANY_TMP_DIR}"
-    cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
-
-    if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
-        set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
-    fi
-    set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
-    set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
-
-    mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
+    printf "* Ignoring Geany (disabled from configuration).\n"
 
 elif ! [ -f "${GEANY_CONFIG_FILE}" ]; then
-    printf "* Not settin colors for Geany (configuration file \"${GEANY_CONFIG_FILE}\" not found).\n"
+    printf "* Ignoring Geany (configuration file \"${GEANY_CONFIG_FILE}\" not found).\n"
 
-else
-    printf "* Setting colors for Geany..."
-    geany_template_file="${BASH_SOURCE%/*}/geany-template.conf"
-    
-    if [ -f "${geany_template_file}" ]; then
-        [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
-        mkdir -p "$HOME/.config/geany/colorschemes"
-        destfile="$HOME/.config/geany/colorschemes/gcs.conf"
-        cp "${geany_template_file}" "${destfile}"
+elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    printf "* Making backup of Geany configuration file..."
 
-        set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
-        set_value "foreground"            "=" "${geany_fg}"                                                   "${destfile}"
-        set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${destfile}"
-        set_value "selected_fg"           "=" "${geany_selected_fg}"                                          "${destfile}"
-        set_value "frame_bg"              "=" "${geany_frame_bg}"                                             "${destfile}"
-        set_value "frame_fg"              "=" "${geany_frame_fg}"                                             "${destfile}"
-        
-        set_value "current_line"          "=" ";${geany_current_line_bg};true"                                "${destfile}"
-        set_value "indent_guide"          "=" "${geany_indent_guide}"                                         "${destfile}"
+    GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
+    mkdir -p "${GEANY_BACKUP_DIR}"
+    cp "${GEANY_CONFIG_FILE}" "${GEANY_BACKUP_DIR}/geany.conf"
 
-        set_value "number"                "=" "${geany_number};;true"                                         "${destfile}"
-        set_value "class"                 "=" "${geany_class};;true"                                          "${destfile}"
-        set_value "string"                "=" "${geany_string}"                                               "${destfile}"
-        set_value "operator"              "=" "${geany_operator};;true"                                       "${destfile}"
-        set_value "comment"               "=" "${geany_comment}"                                              "${destfile}"
-        set_value "error"                 "=" "${geany_error}"                                                "${destfile}"
-        set_value "keyword"               "=" "${geany_keyword};;true"                                        "${destfile}"
-        set_value "character"             "=" "${geany_character}"                                            "${destfile}"
-        set_value "preprocessor"          "=" "${geany_preprocessor}"                                         "${destfile}"
-        set_value "brace_good"            "=" "${geany_brace_good};;true"                                     "${destfile}"
-        set_value "white_space"           "=" "${geany_white_space};;true"                                    "${destfile}"
-        
-        set_value "margin_folding"        "=" "${geany_margin_folding_fg};${geany_margin_folding_bg}"         "${destfile}"
-        set_value "fold_symbol_highlight" "=" "${geany_fold_symbol_highlight}"                                "${destfile}"
-        set_value "marker_search"         "=" "${geany_marker_search_fg};${geany_marker_search_bg};true;true" "${destfile}"
-        set_value "marker_mark"           "=" "${geany_marker_mark_fg};${geany_marker_mark_fg};false;false"   "${destfile}"
-        set_value "type"                  "=" "${geany_type};;true"                                           "${destfile}"
-        set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${destfile}"
-        set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${destfile}"
-        set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${destfile}"
-        
-        set_value "line_added"            "=" "${geany_diff_added}"                                           "${destfile}"
-        set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
-        set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
+    printf " done.\n"
 
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    printf "* Restoring backup of Geany configuration file..."
 
+    GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
+    [ -f "${GEANY_BACKUP_DIR}/geany.conf" ] && cp "${GEANY_BACKUP_DIR}/geany.conf" "${GEANY_CONFIG_FILE}"
+
+    printf " done.\n"
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    if [ "${editor_syntax_enable}" == "false" ]; then
         GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
         GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
         mkdir "${GEANY_TMP_DIR}"
         cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-        set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_TMP_CONFIG_FILE}"
-        set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_TMP_CONFIG_FILE}"
-        set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_TMP_CONFIG_FILE}"
-        set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_TMP_CONFIG_FILE}"
+        if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
+            set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
+        fi
+        set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
+        set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
 
         mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 
-        printf " done.\n" 
     else
-        printf " error: template file \"${geany_template_file}\" not found!\n"
+        printf "* Setting colors for Geany..."
+        geany_template_file="${BASH_SOURCE%/*}/geany-template.conf"
+
+        if [ -f "${geany_template_file}" ]; then
+            [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
+            mkdir -p "$HOME/.config/geany/colorschemes"
+            destfile="$HOME/.config/geany/colorschemes/gcs.conf"
+            cp "${geany_template_file}" "${destfile}"
+
+            set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
+            set_value "foreground"            "=" "${geany_fg}"                                                   "${destfile}"
+            set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${destfile}"
+            set_value "selected_fg"           "=" "${geany_selected_fg}"                                          "${destfile}"
+            set_value "frame_bg"              "=" "${geany_frame_bg}"                                             "${destfile}"
+            set_value "frame_fg"              "=" "${geany_frame_fg}"                                             "${destfile}"
+
+            set_value "current_line"          "=" ";${geany_current_line_bg};true"                                "${destfile}"
+            set_value "indent_guide"          "=" "${geany_indent_guide}"                                         "${destfile}"
+
+            set_value "number"                "=" "${geany_number};;true"                                         "${destfile}"
+            set_value "class"                 "=" "${geany_class};;true"                                          "${destfile}"
+            set_value "string"                "=" "${geany_string}"                                               "${destfile}"
+            set_value "operator"              "=" "${geany_operator};;true"                                       "${destfile}"
+            set_value "comment"               "=" "${geany_comment}"                                              "${destfile}"
+            set_value "error"                 "=" "${geany_error}"                                                "${destfile}"
+            set_value "keyword"               "=" "${geany_keyword};;true"                                        "${destfile}"
+            set_value "character"             "=" "${geany_character}"                                            "${destfile}"
+            set_value "preprocessor"          "=" "${geany_preprocessor}"                                         "${destfile}"
+            set_value "brace_good"            "=" "${geany_brace_good};;true"                                     "${destfile}"
+            set_value "white_space"           "=" "${geany_white_space};;true"                                    "${destfile}"
+
+            set_value "margin_folding"        "=" "${geany_margin_folding_fg};${geany_margin_folding_bg}"         "${destfile}"
+            set_value "fold_symbol_highlight" "=" "${geany_fold_symbol_highlight}"                                "${destfile}"
+            set_value "marker_search"         "=" "${geany_marker_search_fg};${geany_marker_search_bg};true;true" "${destfile}"
+            set_value "marker_mark"           "=" "${geany_marker_mark_fg};${geany_marker_mark_fg};false;false"   "${destfile}"
+            set_value "type"                  "=" "${geany_type};;true"                                           "${destfile}"
+            set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${destfile}"
+            set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${destfile}"
+            set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${destfile}"
+            
+            set_value "line_added"            "=" "${geany_diff_added}"                                           "${destfile}"
+            set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
+            set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
+
+
+            GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+            GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+            mkdir "${GEANY_TMP_DIR}"
+            cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
+
+            set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+            set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_TMP_CONFIG_FILE}"
+
+            mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
+
+            printf " done.\n" 
+        else
+            printf " error: template file \"${geany_template_file}\" not found!\n"
+        fi
+
     fi
 
 fi
+
