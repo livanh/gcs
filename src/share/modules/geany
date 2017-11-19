@@ -52,11 +52,19 @@ if ! [ "${GEANY_ENABLE}" == "true" ]; then
     printf "* Not setting colors for Geany (disabled from configuration).\n"
 
 elif [ "${editor_syntax_enable}" == "false" ]; then
+
+    GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+    GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+    mkdir "${GEANY_TMP_DIR}"
+    cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
+
     if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
-        set_value "color_scheme" "=" ""                    "${GEANY_CONFIG_FILE}"
+        set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
     fi
-    set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_CONFIG_FILE}"
-    set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_CONFIG_FILE}"
+    set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
+    set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
+
+    mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 
 elif ! [ -f "${GEANY_CONFIG_FILE}" ]; then
     printf "* Not settin colors for Geany (configuration file \"${GEANY_CONFIG_FILE}\" not found).\n"
@@ -106,12 +114,18 @@ else
         set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
         set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
 
-        set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_CONFIG_FILE}"
 
-        set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_CONFIG_FILE}"
-        set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_CONFIG_FILE}"
+        GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+        GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+        mkdir "${GEANY_TMP_DIR}"
+        cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-        set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_CONFIG_FILE}"
+        set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_TMP_CONFIG_FILE}"
+        set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+        set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+        set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_TMP_CONFIG_FILE}"
+
+        mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 
         printf " done.\n" 
     else

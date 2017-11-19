@@ -23,11 +23,18 @@ elif ! [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
 else
     printf "* Setting colors for Galculator..."
 
-    set_value "display_bkg_color"             "=" "\"${galculator_bg_color}\""              "${GALCULATOR_CONFIG_FILE}"
-    set_value "display_result_color"          "=" "\"${galculator_result_color}\""          "${GALCULATOR_CONFIG_FILE}"
-    set_value "display_stack_color"           "=" "\"${galculator_stack_color}\""           "${GALCULATOR_CONFIG_FILE}"
-    set_value "display_module_active_color"   "=" "\"${galculator_module_active_color}\""   "${GALCULATOR_CONFIG_FILE}"
-    set_value "display_module_inactive_color" "=" "\"${galculator_module_inactive_color}\"" "${GALCULATOR_CONFIG_FILE}"
+    GALCULATOR_TMP_DIR="${GCS_TMP_DIR}/galculator"
+    GALCULATOR_TMP_CONFIG_FILE="${GALCULATOR_TMP_DIR}/galculator.conf"
+    mkdir "${GALCULATOR_TMP_DIR}"
+    cp "${GALCULATOR_CONFIG_FILE}" "${GALCULATOR_TMP_CONFIG_FILE}"
+
+    set_value "display_bkg_color"             "=" "\"${galculator_bg_color}\""              "${GALCULATOR_TMP_CONFIG_FILE}"
+    set_value "display_result_color"          "=" "\"${galculator_result_color}\""          "${GALCULATOR_TMP_CONFIG_FILE}"
+    set_value "display_stack_color"           "=" "\"${galculator_stack_color}\""           "${GALCULATOR_TMP_CONFIG_FILE}"
+    set_value "display_module_active_color"   "=" "\"${galculator_module_active_color}\""   "${GALCULATOR_TMP_CONFIG_FILE}"
+    set_value "display_module_inactive_color" "=" "\"${galculator_module_inactive_color}\"" "${GALCULATOR_TMP_CONFIG_FILE}"
+
+    mv "${GALCULATOR_TMP_CONFIG_FILE}" "${GALCULATOR_CONFIG_FILE}"
 
     printf " done.\n"
 fi

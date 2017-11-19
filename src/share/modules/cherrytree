@@ -25,13 +25,22 @@ elif ! [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for cherrytree..."
-    set_value "rt_def_fg"     " = " "${cherrytree_window_fg}"      "${CHERRYTREE_CONFIG_FILE}"
-    set_value "rt_def_bg"     " = " "${cherrytree_window_bg}"      "${CHERRYTREE_CONFIG_FILE}"
-    set_value "tt_def_fg"     " = " "${cherrytree_tree_fg}"        "${CHERRYTREE_CONFIG_FILE}"
-    set_value "tt_def_bg"     " = " "${cherrytree_tree_bg}"        "${CHERRYTREE_CONFIG_FILE}"
-    set_value "col_link_webs" " = " "${cherrytree_link_web}"       "${CHERRYTREE_CONFIG_FILE}"
-    set_value "col_link_node" " = " "${cherrytree_link_node}"      "${CHERRYTREE_CONFIG_FILE}"
-    set_value "col_link_file" " = " "${cherrytree_link_file}"      "${CHERRYTREE_CONFIG_FILE}"
-    set_value "col_link_fold" " = " "${cherrytree_link_directory}" "${CHERRYTREE_CONFIG_FILE}"
+
+    CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
+    CHERRYTREE_TMP_CONFIG_FILE="${CHERRYTREE_TMP_DIR}/config.cfg"
+    mkdir "${CHERRYTREE_TMP_DIR}"
+    cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_TMP_CONFIG_FILE}"
+
+    set_value "rt_def_fg"     " = " "${cherrytree_window_fg}"      "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "rt_def_bg"     " = " "${cherrytree_window_bg}"      "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "tt_def_fg"     " = " "${cherrytree_tree_fg}"        "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "tt_def_bg"     " = " "${cherrytree_tree_bg}"        "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "col_link_webs" " = " "${cherrytree_link_web}"       "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "col_link_node" " = " "${cherrytree_link_node}"      "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "col_link_file" " = " "${cherrytree_link_file}"      "${CHERRYTREE_TMP_CONFIG_FILE}"
+    set_value "col_link_fold" " = " "${cherrytree_link_directory}" "${CHERRYTREE_TMP_CONFIG_FILE}"
+
+    mv "${CHERRYTREE_TMP_CONFIG_FILE}" "${CHERRYTREE_CONFIG_FILE}"
+
     printf " done.\n"
 fi

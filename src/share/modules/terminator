@@ -48,15 +48,24 @@ elif ! [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for terminator..."
-    terminator_set_value_default_profile "background_color" "${terminal_bg_color}"  "${TERMINATOR_CONFIG_FILE}"
-    terminator_set_value_default_profile "foreground_color" "${terminal_fg_color}"  "${TERMINATOR_CONFIG_FILE}"
-    terminator_set_value_default_profile "cursor_color"     "${terminal_fg_color}"  "${TERMINATOR_CONFIG_FILE}"
-    terminator_set_value_default_profile "palette"          "${terminator_palette}" "${TERMINATOR_CONFIG_FILE}"
+
+    TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
+    TERMINATOR_TMP_CONFIG_FILE="${TERMINATOR_TMP_DIR}/config"
+    mkdir "${TERMINATOR_TMP_DIR}"
+    cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_TMP_CONFIG_FILE}"
+
+    terminator_set_value_default_profile "background_color" "${terminal_bg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "foreground_color" "${terminal_fg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "cursor_color"     "${terminal_fg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "palette"          "${terminator_palette}" "${TERMINATOR_TMP_CONFIG_FILE}"
     if [ "${terminal_transparency}" != "" ]; then
-        terminator_set_value_default_profile "background_type"     "transparent"              "${TERMINATOR_CONFIG_FILE}"
-        terminator_set_value_default_profile "background_darkness" "${terminal_transparency}" "${TERMINATOR_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_type"     "transparent"              "${TERMINATOR_TMP_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_darkness" "${terminal_transparency}" "${TERMINATOR_TMP_CONFIG_FILE}"
     else
-        terminator_set_value_default_profile "background_type"     "solid"                    "${TERMINATOR_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_type"     "solid"                    "${TERMINATOR_TMP_CONFIG_FILE}"
     fi
+
+    mv "${TERMINATOR_TMP_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}"
+
     printf " done.\n"
 fi

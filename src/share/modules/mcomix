@@ -47,7 +47,16 @@ elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for MComix..."
-    set_color_mcomix "bg colour"       "${mcomix_bg_color}"       "${MCOMIX_CONFIG_FILE}"
-    set_color_mcomix "thumb bg colour" "${mcomix_thumb_bg_color}" "${MCOMIX_CONFIG_FILE}"
+
+    MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
+    MCOMIX_TMP_CONFIG_FILE="${MCOMIX_TMP_DIR}/preferences.conf"
+    mkdir "${MCOMIX_TMP_DIR}"
+    cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_TMP_CONFIG_FILE}"
+
+    set_color_mcomix "bg colour"       "${mcomix_bg_color}"       "${MCOMIX_TMP_CONFIG_FILE}"
+    set_color_mcomix "thumb bg colour" "${mcomix_thumb_bg_color}" "${MCOMIX_TMP_CONFIG_FILE}"
+
+    mv "${MCOMIX_TMP_CONFIG_FILE}" "${MCOMIX_CONFIG_FILE}"
+
     printf " done.\n"
 fi

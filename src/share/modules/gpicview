@@ -19,7 +19,16 @@ elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for gpicview..."
-    set_value "bg"      "=" "${gpicview_bg_color}"      "${GPICVIEW_CONFIG_FILE}"
-    set_value "bg_full" "=" "${gpicview_bg_full_color}" "${GPICVIEW_CONFIG_FILE}"
+
+    GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"
+    GPICVIEW_TMP_CONFIG_FILE="${GPICVIEW_TMP_DIR}/gpicview.conf"
+    mkdir "${GPICVIEW_TMP_DIR}"
+    cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_TMP_CONFIG_FILE}"
+
+    set_value "bg"      "=" "${gpicview_bg_color}"      "${GPICVIEW_TMP_CONFIG_FILE}"
+    set_value "bg_full" "=" "${gpicview_bg_full_color}" "${GPICVIEW_TMP_CONFIG_FILE}"
+
+    mv "${GPICVIEW_TMP_CONFIG_FILE}" "${GPICVIEW_CONFIG_FILE}"
+
     printf " done.\n"
 fi

@@ -68,21 +68,29 @@ elif ! i3 --get-socketpath &>/dev/null; then
 else
     printf "* Setting colors for i3 window manager..."
 
-    set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_CONFIG_FILE}"
-    set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_CONFIG_FILE}"
-    set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_CONFIG_FILE}"
-    set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_CONFIG_FILE}"
-    set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_CONFIG_FILE}"
+    I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
+    I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
+    mkdir "${I3_TMP_DIR}"
+    cp "${I3_CONFIG_FILE}" "${I3_TMP_CONFIG_FILE}"
 
-    set_value "separator"  " " " ${i3_bar_separator}"  "${I3_CONFIG_FILE}"
-    set_value "background" " " " ${i3_bar_background}" "${I3_CONFIG_FILE}"
-    set_value "statusline" " " " ${i3_bar_statusline}" "${I3_CONFIG_FILE}"
+    set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_TMP_CONFIG_FILE}"
+    set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_TMP_CONFIG_FILE}"
+    set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_TMP_CONFIG_FILE}"
+    set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_TMP_CONFIG_FILE}"
+    set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_TMP_CONFIG_FILE}"
 
-    set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_CONFIG_FILE}"
-    set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_CONFIG_FILE}"
-    set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_CONFIG_FILE}"
-    set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_CONFIG_FILE}"
+    set_value "separator"  " " " ${i3_bar_separator}"  "${I3_TMP_CONFIG_FILE}"
+    set_value "background" " " " ${i3_bar_background}" "${I3_TMP_CONFIG_FILE}"
+    set_value "statusline" " " " ${i3_bar_statusline}" "${I3_TMP_CONFIG_FILE}"
+
+    set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_TMP_CONFIG_FILE}"
+    set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
+    set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_TMP_CONFIG_FILE}"
+    set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
+
+    mv "${I3_TMP_CONFIG_FILE}" "${I3_CONFIG_FILE}"
 
     ${I3_RESTART_COMMAND} &>/dev/null
+
     printf " done.\n"
 fi

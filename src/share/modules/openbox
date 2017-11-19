@@ -44,7 +44,7 @@ elif ! pgrep openbox &>/dev/null; then
 
 else
     printf "* Setting colors for openbox..."
-    xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "gcs-theme" "${OPENBOX_CONFIG_FILE}"
+
     set_value "window.active.title.bg.color:" " " "${openbox_window_active_title_bg_color}" "${OPENBOX_THEME_FILE}"
     set_value "window.active.label.text.color:" " " "${openbox_window_active_label_text_color}" "${OPENBOX_THEME_FILE}"
     set_value "window.inactive.title.bg.color:" " " "${openbox_window_inactive_title_bg_color}" "${OPENBOX_THEME_FILE}"
@@ -63,6 +63,8 @@ else
 
     set_value "menu.separator.color:" " " "${openbox_menu_separator_color}" "${OPENBOX_THEME_FILE}"
     set_value "menu.items.active.text.color:" " " "${openbox_menu_items_active_text_color}" "${OPENBOX_THEME_FILE}"
+
+    xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "gcs-theme" "${OPENBOX_TMP_CONFIG_FILE}"
 
     $OPENBOX_RESTART_COMMAND &>/dev/null
     printf " done.\n"

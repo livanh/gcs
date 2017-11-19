@@ -26,13 +26,23 @@ elif ! [ -f "${DUNST_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for dunst..."
-    set_value_section "frame"            "color"      " = " "\"${dunst_frame}\""               "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_low"      "background" " = " "\"${dunst_urgency_low_bg}\""      "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_low"      "foreground" " = " "\"${dunst_urgency_low_fg}\""      "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_normal"   "background" " = " "\"${dunst_urgency_normal_bg}\""   "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_normal"   "foreground" " = " "\"${dunst_urgency_normal_fg}\""   "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_critical" "background" " = " "\"${dunst_urgency_critical_bg}\"" "${DUNST_CONFIG_FILE}"
-    set_value_section "urgency_critical" "foreground" " = " "\"${dunst_urgency_critical_fg}\"" "${DUNST_CONFIG_FILE}"
+
+    DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
+    DUNST_TMP_CONFIG_FILE="${DUNST_TMP_DIR}/dunstrc"
+    mkdir "${DUNST_TMP_DIR}"
+    cp "${DUNST_CONFIG_FILE}" "${DUNST_TMP_CONFIG_FILE}"
+
+    set_value_section "frame"            "color"      " = " "\"${dunst_frame}\""               "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_low"      "background" " = " "\"${dunst_urgency_low_bg}\""      "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_low"      "foreground" " = " "\"${dunst_urgency_low_fg}\""      "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_normal"   "background" " = " "\"${dunst_urgency_normal_bg}\""   "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_normal"   "foreground" " = " "\"${dunst_urgency_normal_fg}\""   "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_critical" "background" " = " "\"${dunst_urgency_critical_bg}\"" "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "urgency_critical" "foreground" " = " "\"${dunst_urgency_critical_fg}\"" "${DUNST_TMP_CONFIG_FILE}"
+
+    mv "${DUNST_TMP_CONFIG_FILE}" "${DUNST_CONFIG_FILE}"
+
     $DUNST_RESTART_COMMAND &>/dev/null
+
     printf " done.\n"
 fi

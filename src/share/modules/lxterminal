@@ -19,7 +19,16 @@ elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
 
 else
     printf "* Setting colors for LXTerminal..."
-    set_value "bgcolor" "=" "${lxterminal_bg_color}" "${LXTERMINAL_CONFIG_FILE}"
-    set_value "fgcolor" "=" "${lxterminal_fg_color}" "${LXTERMINAL_CONFIG_FILE}"
+
+    LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
+    LXTERMINAL_TMP_CONFIG_FILE="${LXTERMINAL_TMP_DIR}/lxterminal.conf"
+    mkdir "${LXTERMINAL_TMP_DIR}"
+    cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+
+    set_value "bgcolor" "=" "${lxterminal_bg_color}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "fgcolor" "=" "${lxterminal_fg_color}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+
+    mv "${LXTERMINAL_TMP_CONFIG_FILE}" "${LXTERMINAL_CONFIG_FILE}"
+
     printf " done.\n"
 fi

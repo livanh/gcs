@@ -36,6 +36,11 @@ if ! [ "${CONKY_ENABLE}" == "true" ]; then
     printf "* Not setting colors for conky (disabled from configuration).\n"
 else
     printf "* Setting colors for conky...\n"
+
+    CONKY_TMP_DIR="${GCS_TMP_DIR}/conky"
+    CONKY_TMP_FILE="${CONKY_TMP_DIR}/conkyrc"
+    mkdir "${CONKY_TMP_DIR}"
+
     for i in ${CONKY_CONFIG_FILES}; do
         
         file="$i"
@@ -48,20 +53,26 @@ else
 
         printf "  ${file}..."
         if [ -f "${file}" ]; then
-            set_value "default_color"     " "  "${conky_default_color:1}"     "${file}"
-            set_value "default_shade_color" " "  "${conky_shade_color:1}" "${file}"
-            set_value "own_window_colour" " "  "${conky_own_window_colour:1}" "${file}"
+
+            cp "${file}" "${CONKY_TMP_FILE}"
+
+            set_value "default_color"       " "  "${conky_default_color:1}"     "${CONKY_TMP_FILE}"
+            set_value "default_shade_color" " "  "${conky_shade_color:1}"       "${CONKY_TMP_FILE}"
+            set_value "own_window_colour"   " "  "${conky_own_window_colour:1}" "${CONKY_TMP_FILE}"
             
-            [ -z "${conky_color0}" ] || set_value "color0" " " "${conky_color0:1}" "${file}"
-            [ -z "${conky_color1}" ] || set_value "color1" " " "${conky_color1:1}" "${file}"
-            [ -z "${conky_color2}" ] || set_value "color2" " " "${conky_color2:1}" "${file}"
-            [ -z "${conky_color3}" ] || set_value "color3" " " "${conky_color3:1}" "${file}"
-            [ -z "${conky_color4}" ] || set_value "color4" " " "${conky_color4:1}" "${file}"
-            [ -z "${conky_color5}" ] || set_value "color5" " " "${conky_color5:1}" "${file}"
-            [ -z "${conky_color6}" ] || set_value "color6" " " "${conky_color6:1}" "${file}"
-            [ -z "${conky_color7}" ] || set_value "color7" " " "${conky_color7:1}" "${file}"
-            [ -z "${conky_color8}" ] || set_value "color8" " " "${conky_color8:1}" "${file}"
-            [ -z "${conky_color9}" ] || set_value "color9" " " "${conky_color9:1}" "${file}"
+            [ -z "${conky_color0}" ] || set_value "color0" " " "${conky_color0:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color1}" ] || set_value "color1" " " "${conky_color1:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color2}" ] || set_value "color2" " " "${conky_color2:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color3}" ] || set_value "color3" " " "${conky_color3:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color4}" ] || set_value "color4" " " "${conky_color4:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color5}" ] || set_value "color5" " " "${conky_color5:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color6}" ] || set_value "color6" " " "${conky_color6:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color7}" ] || set_value "color7" " " "${conky_color7:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color8}" ] || set_value "color8" " " "${conky_color8:1}" "${CONKY_TMP_FILE}"
+            [ -z "${conky_color9}" ] || set_value "color9" " " "${conky_color9:1}" "${CONKY_TMP_FILE}"
+
+            mv "${CONKY_TMP_FILE}" "${file}"
+
             printf " done.\n"
         else
             printf "not found!\n"

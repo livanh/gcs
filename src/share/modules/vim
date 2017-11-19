@@ -71,7 +71,8 @@ else
     echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
     echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
-    sed -i "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
+    sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
+    rm "${VIM_CONFIG_FILE}.gcs-bak"
 
     for server in $(vim --serverlist); do
         vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
