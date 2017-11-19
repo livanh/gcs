@@ -261,8 +261,9 @@ set_value_section() {
     rm $tmp_file
 }
 
-remove_lock_file() {
+cleanup() {
     rm "${GCS_LOCK_FILE}"
+    rm -r "${GCS_TMP_DIR}" &>/dev/null
 }
 
 
@@ -281,7 +282,7 @@ fi
 
 echo "Applying color theme ${COLOR_THEME_NAME}"
 touch "${GCS_LOCK_FILE}"
-trap "remove_lock_file; exit 1" INT
+trap "cleanup; exit 1" INT
 
 # create an array of modules to execute
 MODULES=()
@@ -313,7 +314,5 @@ for module_file in ${MODULES[@]}; do
     . "${module_file}"
 done
 
-remove_lock_file
-
-rm -r "${GCS_TMP_DIR}" &>/dev/null
+cleanup
 
