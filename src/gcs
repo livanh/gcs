@@ -279,7 +279,7 @@ set_value_section() {
     local VALUE=$4
     local FILE=$5
     local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}" | tr -d \\0)"
-    local tmp_file="$(mktemp)"
+    local tmp_file="${GCS_TMP_DIR}/set_value_temp"
     echo "$old_section" >"$tmp_file"
     set_value "$KEY" "$SEPARATOR" "$VALUE" "$tmp_file"
     perl -i -p0e "s/\Q${old_section}\E/$(cat $tmp_file)/" ${FILE}

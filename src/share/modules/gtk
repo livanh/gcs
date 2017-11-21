@@ -79,26 +79,29 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors and icon theme for GTK+...\n"
 
     gtk_get_colors
+    
+    GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
+    mkdir "${GTK_TMP_DIR}"
 
-    TMPFILE="/tmp/.oomox-theme"
+    GTK_OOMOX_THEME="${GTK_TMP_DIR}/oomox-theme"
 
-    echo "NAME=gcs-theme" > "${TMPFILE}"
-    echo "BG=${gtk_bg_color:1}" >> "${TMPFILE}"
-    echo "FG=${gtk_fg_color:1}" >> "${TMPFILE}"
-    echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${TMPFILE}"
-    echo "MENU_FG=${gtk_menu_fg_color:1}" >> "${TMPFILE}"
-    echo "SEL_BG=${gtk_selected_bg_color:1}" >> "${TMPFILE}"
-    echo "SEL_FG=${gtk_selected_fg_color:1}" >> "${TMPFILE}"
-    echo "TXT_BG=${gtk_base_color:1}" >> "${TMPFILE}"
-    echo "TXT_FG=${gtk_text_color:1}" >> "${TMPFILE}"
-    echo "BTN_BG=${gtk_button_bg_color:1}" >> "${TMPFILE}"
-    echo "BTN_FG=${gtk_button_fg_color:1}" >> "${TMPFILE}"
-    echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${TMPFILE}"
-    echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${TMPFILE}"
-    echo "GTK3_GENERATE_DARK=False" >> "${TMPFILE}"
-    echo "ROUNDNESS=${gtk_roundness}" >> "${TMPFILE}"
-    echo "SPACING=${gtk_spacing}" >> "${TMPFILE}"
-    echo "GRADIENT=${gtk_gradient}" >> "${TMPFILE}"
+    echo "NAME=gcs-theme" > "${GTK_OOMOX_THEME}"
+    echo "BG=${gtk_bg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "FG=${gtk_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "MENU_FG=${gtk_menu_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "SEL_BG=${gtk_selected_bg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "SEL_FG=${gtk_selected_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "TXT_BG=${gtk_base_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "TXT_FG=${gtk_text_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "BTN_BG=${gtk_button_bg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "BTN_FG=${gtk_button_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "GTK3_GENERATE_DARK=False" >> "${GTK_OOMOX_THEME}"
+    echo "ROUNDNESS=${gtk_roundness}" >> "${GTK_OOMOX_THEME}"
+    echo "SPACING=${gtk_spacing}" >> "${GTK_OOMOX_THEME}"
+    echo "GRADIENT=${gtk_gradient}" >> "${GTK_OOMOX_THEME}"
 
 
     if [ "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ] && \
@@ -107,14 +110,13 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         rm -r "${HOME}/.themes/gcs-theme" &>/dev/null
         cp -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" "${HOME}/.themes/gcs-theme"
     else
-        oomox-cli -o gcs-theme "${TMPFILE}" >/dev/null 2>/dev/null
+        oomox-cli -o gcs-theme "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
         mkdir -p "${HOME}/.cache/gcs/gtk-themes"
         rm -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" &>/dev/null
         cp -r "${HOME}/.themes/gcs-theme" "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}"
     fi
-    rm "${TMPFILE}"
 
-    unity_decoration_temp="/tmp/.unity_decoration_temp.css"
+    unity_decoration_temp="${GTK_TMP_DIR}/unity_decoration_temp.css"
     echo "
 UnityDecoration.top {
   background-image: none;
@@ -139,8 +141,6 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 " > "${unity_decoration_temp}"
     cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
     cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
-
-    rm "${unity_decoration_temp}"
 
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_dash_prelight.svg"
@@ -175,7 +175,7 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 
     sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
 
-    gtk3_tabs_temp="/tmp/.gtk3-tabs-temp"
+    gtk3_tabs_temp="${GTK_TMP_DIR}/gtk3-tabs-temp"
     echo "
 .notebook tab.top:active {
   border-top-color: ${gtk_selected_tab_color};
@@ -191,9 +191,8 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 }
 " > "${gtk3_tabs_temp}"
     cat "${gtk3_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
-    rm "${gtk3_tabs_temp}"
 
-    gtk3_20_tabs_temp="/tmp/.gtk3.20-tabs-temp"
+    gtk3_20_tabs_temp="${GTK_TMP_DIR}/gtk3.20-tabs-temp"
     echo "
 notebook > header.top > tabs > tab:checked {
   border-top-color: ${gtk_selected_tab_color};
@@ -212,14 +211,13 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 }
 " > "${gtk3_20_tabs_temp}"
     cat "${gtk3_20_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
-    rm "${gtk3_20_tabs_temp}"
 
 
 
     sed -i "s/tooltip_fg_color\:[^n]*n/tooltip_fg_color:${gtk_tooltip_fg_color}\\\n/g" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
     sed -i "s/tooltip_bg_color\:[^n]*n/tooltip_bg_color:${gtk_tooltip_bg_color}\\\n/g" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
 
-    gtk3_tooltip_temp="/tmp/.gtk3-tooltip-temp"
+    gtk3_tooltip_temp="${GTK_TMP_DIR}/gtk3-tooltip-temp"
     echo "
 .tooltip.background {
   background-color: ${gtk_tooltip_bg_color};
@@ -227,9 +225,8 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
   color: ${gtk_tooltip_fg_color}; }
 " > "${gtk3_tooltip_temp}"
     cat "${gtk3_tooltip_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
-    rm "${gtk3_tooltip_temp}"
 
-    gtk3_20_tooltip_temp="/tmp/.gtk3.20-tooltip-temp"
+    gtk3_20_tooltip_temp="${GTK_TMP_DIR}/gtk3.20-tooltip-temp"
     echo "
 .tooltip.background, .tooltip.background.csd, tooltip.background, tooltip.background.csd {
   background-color: ${gtk_tooltip_bg_color};
@@ -237,7 +234,6 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
   color: ${gtk_tooltip_fg_color}; }
 " > "${gtk3_20_tooltip_temp}"
     cat "${gtk3_20_tooltip_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
-    rm "${gtk3_20_tooltip_temp}"
 
 
 
