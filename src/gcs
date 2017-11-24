@@ -34,34 +34,32 @@ GCS_LOCK_FILE="/tmp/.gcs_lock"
 GCS_ACTION="apply-theme"
 GCS_BACKUP_NAME=""
 
-while getopts "m:b:r:" opt; do
-  case $opt in
-    m)
-      FORCED_MODULE="$OPTARG"
-      shift
-      shift
-      ;;
-    b)
-      GCS_ACTION="create-backup"
-      GCS_BACKUP_NAME="$OPTARG"
-      shift
-      shift
-    ;;
-    r)
-      GCS_ACTION="restore-backup"
-      GCS_BACKUP_NAME="$OPTARG"
-      shift
-      shift
-    ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      exit 1
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." >&2
-      exit 1
-      ;;
-  esac
+while getopts ":m:b:r:" opt; do
+    case $opt in
+      m)
+        FORCED_MODULE="$OPTARG"
+        shift $((OPTIND-1))
+        ;;
+      b)
+        GCS_ACTION="create-backup"
+        GCS_BACKUP_NAME="$OPTARG"
+        shift $((OPTIND-1))
+        ;;
+      r)
+        GCS_ACTION="restore-backup"
+        GCS_BACKUP_NAME="$OPTARG"
+        shift $((OPTIND-1))
+        ;;
+      \?)
+        echo "Invalid option: -$OPTARG" >&2
+        exit 1
+        ;;
+      :)
+        echo "Option -$OPTARG requires an argument." >&2
+        exit 1
+        ;;
+    esac
+    OPTIND=1
 done
 
 if [ "${GCS_ACTION}" == "apply-theme" ]; then
