@@ -54,6 +54,9 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
     if [ -f "${OPENBOX_BACKUP_DIR}/rc.xml" ]; then
         cp "${OPENBOX_BACKUP_DIR}/rc.xml" "${OPENBOX_CONFIG_FILE}"
+
+        $OPENBOX_RESTART_COMMAND &>/dev/null
+
         printf " done.\n"
     else
         printf " not found!\n"
@@ -87,6 +90,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "gcs-theme" "${OPENBOX_TMP_CONFIG_FILE}"
 
     $OPENBOX_RESTART_COMMAND &>/dev/null
+
     printf " done.\n"
 
 fi

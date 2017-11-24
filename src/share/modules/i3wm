@@ -80,6 +80,9 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
     if [ -f "${I3_BACKUP_DIR}/config" ]; then
         cp "${I3_BACKUP_DIR}/config" "${I3_CONFIG_FILE}"
+
+        ${I3_RESTART_COMMAND} &>/dev/null
+
         printf " done.\n"
     else
         printf " not found!\n"

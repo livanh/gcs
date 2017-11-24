@@ -39,6 +39,9 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
     if [ -f "${DUNST_BACKUP_DIR}/dunstrc" ]; then
         cp "${DUNST_BACKUP_DIR}/dunstrc" "${DUNST_CONFIG_FILE}"
+        
+        $DUNST_RESTART_COMMAND &>/dev/null
+        
         printf " done.\n"
     else
         printf " not found!\n"

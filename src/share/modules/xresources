@@ -49,6 +49,10 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
     if [ -f "${XRESOURCES_BACKUP_DIR}/Xresources" ]; then
         cp "${XRESOURCES_BACKUP_DIR}/Xresources" "${XRESOURCES_CONFIG_FILE}" || echo "not found"
+
+        $XRESOURCES_RESTART_COMMAND "${XRESOURCES_CONFIG_FILE}" &>/dev/null
+        $XRESOURCES_ADDITIONAL_COMMANDS &>/dev/null
+
         printf " done.\n"
     else
         printf " not found!\n"

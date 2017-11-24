@@ -49,6 +49,9 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
     if [ -f "${ROFI_BACKUP_DIR}/config" ]; then
         cp "${ROFI_BACKUP_DIR}/config" "${ROFI_CONFIG_FILE}"
+
+        $ROFI_RESTART_COMMAND &>/dev/null
+
         printf " done.\n"
     else
         printf " not found!\n"
