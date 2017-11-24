@@ -74,8 +74,8 @@ if [ "$#" -ne 0 ]; then
     echo "<color_theme_name> should be given for normal use, but not when making/restoring a backup"
     echo
     echo "Available options:"
-    echo -e "\t-m <module>\texecute only one module"
-    echo -b "\t-m <backup_name>\tmake a backup"
+    echo -e "\t-m <module>\t\texecute only one module"
+    echo -e "\t-b <backup_name>\tmake a backup"
     echo -e "\t-m <backup_name>\trestore a backup"
     echo
     echo "Avilable color themes:"
