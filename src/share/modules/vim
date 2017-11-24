@@ -47,9 +47,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Vim configuration file..."
 
     VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
-    [ -f "${VIM_BACKUP_DIR}/vimrc" ] && cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${VIM_BACKUP_DIR}/vimrc" ]; then
+        cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then

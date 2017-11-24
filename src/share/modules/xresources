@@ -47,9 +47,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Xresources file..."
 
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
-    [ -f "${XRESOURCES_BACKUP_DIR}/Xresources" ] && cp "${XRESOURCES_BACKUP_DIR}/Xresources" "${XRESOURCES_CONFIG_FILE}" || echo "not found"
-
-    printf " done.\n"
+    if [ -f "${XRESOURCES_BACKUP_DIR}/Xresources" ]; then
+        cp "${XRESOURCES_BACKUP_DIR}/Xresources" "${XRESOURCES_CONFIG_FILE}" || echo "not found"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"

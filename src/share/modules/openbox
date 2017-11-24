@@ -52,9 +52,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of openbox configuration file..."
 
     OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
-    [ -f "${OPENBOX_BACKUP_DIR}/rc.xml" ] && cp "${OPENBOX_BACKUP_DIR}/rc.xml" "${OPENBOX_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${OPENBOX_BACKUP_DIR}/rc.xml" ]; then
+        cp "${OPENBOX_BACKUP_DIR}/rc.xml" "${OPENBOX_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif ! pgrep openbox &>/dev/null; then
     printf "* Not setting colors for openbox (not active).\n"

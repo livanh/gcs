@@ -65,9 +65,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Octave configuration file..."
 
     OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
-    [ -f "${OCTAVE_BACKUP_DIR}/qt-settings" ] && cp "${OCTAVE_BACKUP_DIR}/qt-settings" "${OCTAVE_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${OCTAVE_BACKUP_DIR}/qt-settings" ]; then
+        cp "${OCTAVE_BACKUP_DIR}/qt-settings" "${OCTAVE_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then

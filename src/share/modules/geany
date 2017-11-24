@@ -67,9 +67,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Geany configuration file..."
 
     GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
-    [ -f "${GEANY_BACKUP_DIR}/geany.conf" ] && cp "${GEANY_BACKUP_DIR}/geany.conf" "${GEANY_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${GEANY_BACKUP_DIR}/geany.conf" ]; then
+        cp "${GEANY_BACKUP_DIR}/geany.conf" "${GEANY_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then

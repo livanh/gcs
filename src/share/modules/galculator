@@ -33,9 +33,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Galculator configuration file..."
 
     GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
-    [ -f "${GALCULATOR_BACKUP_DIR}/galculator.conf" ] && cp "${GALCULATOR_BACKUP_DIR}/galculator.conf" "${GALCULATOR_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${GALCULATOR_BACKUP_DIR}/galculator.conf" ]; then
+        cp "${GALCULATOR_BACKUP_DIR}/galculator.conf" "${GALCULATOR_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for Galculator..."

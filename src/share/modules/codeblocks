@@ -147,9 +147,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of Code::Blocks configuration file..."
 
     CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
-    [ -f "${CODEBLOCKS_BACKUP_DIR}/default.conf" ] && cp "${CODEBLOCKS_BACKUP_DIR}/default.conf" "${CODEBLOCKS_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${CODEBLOCKS_BACKUP_DIR}/default.conf" ]; then
+        cp "${CODEBLOCKS_BACKUP_DIR}/default.conf" "${CODEBLOCKS_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then

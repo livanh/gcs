@@ -58,9 +58,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of MComix configuration file..."
 
     MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
-    [ -f "${MCOMIX_BACKUP_DIR}/preferences.conf" ] && cp "${MCOMIX_BACKUP_DIR}/preferences.conf" "${MCOMIX_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${MCOMIX_BACKUP_DIR}/preferences.conf" ]; then
+        cp "${MCOMIX_BACKUP_DIR}/preferences.conf" "${MCOMIX_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for MComix..."

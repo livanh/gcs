@@ -30,9 +30,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of LXTerminal configuration file..."
 
     LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
-    [ -f "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" ] && cp "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" "${LXTERMINAL_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" ]; then
+        cp "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" "${LXTERMINAL_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for LXTerminal..."

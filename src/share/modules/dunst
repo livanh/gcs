@@ -37,9 +37,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of dunst configuration file..."
 
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
-    [ -f "${DUNST_BACKUP_DIR}/dunstrc" ] && cp "${DUNST_BACKUP_DIR}/dunstrc" "${DUNST_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${DUNST_BACKUP_DIR}/dunstrc" ]; then
+        cp "${DUNST_BACKUP_DIR}/dunstrc" "${DUNST_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for dunst..."

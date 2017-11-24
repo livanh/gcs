@@ -59,9 +59,12 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     printf "* Restoring backup of terminator configuration file..."
 
     TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
-    [ -f "${TERMINATOR_BACKUP_DIR}/config" ] && cp "${TERMINATOR_BACKUP_DIR}/config" "${TERMINATOR_CONFIG_FILE}"
-
-    printf " done.\n"
+    if [ -f "${TERMINATOR_BACKUP_DIR}/config" ]; then
+        cp "${TERMINATOR_BACKUP_DIR}/config" "${TERMINATOR_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for terminator..."
