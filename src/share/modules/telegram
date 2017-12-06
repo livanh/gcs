@@ -66,15 +66,16 @@
 : ${telegram_msgInBgSelected=${selected_bg_color}}
 : ${telegram_msgInDateFg=${accent_color}}
 : ${telegram_msgInFg=${notification_fg_color}}
-: ${telegram_msgInShadow=${accent_color}}
-: ${telegram_msgOutBg=${notification_bg_color}}
+: ${telegram_msgInShadow=${accent_color}88}
+: ${telegram_msgOutBg=${base_color}}
 : ${telegram_msgOutBgSelected=${selected_bg_color}}
 : ${telegram_msgOutDateFg=${accent_color}}
-: ${telegram_msgOutFg=${notification_fg_color}}
-: ${telegram_msgOutShadow=${accent_color}}
+: ${telegram_msgOutFg=${text_color}}
+: ${telegram_msgOutShadow=${accent_color}88}
+: ${telegram_msgServiceBg=${accent_color}}
 : ${telegram_historyComposeAreaBg=${bg_color}}
 : ${telegram_historyLinkInFg=${accent_color}}
-: ${telegram_historyToDownShadow=${accent_color}}
+: ${telegram_historyToDownShadow=${accent_color}88}
 
 # icons colors
 : ${telegram_cancelIconFgOver=${accent_color}}
@@ -211,6 +212,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     set_value "msgOutDateFg"         ": " "${telegram_msgOutDateFg};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutFg"             ": " "${telegram_msgOutFg};"             "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutShadow"         ": " "${telegram_msgOutShadow};"         "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgServiceBg"         ": " "${telegram_msgServiceBg};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "historyComposeAreaBg" ": " "${telegram_historyComposeAreaBg};" "${TELEGRAM_PALETTE_FILE}"
     set_value "historyLinkInFg"      ": " "${telegram_historyLinkInFg};"      "${TELEGRAM_PALETTE_FILE}"
     set_value "historyToDownShadow"  ": " "${telegram_historyToDownShadow};"  "${TELEGRAM_PALETTE_FILE}"
