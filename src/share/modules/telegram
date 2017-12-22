@@ -76,19 +76,20 @@
 : ${telegram_msgInBgSelected=${selected_bg_color}}
 : ${telegram_msgInDateFg=${accent_color}}
 : ${telegram_msgInDateFgSelected=${selected_fg_color}}
-: ${telegram_msgInFg=${notification_fg_color}}
 : ${telegram_msgInMonoFg=${notification_fg_color}}
 : ${telegram_msgInMonoFgSelected=${selected_fg_color}}
 : ${telegram_msgInShadow=${accent_color}88}
+: ${telegram_msgInServiceFgSelected=${selected_fg_color}}
 : ${telegram_msgOutBg=${base_color}}
 : ${telegram_msgOutBgSelected=${selected_bg_color}}
 : ${telegram_msgOutDateFg=${accent_color}}
 : ${telegram_msgOutDateFgSelected=${selected_fg_color}}
-: ${telegram_msgOutFg=${text_color}}
 : ${telegram_msgOutMonoFg=${text_color}}
 : ${telegram_msgOutMonoFgSelected=${selected_fg_color}}
 : ${telegram_msgOutReplyBarSelColor=${selected_fg_color}}
 : ${telegram_msgOutShadow=${accent_color}88}
+: ${telegram_msgOutServiceFg=${selected_fg_color}}
+: ${telegram_msgOutServiceFgSelected=${selected_fg_color}}
 : ${telegram_msgSelectOverlay=${selected_bg_color}88}
 : ${telegram_msgServiceBg=${accent_color}88}
 : ${telegram_msgServiceBgSelected=${accent_color}}
@@ -102,8 +103,25 @@
 : ${telegram_msgWaveformOutInactive=${fg_color}}
 : ${telegram_msgWaveformOutInactiveSelected=${selected_fg_color}88}
 : ${telegram_historyComposeAreaBg=${bg_color}}
+: ${telegram_historyFileNameInFgSelected=${selected_fg_color}}
+: ${telegram_historyFileNameOutFgSelected=${selected_fg_color}}
 : ${telegram_historyLinkInFg=${accent_color}}
+: ${telegram_historyLinkInFgSelected=${selected_fg_color}}
+: ${telegram_historyLinkOutFgSelected=${selected_fg_color}}
 : ${telegram_historyOutIconFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer1NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer2NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer3NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer4NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer5NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer6NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer7NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer8NameFgSelected=${selected_fg_color}}
+: ${telegram_historyPeer9NameFgSelected=${selected_fg_color}}
+: ${telegram_historyTextInFg=${notification_fg_color}}
+: ${telegram_historyTextInFgSelected=${selected_fg_color}}
+: ${telegram_historyTextOutFg=${text_color}}
+: ${telegram_historyTextOutFgSelected=${selected_fg_color}}
 : ${telegram_historyToDownShadow=${accent_color}88}
 
 # icons colors
@@ -249,19 +267,22 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     set_value "msgInBgSelected"                ": " "${telegram_msgInBgSelected};"                "${TELEGRAM_PALETTE_FILE}"
     set_value "msgInDateFg"                    ": " "${telegram_msgInDateFg};"                    "${TELEGRAM_PALETTE_FILE}"
     set_value "msgInDateFgSelected"            ": " "${telegram_msgInDateFgSelected};"            "${TELEGRAM_PALETTE_FILE}"
-    set_value "msgInFg"                        ": " "${telegram_msgInFg};"                        "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyTextInFg"                ": " "${telegram_historyTextInFg};"                "${TELEGRAM_PALETTE_FILE}"
     set_value "msgInMonoFg"                    ": " "${telegram_msgInMonoFg};"                    "${TELEGRAM_PALETTE_FILE}"
     set_value "msgInMonoFgSelected"            ": " "${telegram_msgInMonoFgSelected};"            "${TELEGRAM_PALETTE_FILE}"
     set_value "msgInShadow"                    ": " "${telegram_msgInShadow};"                    "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgInServiceFgSelected"         ": " "${telegram_msgInServiceFgSelected};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutBg"                       ": " "${telegram_msgOutBg};"                       "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutBgSelected"               ": " "${telegram_msgOutBgSelected};"               "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutDateFg"                   ": " "${telegram_msgOutDateFg};"                   "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutDateFgSelected"           ": " "${telegram_msgOutDateFgSelected};"           "${TELEGRAM_PALETTE_FILE}"
-    set_value "msgOutFg"                       ": " "${telegram_msgOutFg};"                       "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyTextOutFg"               ": " "${telegram_historyTextOutFg};"               "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutMonoFg"                   ": " "${telegram_msgOutMonoFg};"                   "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutMonoFgSelected"           ": " "${telegram_msgOutMonoFgSelected};"           "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutReplyBarSelColor"         ": " "${telegram_msgOutReplyBarSelColor};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "msgOutShadow"                   ": " "${telegram_msgOutShadow};"                   "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgOutServiceFg"                ": " "${telegram_msgOutServiceFg};"                "${TELEGRAM_PALETTE_FILE}"
+    set_value "msgOutServiceFgSelected"        ": " "${telegram_msgOutServiceFgSelected};"        "${TELEGRAM_PALETTE_FILE}"
     set_value "msgSelectOverlay"               ": " "${telegram_msgSelectOverlay};"               "${TELEGRAM_PALETTE_FILE}"
     set_value "msgServiceBg"                   ": " "${telegram_msgServiceBg};"                   "${TELEGRAM_PALETTE_FILE}"
     set_value "msgServiceBgSelected"           ": " "${telegram_msgServiceBgSelected};"           "${TELEGRAM_PALETTE_FILE}"
@@ -275,11 +296,24 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     set_value "msgWaveformOutInactive"         ": " "${telegram_msgWaveformOutInactive};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "msgWaveformOutInactiveSelected" ": " "${telegram_msgWaveformOutInactiveSelected};" "${TELEGRAM_PALETTE_FILE}"
     set_value "historyComposeAreaBg"           ": " "${telegram_historyComposeAreaBg};"           "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyFileNameInFgSelected"    ": " "${telegram_historyFileNameInFgSelected};"    "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyFileNameOutFgSelected"   ": " "${telegram_historyFileNameOutFgSelected};"   "${TELEGRAM_PALETTE_FILE}"
     set_value "historyLinkInFg"                ": " "${telegram_historyLinkInFg};"                "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyLinkInFgSelected"        ": " "${telegram_historyLinkInFgSelected};"        "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyLinkOutFgSelected"       ": " "${telegram_historyLinkOutFgSelected};"       "${TELEGRAM_PALETTE_FILE}"
     set_value "historyOutIconFgSelected"       ": " "${telegram_historyOutIconFgSelected};"       "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer1NameFgSelected"     ": " "${telegram_historyPeer1NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer2NameFgSelected"     ": " "${telegram_historyPeer2NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer3NameFgSelected"     ": " "${telegram_historyPeer3NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer4NameFgSelected"     ": " "${telegram_historyPeer4NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer5NameFgSelected"     ": " "${telegram_historyPeer5NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer6NameFgSelected"     ": " "${telegram_historyPeer6NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer7NameFgSelected"     ": " "${telegram_historyPeer7NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer8NameFgSelected"     ": " "${telegram_historyPeer8NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyPeer9NameFgSelected"     ": " "${telegram_historyPeer9NameFgSelected};"     "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyTextInFgSelected"        ": " "${telegram_historyTextInFgSelected};"        "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyTextOutFgSelected"       ": " "${telegram_historyTextOutFgSelected};"       "${TELEGRAM_PALETTE_FILE}"
     set_value "historyToDownShadow"            ": " "${telegram_historyToDownShadow};"            "${TELEGRAM_PALETTE_FILE}"
-    set_value "historyUnreadBarBg"             ": " "${telegram_historyUnreadBarBg};"             "${TELEGRAM_PALETTE_FILE}"
-    set_value "historyUnreadBarFg"             ": " "${telegram_historyUnreadBarFg};"             "${TELEGRAM_PALETTE_FILE}"
 
     set_value "cancelIconFgOver"         ": " "${telegram_cancelIconFgOver};"         "${TELEGRAM_PALETTE_FILE}"
     set_value "dialogsMenuIconFgOver"    ": " "${telegram_dialogsMenuIconFgOver};"    "${TELEGRAM_PALETTE_FILE}"
@@ -309,6 +343,8 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     set_value "historyScrollBarBgOver" ": " "${telegram_historyScrollBarBgOver};" "${TELEGRAM_PALETTE_FILE}"
     set_value "historyScrollBg"        ": " "${telegram_historyScrollBg};"        "${TELEGRAM_PALETTE_FILE}"
     set_value "historyScrollBgOver"    ": " "${telegram_historyScrollBgOver};"    "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyUnreadBarBg"             ": " "${telegram_historyUnreadBarBg};"             "${TELEGRAM_PALETTE_FILE}"
+    set_value "historyUnreadBarFg"             ": " "${telegram_historyUnreadBarFg};"             "${TELEGRAM_PALETTE_FILE}"
 
     set_value "boxTitleFg"      ": " "${telegram_boxTitleFg};"      "${TELEGRAM_PALETTE_FILE}"
     set_value "menuSeparatorFg" ": " "${telegram_menuSeparatorFg};" "${TELEGRAM_PALETTE_FILE}"
