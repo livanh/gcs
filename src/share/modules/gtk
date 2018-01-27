@@ -55,6 +55,8 @@ gtk_get_colors() {
     : ${unity_titlebar_button_pressed_original:=#f0544c}
     : ${unity_titlebar_button_pressed:=$(mix_hex_colors "${titlebar_focused_fg_color}" "${titlebar_focused_bg_color}" 0.25)}
 
+    : ${gtk_icon_theme_name:=${icon_theme_name}}
+
     gtk_roundness=$(crudini --get ${GCS_CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
     gtk_spacing=$(crudini   --get ${GCS_CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
     gtk_gradient=$(crudini  --get ${GCS_CONFIG_FILE} gtk gradient  2>/dev/null || echo 0.14)
@@ -238,9 +240,9 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
 
     icon_theme_found="false"
-    if ! [ -z "${icon_theme_name}" ]; then
+    if ! [ -z "${gtk_icon_theme_name}" ]; then
         for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons" "$HOME/.local/share/icons"; do
-            if [ -d "$i/$icon_theme_name" ]; then
+            if [ -d "$i/${gtk_icon_theme_name}" ]; then
                 icon_theme_found="true"
             fi
         done
@@ -255,10 +257,10 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
         printf " done.\n"
 
-        if ! [ -z "${icon_theme_name}" ]; then
-            printf "  icon theme: ${icon_theme_name}..."
+        if ! [ -z "${gtk_icon_theme_name}" ]; then
+            printf "  icon theme: ${gtk_icon_theme_name}..."
             if [ "${icon_theme_found}" == "true" ]; then
-                set_value "Net\/IconThemeName" " " "\"${icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+                set_value "Net\/IconThemeName" " " "\"${gtk_icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
                 printf " done.\n"
             else
                 printf " not found!\n"
@@ -276,10 +278,10 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         gsettings set org.gnome.desktop.interface gtk-color-scheme ""
         printf " done.\n"
 
-        if ! [ -z "${icon_theme_name}" ]; then
-            printf "  icon theme: ${icon_theme_name}..."
-            if [ "${icon_theme_found}" == "true" ]; then
-                gsettings set org.gnome.desktop.interface icon-theme "${icon_theme_name}"
+        if ! [ -z "${gtk_icon_theme_name}" ]; then
+            printf "  icon theme: ${gtk_icon_theme_name}..."
+            if [ "${gtk_icon_theme_name}" == "true" ]; then
+                gsettings set org.gnome.desktop.interface icon-theme "${gtk_icon_theme_name}"
                 printf " done.\n"
             else
                 printf " not found!\n"
