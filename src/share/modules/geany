@@ -97,7 +97,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         if [ -f "${geany_template_file}" ]; then
             [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
             mkdir -p "$HOME/.config/geany/colorschemes"
-            destfile="$HOME/.config/geany/colorschemes/gcs.conf"
+            destfile="$HOME/.config/geany/colorschemes/${FULL_COLOR_THEME_NAME}.conf"
             cp "${geany_template_file}" "${destfile}"
 
             set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
@@ -141,10 +141,10 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             mkdir "${GEANY_TMP_DIR}"
             cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-            set_value "color_scheme"    "=" "gcs.conf"                   "${GEANY_TMP_CONFIG_FILE}"
-            set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_TMP_CONFIG_FILE}"
-            set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_TMP_CONFIG_FILE}"
-            set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_TMP_CONFIG_FILE}"
+            set_value "color_scheme"    "=" "${FULL_COLOR_THEME_NAME}.conf" "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_fore"     "=" "${terminal_fg_color}"          "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_back"     "=" "${terminal_bg_color}"          "${GEANY_TMP_CONFIG_FILE}"
+            set_value "long_line_color" "=" "${editor_long_line_marker}"    "${GEANY_TMP_CONFIG_FILE}"
 
             mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 

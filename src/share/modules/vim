@@ -22,7 +22,7 @@ which vim>/dev/null || return
 
 VIM_ENABLE_DEFAULT="true"
 VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
-VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/gcs.vim"
+VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
 
 VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
 VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
@@ -72,7 +72,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
         echo "    syntax reset" >> "${VIM_COLORSCHEME_FILE}"
         echo "endif" >> "${VIM_COLORSCHEME_FILE}"
-        echo "let colors_name = \"gcs\"" >> "${VIM_COLORSCHEME_FILE}"
+        echo "let colors_name = \"${FULL_COLOR_THEME_NAME}\"" >> "${VIM_COLORSCHEME_FILE}"
 
         echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
@@ -93,11 +93,11 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
-        sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs/" "${VIM_CONFIG_FILE}"
+        sed -i".gcs-bak" "s/colorscheme.*/colorscheme ${FULL_COLOR_THEME_NAME}/" "${VIM_CONFIG_FILE}"
         rm "${VIM_CONFIG_FILE}.gcs-bak"
 
         for server in $(vim --serverlist); do
-            vim --servername ${server} --remote-send ":colorscheme gcs<CR>"
+            vim --servername ${server} --remote-send ":colorscheme ${FULL_COLOR_THEME_NAME}<CR>"
         done
 
         printf " done.\n"

@@ -51,7 +51,7 @@ which codeblocks >/dev/null || return
 # declare some constants
 CB_STYLE_CTR=0
 CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
-CB_COLORSET_NAME="gcs_theme"
+CB_COLORSET_NAME="${FULL_COLOR_THEME_NAME}"
 CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 
 # helper function to set styles in Code::blocks config file
