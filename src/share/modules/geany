@@ -48,6 +48,10 @@ GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
 GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
 GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
 
+GCS_SYNTAX_FALLBACK_DEFAULT="true"
+GCS_SYNTAX_FALLBACK="$(crudini   --get ${GCS_CONFIG_FILE} gcs   syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+GEANY_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} geany syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+
 if ! [ "${GEANY_ENABLE}" == "true" ]; then
     printf "* Ignoring Geany (disabled from configuration).\n"
 
@@ -76,19 +80,22 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
-        GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
-        GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
-        mkdir "${GEANY_TMP_DIR}"
-        cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
+        if [ "${GEANY_SYNTAX_FALLBACK}" == "true" ]; then
+            printf "* Setting default colors for Geany..."
+            GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+            GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+            mkdir "${GEANY_TMP_DIR}"
+            cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-        if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
-            set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
+            if [[ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs"* ]]; then
+                set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
+            fi
+            set_value "colour_fore"     "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_back"     "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
+            set_value "long_line_color" "=" "#C2EBC2"              "${GEANY_TMP_CONFIG_FILE}"
+
+            mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
         fi
-        set_value "colour_fore"     "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
-        set_value "colour_back"     "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
-        set_value "long_line_color" "=" "#C2EBC2"              "${GEANY_TMP_CONFIG_FILE}"
-
-        mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 
     else
         printf "* Setting colors for Geany..."

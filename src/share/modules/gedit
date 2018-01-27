@@ -52,6 +52,10 @@ which gedit >/dev/null || return
 GEDIT_ENABLE_DEFAULT="true"
 GEDIT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gedit enable      2>/dev/null || echo "${GEDIT_ENABLE_DEFAULT}")"
 
+GCS_SYNTAX_FALLBACK_DEFAULT="true"
+GCS_SYNTAX_FALLBACK="$(crudini   --get ${GCS_CONFIG_FILE} gcs  syntax_fallback  2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+GEDIT_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} gedit syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+
 if ! [ "${GEDIT_ENABLE}" == "true" ]; then
     printf "* Ignoring gedit (disabled from configuration).\n"
 
@@ -63,7 +67,10 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
-        gsettings set org.gnome.gedit.preferences.editor scheme "Default"
+        if [ "${GEDIT_SYNTAX_FALLBACK}" == "true" ]; then
+            printf "* Setting default colors for gedit..."
+            gsettings set org.gnome.gedit.preferences.editor scheme "Default"
+        fi
 
     else
         printf "* Setting colors for gedit..."

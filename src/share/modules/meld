@@ -37,6 +37,10 @@ MELD_ENABLE_DEFAULT="true"
 MELD_DEFAULT_STYLE_FILE="/usr/share/meld/styles/meld-base.xml"
 MELD_DESTINATION_STYLE_FILE="${HOME}/.local/share/gtksourceview-3.0/styles/${FULL_COLOR_THEME_NAME}-meld.xml"
 
+GCS_SYNTAX_FALLBACK_DEFAULT="true"
+GCS_SYNTAX_FALLBACK="$(crudini  --get ${GCS_CONFIG_FILE} gcs  syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+MELD_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} meld syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+
 MELD_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} meld enable 2>/dev/null || echo "${MELD_ENABLE_DEFAULT}")"
 
 if ! [ "${MELD_ENABLE}" == "true" ]; then
@@ -57,7 +61,10 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [[ "$(gsettings get org.gnome.meld style-scheme)" == "'gcs"* ]]; then
-            gsettings set org.gnome.meld style-scheme "meld-base"
+            if [ "${MELD_SYNTAX_FALLBACK}" == "true" ]; then
+                printf "* Setting default colors for Meld..."
+                gsettings set org.gnome.meld style-scheme "meld-base"
+            fi
         fi
 
     else

@@ -28,6 +28,10 @@ VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>
 VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
 VIM_COLORSCHEME_FILE="$(crudini --get ${GCS_CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
 
+GCS_SYNTAX_FALLBACK_DEFAULT="true"
+GCS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} gcs syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+VIM_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} vim syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+
 if ! [ "${VIM_ENABLE}" == "true" ]; then
     printf "* Ignoring Vim (disabled from configuration).\n"
 
@@ -56,12 +60,16 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
-        sed -i".gcs-bak" "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
-        rm "${VIM_CONFIG_FILE}.gcs-bak"
+        if [ "${VIM_SYNTAX_FALLBACK}" == "true" ]; then
+            printf "* Setting default colors for Vim GUI..."
+            sed -i".gcs-bak" "s/colorscheme.*/colorscheme default/" "${VIM_CONFIG_FILE}"
+            rm "${VIM_CONFIG_FILE}.gcs-bak"
 
-        for server in $(vim --serverlist); do
-            vim --servername ${server} --remote-send ":colorscheme default<CR>"
-        done
+            for server in $(vim --serverlist); do
+                vim --servername ${server} --remote-send ":colorscheme default<CR>"
+            done
+
+        fi
 
     else
         printf "* Setting colors for Vim GUI..."

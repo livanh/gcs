@@ -128,6 +128,10 @@ CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
 CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
+GCS_SYNTAX_FALLBACK_DEFAULT="true"
+GCS_SYNTAX_FALLBACK="$(crudini        --get ${GCS_CONFIG_FILE} gcs        syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+CODEBLOCKS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} codeblocks syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+
 if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
     printf "* Ignoring Code::Blocks (disabled from configuration).\n"
 
@@ -156,9 +160,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
-        if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
-            # set default colorset as active
-            xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
+        if [ "${CODEBLOCKS_SYNTAX_FALLBACK}" == "true" ]; then
+            if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
+                printf "* Setting default colors for Code::Blocks..."
+                xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
+            fi
         fi
     else
         printf "* Setting colors for Code::Blocks..."
