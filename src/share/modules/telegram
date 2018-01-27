@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # basic colors
-: ${telegram_windowActiveTextFg=${accent_color}}
+: ${telegram_windowActiveTextFg=${link_color}}
 : ${telegram_windowBg:=${bg_color}}
-: ${telegram_windowBgActive=${accent_color}}
+: ${telegram_windowBgActive=${link_color}}
 : ${telegram_windowBgOver=${selected_bg_color}}
 : ${telegram_windowBgRipple=${selected_fg_color}}
 : ${telegram_windowBoldFg=${fg_color}}
@@ -18,32 +18,32 @@
 
 # search box colors
 : ${telegram_filterInputActiveBg=${base_color}}
-: ${telegram_filterInputBorderFg=${accent_color}}
+: ${telegram_filterInputBorderFg=${link_color}}
 : ${telegram_filterInputInactiveBg=${base_color}}
 : ${telegram_searchedBarFg=${selected_fg_color}}
 
 # chat list colors
 : ${telegram_dialogsBgActive=${selected_bg_color}}
-: ${telegram_dialogsDateFg=${accent_color}}
+: ${telegram_dialogsDateFg=${link_color}}
 : ${telegram_dialogsDateFgOver=${selected_fg_color}}
-: ${telegram_dialogsDraftFg=${accent_color}}
+: ${telegram_dialogsDraftFg=${link_color}}
 : ${telegram_dialogsDraftFgActive=${selected_fg_color}}
 : ${telegram_dialogsDraftFgOver=${selected_fg_color}}
-: ${telegram_dialogsSendingIconFg=${accent_color}}
+: ${telegram_dialogsSendingIconFg=${link_color}}
 : ${telegram_dialogsSendingIconFgActive=${selected_fg_color}}
 : ${telegram_dialogsSendingIconFgOver=${selected_fg_color}}
-: ${telegram_dialogsSentIconFg=${accent_color}}
+: ${telegram_dialogsSentIconFg=${link_color}}
 : ${telegram_dialogsSentIconFgOver=${selected_fg_color}}
 : ${telegram_dialogsNameFgOver=${selected_fg_color}}
 : ${telegram_dialogsTextFgOver=${selected_fg_color}}
 : ${telegram_dialogsTextFgServiceOver=${selected_fg_color}}
 : ${telegram_dialogsUnreadBg=${selected_bg_color}}
 : ${telegram_dialogsUnreadBgOver=${selected_fg_color}}
-: ${telegram_dialogsUnreadBgMuted=${accent_color}}
+: ${telegram_dialogsUnreadBgMuted=${link_color}}
 : ${telegram_dialogsUnreadBgMutedOver=${selected_fg_color}}
 : ${telegram_dialogsUnreadFg=${selected_fg_color}}
 : ${telegram_dialogsUnreadFgOver=${selected_bg_color}}
-: ${telegram_dialogsVerifiedIconBg=${accent_color}}
+: ${telegram_dialogsVerifiedIconBg=${link_color}}
 : ${telegram_dialogsVerifiedIconBgOver=${selected_fg_color}}
 : ${telegram_dialogsVerifiedIconFgOver=${selected_bg_color}}
 
@@ -55,57 +55,57 @@
 : ${telegram_activeButtonFgOver=${selected_fg_color}}
 : ${telegram_activeButtonSecondaryFg=${selected_fg_color}}
 : ${telegram_activeButtonSecondaryFgOver=${selected_fg_color}}
-: ${telegram_activeLineFg=${accent_color}}
+: ${telegram_activeLineFg=${link_color}}
 : ${telegram_lightButtonBgOver=${selected_bg_color}}
 : ${telegram_lightButtonBgRipple=${selected_fg_color}}
 : ${telegram_lightButtonFgOver=${selected_fg_color}}
 : ${telegram_outlineButtonBgOver=${bg_color}}
-: ${telegram_outlineButtonBgRipple=${accent_color}}
+: ${telegram_outlineButtonBgRipple=${link_color}}
 
 # message colors
-: ${telegram_msgFileInBg=${accent_color}}
-: ${telegram_msgFileInBgOver=${accent_color}}
+: ${telegram_msgFileInBg=${link_color}}
+: ${telegram_msgFileInBgOver=${link_color}}
 : ${telegram_msgFileInBgSelected=${selected_fg_color}}
-: ${telegram_msgFileOutBg=${accent_color}}
-: ${telegram_msgFileOutBgOver=${accent_color}}
+: ${telegram_msgFileOutBg=${link_color}}
+: ${telegram_msgFileOutBgOver=${link_color}}
 : ${telegram_msgFileOutBgSelected=${selected_fg_color}}
-: ${telegram_msgFileThumbLinkOutFg=${accent_color}}
+: ${telegram_msgFileThumbLinkOutFg=${link_color}}
 : ${telegram_msgFileThumbLinkOutFgSelected=${selected_fg_color}}
 : ${telegram_msgImgReplyBarColor=${selected_fg_color}}
 : ${telegram_msgInBg=${notification_bg_color}}
 : ${telegram_msgInBgSelected=${selected_bg_color}}
-: ${telegram_msgInDateFg=${accent_color}}
+: ${telegram_msgInDateFg=${link_color}}
 : ${telegram_msgInDateFgSelected=${selected_fg_color}}
 : ${telegram_msgInMonoFg=${notification_fg_color}}
 : ${telegram_msgInMonoFgSelected=${selected_fg_color}}
-: ${telegram_msgInShadow=${accent_color}88}
+: ${telegram_msgInShadow=${link_color}88}
 : ${telegram_msgInServiceFgSelected=${selected_fg_color}}
 : ${telegram_msgOutBg=${base_color}}
 : ${telegram_msgOutBgSelected=${selected_bg_color}}
-: ${telegram_msgOutDateFg=${accent_color}}
+: ${telegram_msgOutDateFg=${link_color}}
 : ${telegram_msgOutDateFgSelected=${selected_fg_color}}
 : ${telegram_msgOutMonoFg=${text_color}}
 : ${telegram_msgOutMonoFgSelected=${selected_fg_color}}
 : ${telegram_msgOutReplyBarSelColor=${selected_fg_color}}
-: ${telegram_msgOutShadow=${accent_color}88}
+: ${telegram_msgOutShadow=${link_color}88}
 : ${telegram_msgOutServiceFg=${selected_fg_color}}
 : ${telegram_msgOutServiceFgSelected=${selected_fg_color}}
 : ${telegram_msgSelectOverlay=${selected_bg_color}88}
-: ${telegram_msgServiceBg=${accent_color}88}
-: ${telegram_msgServiceBgSelected=${accent_color}}
+: ${telegram_msgServiceBg=${link_color}88}
+: ${telegram_msgServiceBgSelected=${link_color}}
 : ${telegram_msgStickerOverlay=${selected_bg_color}88}
-: ${telegram_msgWaveformInActive=${accent_color}}
+: ${telegram_msgWaveformInActive=${link_color}}
 : ${telegram_msgWaveformInActiveSelected=${selected_fg_color}}
 : ${telegram_msgWaveformInInactive=${notification_fg_color}}
 : ${telegram_msgWaveformInInactiveSelected=${selected_fg_color}88}
-: ${telegram_msgWaveformOutActive=${accent_color}}
+: ${telegram_msgWaveformOutActive=${link_color}}
 : ${telegram_msgWaveformOutActiveSelected=${selected_fg_color}}
 : ${telegram_msgWaveformOutInactive=${fg_color}}
 : ${telegram_msgWaveformOutInactiveSelected=${selected_fg_color}88}
 : ${telegram_historyComposeAreaBg=${bg_color}}
 : ${telegram_historyFileNameInFgSelected=${selected_fg_color}}
 : ${telegram_historyFileNameOutFgSelected=${selected_fg_color}}
-: ${telegram_historyLinkInFg=${accent_color}}
+: ${telegram_historyLinkInFg=${link_color}}
 : ${telegram_historyLinkInFgSelected=${selected_fg_color}}
 : ${telegram_historyLinkOutFgSelected=${selected_fg_color}}
 : ${telegram_historyOutIconFgSelected=${selected_fg_color}}
@@ -122,24 +122,24 @@
 : ${telegram_historyTextInFgSelected=${selected_fg_color}}
 : ${telegram_historyTextOutFg=${text_color}}
 : ${telegram_historyTextOutFgSelected=${selected_fg_color}}
-: ${telegram_historyToDownShadow=${accent_color}88}
+: ${telegram_historyToDownShadow=${link_color}88}
 
 # icons colors
-: ${telegram_cancelIconFgOver=${accent_color}}
-: ${telegram_dialogsMenuIconFgOver=${accent_color}}
-: ${telegram_historyComposeIconFgOver=${accent_color}}
+: ${telegram_cancelIconFgOver=${link_color}}
+: ${telegram_dialogsMenuIconFgOver=${link_color}}
+: ${telegram_historyComposeIconFgOver=${link_color}}
 : ${telegram_historySendIconFg=${fg_color}}
-: ${telegram_historySendIconFgOver=${accent_color}}
-: ${telegram_historySendingInIconFg=${accent_color}}
-: ${telegram_historySendingOutIconFg=${accent_color}}
-: ${telegram_historyReplyIconFg=${accent_color}}
+: ${telegram_historySendIconFgOver=${link_color}}
+: ${telegram_historySendingInIconFg=${link_color}}
+: ${telegram_historySendingOutIconFg=${link_color}}
+: ${telegram_historyReplyIconFg=${link_color}}
 : ${telegram_historyToDownFgOver=${selected_fg_color}}
 : ${telegram_mainMenuCloudBg=${selected_fg_color}}
 : ${telegram_mainMenuCloudFg=${selected_bg_color}}
 : ${telegram_menuIconFg=${fg_color}}
 : ${telegram_menuIconFgOver=${selected_fg_color}}
 : ${telegram_emojiIconFg=${fg_color}}
-: ${telegram_emojiIconFgActive=${accent_color}}
+: ${telegram_emojiIconFgActive=${link_color}}
 
 # tooltip colors
 : ${telegram_tooltipBg=${tooltip_bg_color}}
@@ -147,11 +147,11 @@
 : ${telegram_tooltipFg=${tooltip_fg_color}}
 
 # scrollbars colors
-: ${telegram_scrollBarBg=${accent_color}}
+: ${telegram_scrollBarBg=${link_color}}
 : ${telegram_scrollBarBgOver=${selected_bg_color}}
 : ${telegram_scrollBg=${base_color}}
 : ${telegram_scrollBgOver=${base_color}}
-: ${telegram_historyScrollBarBg=${accent_color}}
+: ${telegram_historyScrollBarBg=${link_color}}
 : ${telegram_historyScrollBarBgOver=${selected_bg_color}}
 : ${telegram_historyScrollBg=${bg_color}}
 : ${telegram_historyScrollBgOver=${bg_color}}

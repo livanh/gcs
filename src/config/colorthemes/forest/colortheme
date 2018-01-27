@@ -5,6 +5,7 @@ bg_color="#542303"
 fg_color="#FFF285"
 selected_bg_color="#4C942D"
 selected_fg_color="#FFFFFF"
+link_color="#48BF15"
 
 # icon and cursor theme
 icon_theme_name="Humanity-Dark-Green"

@@ -133,7 +133,6 @@ load_color_theme() {
     #~ unset fg_color
     #~ unset selected_bg_color
     #~ unset selected_fg_color
-    : ${accent_color:=${selected_bg_color}}
     : ${tooltip_fg_color:=${fg_color}}
     : ${tooltip_border_color:=${fg_color}}
     : ${tooltip_bg_color:=${bg_color}}

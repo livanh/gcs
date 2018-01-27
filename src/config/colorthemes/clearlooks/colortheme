@@ -5,6 +5,7 @@ bg_color=#EDECEB
 fg_color=#000000
 selected_bg_color=#86ABD9
 selected_fg_color=#FFFFFF
+link_color=#0958B9
 
 # window manager colors
 titlebar_urgent_bg_color=#BA0000

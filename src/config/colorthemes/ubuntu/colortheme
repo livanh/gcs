@@ -6,6 +6,7 @@ bg_color=#F2F1F0
 fg_color=#4C4C4C
 selected_bg_color=#F07746
 selected_fg_color=#FFFFFF
+link_color=#E25922
 
 gtk_menu_bg_color=#3C3C3C
 gtk_menu_fg_color=#FFFFFF
