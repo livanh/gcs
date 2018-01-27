@@ -84,8 +84,9 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         if [ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs.conf" ]; then
             set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
         fi
-        set_value "colour_fore"  "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
-        set_value "colour_back"  "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
+        set_value "colour_fore"     "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
+        set_value "colour_back"     "=" "${terminal_bg_color}" "${GEANY_TMP_CONFIG_FILE}"
+        set_value "long_line_color" "=" "#C2EBC2"              "${GEANY_TMP_CONFIG_FILE}"
 
         mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 
