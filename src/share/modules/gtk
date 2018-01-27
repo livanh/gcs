@@ -87,7 +87,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
 
     GTK_OOMOX_THEME="${GTK_TMP_DIR}/oomox-theme"
 
-    echo "NAME=gcs-theme" > "${GTK_OOMOX_THEME}"
+    echo "NAME=${FULL_COLOR_THEME_NAME}" > "${GTK_OOMOX_THEME}"
     echo "BG=${gtk_bg_color:1}" >> "${GTK_OOMOX_THEME}"
     echo "FG=${gtk_fg_color:1}" >> "${GTK_OOMOX_THEME}"
     echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${GTK_OOMOX_THEME}"
@@ -106,16 +106,16 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     echo "GRADIENT=${gtk_gradient}" >> "${GTK_OOMOX_THEME}"
 
 
-    if [ "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ] && \
-        [ "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ] && \
-        [ "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" ]; then
-        rm -r "${HOME}/.themes/gcs-theme" &>/dev/null
-        cp -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" "${HOME}/.themes/gcs-theme"
+    if [ "${GCS_THEMES_DIR_USER}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ] && \
+        [ "${GCS_THEMES_DIR_LOCAL}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ] && \
+        [ "${GCS_THEMES_DIR_SYSTEM}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ]; then
+        rm -r "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" &>/dev/null
+        cp -r "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
     else
-        oomox-cli -o gcs-theme "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
+        oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
         mkdir -p "${HOME}/.cache/gcs/gtk-themes"
-        rm -r "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}" &>/dev/null
-        cp -r "${HOME}/.themes/gcs-theme" "${HOME}/.cache/gcs/gtk-themes/${COLOR_THEME_NAME}"
+        rm -r "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" &>/dev/null
+        cp -r "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}"
     fi
 
     unity_decoration_temp="${GTK_TMP_DIR}/unity_decoration_temp.css"
@@ -141,41 +141,41 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
   background-color: ${unity_titlebar_unfocused_bg_color};
 }
 " > "${unity_decoration_temp}"
-    cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
-    cat "${unity_decoration_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+    cat "${unity_decoration_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.0/gtk.css"
+    cat "${unity_decoration_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.20/gtk.css"
 
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_dash_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/close_unfocused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_dash_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/maximize_unfocused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_dash_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/minimize_unfocused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/sheet_style_close_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_dash_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_focused_prelight.svg"
-    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_unfocused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/sheet_style_close_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_dash_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_focused_prelight.svg"
+    sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_unfocused_prelight.svg"
 
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_dash_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/close_unfocused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_dash_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/maximize_unfocused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_dash_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/minimize_unfocused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/sheet_style_close_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_dash_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_focused_pressed.svg"
-    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/gcs-theme/unity/unmaximize_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/close_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/maximize_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/minimize_unfocused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/sheet_style_close_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_dash_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_focused_pressed.svg"
+    sed -i "s/${unity_titlebar_button_pressed_original}/${unity_titlebar_button_pressed}/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/unity/unmaximize_unfocused_pressed.svg"
 
 
-    sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
+    sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-2.0/gtkrc"
 
     gtk3_tabs_temp="${GTK_TMP_DIR}/gtk3-tabs-temp"
     echo "
@@ -192,7 +192,7 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
   border-left-color: ${gtk_selected_tab_color};
 }
 " > "${gtk3_tabs_temp}"
-    cat "${gtk3_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
+    cat "${gtk3_tabs_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.0/gtk.css"
 
     gtk3_20_tabs_temp="${GTK_TMP_DIR}/gtk3.20-tabs-temp"
     echo "
@@ -212,12 +212,12 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
   color: ${gtk_selected_tab_color};
 }
 " > "${gtk3_20_tabs_temp}"
-    cat "${gtk3_20_tabs_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+    cat "${gtk3_20_tabs_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.20/gtk.css"
 
 
 
-    sed -i "s/tooltip_fg_color\:[^n]*n/tooltip_fg_color:${gtk_tooltip_fg_color}\\\n/g" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
-    sed -i "s/tooltip_bg_color\:[^n]*n/tooltip_bg_color:${gtk_tooltip_bg_color}\\\n/g" "${HOME}/.themes/gcs-theme/gtk-2.0/gtkrc"
+    sed -i "s/tooltip_fg_color\:[^n]*n/tooltip_fg_color:${gtk_tooltip_fg_color}\\\n/g" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-2.0/gtkrc"
+    sed -i "s/tooltip_bg_color\:[^n]*n/tooltip_bg_color:${gtk_tooltip_bg_color}\\\n/g" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-2.0/gtkrc"
 
     gtk3_tooltip_temp="${GTK_TMP_DIR}/gtk3-tooltip-temp"
     echo "
@@ -226,7 +226,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
   background-image: none;
   color: ${gtk_tooltip_fg_color}; }
 " > "${gtk3_tooltip_temp}"
-    cat "${gtk3_tooltip_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.0/gtk.css"
+    cat "${gtk3_tooltip_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.0/gtk.css"
 
     gtk3_20_tooltip_temp="${GTK_TMP_DIR}/gtk3.20-tooltip-temp"
     echo "
@@ -235,7 +235,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
   border: 1px solid $gtk_tooltip_border_color{};
   color: ${gtk_tooltip_fg_color}; }
 " > "${gtk3_20_tooltip_temp}"
-    cat "${gtk3_20_tooltip_temp}" >> "${HOME}/.themes/gcs-theme/gtk-3.20/gtk.css"
+    cat "${gtk3_20_tooltip_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.20/gtk.css"
 
 
 
@@ -254,7 +254,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
 
         printf "  colors..."
-        set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+        set_value "Net\/ThemeName" " " "\"${FULL_COLOR_THEME_NAME}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
         printf " done.\n"
 
         if ! [ -z "${gtk_icon_theme_name}" ]; then
@@ -274,7 +274,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
         printf "  colors..."
         gsettings set org.gnome.desktop.interface gtk-theme ""
-        gsettings set org.gnome.desktop.interface gtk-theme "gcs-theme"
+        gsettings set org.gnome.desktop.interface gtk-theme "${FULL_COLOR_THEME_NAME}"
         gsettings set org.gnome.desktop.interface gtk-color-scheme ""
         printf " done.\n"
 

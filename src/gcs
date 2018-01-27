@@ -96,6 +96,8 @@ load_color_theme() {
         exit 2
     fi
 
+    FULL_COLOR_THEME_NAME="gcs-${COLOR_THEME_NAME}"
+
     COLOR_THEME_FILES=()
     COLOR_THEME_DIRS=()
 

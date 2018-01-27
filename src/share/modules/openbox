@@ -12,7 +12,7 @@ OPENBOX_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} openbox restart_comm
 
 OPENBOX_NAMESPACE="http://openbox.org/3.4/rc"
 OPENBOX_THEME_NAME_PATH="/o:openbox_config/o:theme/o:name"
-OPENBOX_THEME_FILE="${HOME}/.themes/gcs-theme/openbox-3/themerc"
+OPENBOX_THEME_FILE="${HOME}/.themes/${FULL_COLOR_THEME_NAME}/openbox-3/themerc"
 
 : ${openbox_window_active_title_bg_color:=${titlebar_focused_bg_color}}
 : ${openbox_window_active_label_text_color:=${titlebar_focused_fg_color}}
@@ -87,7 +87,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     set_value "menu.separator.color:" " " "${openbox_menu_separator_color}" "${OPENBOX_THEME_FILE}"
     set_value "menu.items.active.text.color:" " " "${openbox_menu_items_active_text_color}" "${OPENBOX_THEME_FILE}"
 
-    xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "gcs-theme" "${OPENBOX_TMP_CONFIG_FILE}"
+    xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "${FULL_COLOR_THEME_NAME}" "${OPENBOX_TMP_CONFIG_FILE}"
 
     $OPENBOX_RESTART_COMMAND &>/dev/null
 
