@@ -6,7 +6,7 @@ which lxterminal >/dev/null || return
 : ${lxterminal_fg_color:=${terminal_fg_color}}
 
 LXTERMINAL_ENABLE_DEFAULT="true"
-LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/config/lxterminal/lxterminal.conf"
+LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/.config/lxterminal/lxterminal.conf"
 
 LXTERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} lxterminal enable      2>/dev/null || echo "${LXTERMINAL_ENABLE_DEFAULT}")"
 LXTERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} lxterminal config_file 2>/dev/null || echo "${LXTERMINAL_CONFIG_FILE_DEFAULT}")"
