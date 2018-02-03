@@ -72,10 +72,71 @@ elif ! which oomox-cli >/dev/null; then
     printf "* Ignoring colors and icon theme for GTK+ (oomox not installed).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Backup/restore not supported with GTK+.\n"
+    printf "* Making backup of colors and icon theme for GTK+..."
+
+    GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
+    mkdir -p "${GTK_BACKUP_DIR}"
+
+    if ps -e | grep xsettingsd >/dev/null; then
+        dump_xsettings | awk '/Net\/ThemeName/{print $2}'     > "${GTK_BACKUP_DIR}/ThemeName"
+        dump_xsettings | awk '/Net\/IconThemeName/{print $2}' > "${GTK_BACKUP_DIR}/IconThemeName"
+        printf " done.\n"
+
+    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
+        gsettings get org.gnome.desktop.interface gtk-theme  > "${GTK_BACKUP_DIR}/ThemeName"
+        gsettings get org.gnome.desktop.interface icon-theme > "${GTK_BACKUP_DIR}/IconThemeName"
+        printf " done.\n"
+
+    else
+        printf " no supported XSettings manager found!\n"
+        # TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
+    fi
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Backup/restore not supported with GTK+.\n"
+    printf "* Restoring backup of colors and icon theme for GTK+...\n"
+
+    GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
+
+    if ps -e | grep xsettingsd >/dev/null; then
+
+        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
+
+        printf "    colors..."
+        if [ -f "${GTK_BACKUP_DIR}/ThemeName" ]; then
+            set_value "Net\/ThemeName" " " "$(cat "${GTK_BACKUP_DIR}/ThemeName")" "${GTK_XSETTINGSD_CONFIG_FILE}"
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
+        printf "    icon theme..."
+        if [ -f "${GTK_BACKUP_DIR}/IconThemeName" ]; then
+            set_value "Net\/IconThemeName" " " "$(cat "${GTK_BACKUP_DIR}/IconThemeName")" "${GTK_XSETTINGSD_CONFIG_FILE}"
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
+    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
+
+        printf "    colors..."
+        if [ -f "${GTK_BACKUP_DIR}/ThemeName" ]; then
+            gsettings set org.gnome.desktop.interface gtk-theme $(cat "${GTK_BACKUP_DIR}/ThemeName")
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
+        printf "    icon theme..."
+        if [ -f "${GTK_BACKUP_DIR}/IconThemeName" ]; then
+            gsettings set org.gnome.desktop.interface icon-theme $(cat "${GTK_BACKUP_DIR}/IconThemeName")
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors and icon theme for GTK+...\n"
@@ -248,7 +309,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         done
     fi
 
-    if ps -e | grep xsettings >/dev/null; then
+    if ps -e | grep xsettingsd >/dev/null; then
 
         GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
         GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
@@ -270,7 +331,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
 
 
-    elif ps -e | grep gnome-settings- >/dev/null; then
+    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
 
         printf "  colors..."
         gsettings set org.gnome.desktop.interface gtk-theme ""
