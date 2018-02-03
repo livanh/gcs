@@ -95,6 +95,9 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             set_value "long_line_color" "=" "#C2EBC2"              "${GEANY_TMP_CONFIG_FILE}"
 
             mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
+
+            printf " done.\n"
+
         fi
 
     else

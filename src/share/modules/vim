@@ -74,6 +74,8 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
                 vim --servername ${server} --remote-send ":colorscheme default<CR>"
             done
 
+            printf " done.\n"
+
         fi
 
     else

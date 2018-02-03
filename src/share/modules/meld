@@ -79,6 +79,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             if [ "${MELD_SYNTAX_FALLBACK}" == "true" ]; then
                 printf "* Setting default colors for Meld..."
                 gsettings set org.gnome.meld style-scheme "meld-base"
+                printf " done.\n"
             fi
         fi
 

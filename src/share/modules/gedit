@@ -84,6 +84,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         if [ "${GEDIT_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for gedit..."
             gsettings set org.gnome.gedit.preferences.editor scheme "Default"
+            printf " done.\n"
         fi
 
     else

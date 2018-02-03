@@ -164,6 +164,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
                 printf "* Setting default colors for Code::Blocks..."
                 xmlstarlet ed --inplace --update "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" --value "default" "${CODEBLOCKS_CONFIG_FILE}"
+                printf " done.\n"
             fi
         fi
     else

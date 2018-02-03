@@ -126,6 +126,8 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
 
                 mv "${OCTAVE_TMP_CONFIG_FILE}" "${OCTAVE_CONFIG_FILE}"
 
+                printf " done.\n"
+
             fi
 
         fi
