@@ -34,7 +34,28 @@ GCS_LOCK_FILE="/tmp/.gcs_lock"
 GCS_ACTION="apply-theme"
 GCS_BACKUP_NAME=""
 
-while getopts ":m:b:r:" opt; do
+
+help() {
+    echo "Usage:"
+    echo "  to apply a color theme:   $0 [options] <color_theme_name>"
+    echo "  to create a backup:       $0 [options] -b <backup_name>"
+    echo "  to restore a backup:      $0 [options] -r <backup_name>"
+    echo
+    echo "Available options:"
+    echo "  -m <module>    execute only one module"
+    echo "  -h             show this help screen"
+    echo
+    echo "Avilable color themes:"
+    find "${GCS_THEMES_DIR_USER}" "${GCS_THEMES_DIR_LOCAL}" "${GCS_THEMES_DIR_SYSTEM}" \
+        -mindepth 1 -maxdepth 1 -type d -printf "  %f\n" 2>/dev/null | sort | uniq | column
+    echo
+    echo "Avilable modules:"
+    find "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}" \
+        -mindepth 1 -maxdepth 1 -type f -executable -printf "  %f\n" 2>/dev/null | sort | uniq | column
+    exit 1
+}
+
+while getopts ":m:b:r:h" opt; do
     case $opt in
       m)
         FORCED_MODULE="$OPTARG"
@@ -49,6 +70,9 @@ while getopts ":m:b:r:" opt; do
         GCS_ACTION="restore-backup"
         GCS_BACKUP_NAME="$OPTARG"
         shift $((OPTIND-1))
+        ;;
+      h)
+        help
         ;;
       \?)
         echo "Invalid option: -$OPTARG" >&2
@@ -68,20 +92,12 @@ if [ "${GCS_ACTION}" == "apply-theme" ]; then
 fi
 
 
+if [[ "${GCS_ACTION}" == "apply-theme" && "${COLOR_THEME_NAME}" == "" ]]; then
+    help
+fi
+
 if [ "$#" -ne 0 ]; then
-    echo "Usage: $0 [options] [ <color_theme_name> ]"
-    echo
-    echo "<color_theme_name> should be given for normal use, but not when making/restoring a backup"
-    echo
-    echo "Available options:"
-    echo -e "\t-m <module>\t\texecute only one module"
-    echo -e "\t-b <backup_name>\tmake a backup"
-    echo -e "\t-m <backup_name>\trestore a backup"
-    echo
-    echo "Avilable color themes:"
-    find "${HOME}/.config/gcs/colorthemes" "/usr/local/share/gcs/colorthemes" "/usr/share/gcs/colorthemes" \
-        -mindepth 1 -maxdepth 1 -type d -printf "\t%f\n" 2>/dev/null | sort | uniq
-    exit 1
+    help
 fi
 
 # Load a color theme file.
