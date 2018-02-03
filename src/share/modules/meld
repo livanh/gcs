@@ -53,10 +53,25 @@ elif ! which xmlstarlet >/dev/null; then
     printf "* Not setting colors for Meld (XMLStarlet is not installed).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Backup/restore not supported with Meld.\n"
+    printf "* Making backup of colors for Meld..."
+
+    MELD_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/meld"
+    mkdir -p "${MELD_BACKUP_DIR}"
+    gsettings get org.gnome.meld style-scheme > "${MELD_BACKUP_DIR}/style-scheme"
+
+    printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Backup/restore not supported with Meld.\n"
+    printf "* Restoring backup of colors for Meld..."
+
+    MELD_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/meld"
+    if [ -f "${MELD_BACKUP_DIR}/style-scheme" ]; then
+        gsettings set org.gnome.meld style-scheme $(cat "${MELD_BACKUP_DIR}/style-scheme")
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
+
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then

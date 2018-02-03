@@ -18,10 +18,50 @@ if ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
     printf "* Ignoring wallpaper for nautilus (disabled from configuration).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Backup/restore not supported with nautilus wallpaper.\n"
+    printf "* Making backup of wallpaper for nautilus..."
+
+    BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
+    mkdir -p "${BACKGROUND_NAUTILUS_BACKUP_DIR}"
+
+    gsettings get org.gnome.desktop.background color-shading-type > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type"
+    gsettings get org.gnome.desktop.background picture-opacity    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity"
+    gsettings get org.gnome.desktop.background primary-color      > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color"
+    gsettings get org.gnome.desktop.background secondary-color    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color"
+    gsettings get org.gnome.desktop.background picture-uri        > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri"
+    gsettings get org.gnome.desktop.background picture-options    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options"
+
+    printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Backup/restore not supported with nautilus wallpaper.\n"
+    printf "* Restoring backup of wallpaper for nautilus..."
+
+    BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type" ]; then
+        gsettings set org.gnome.desktop.background color-shading-type $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type")
+    fi
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity" ]; then
+        gsettings set org.gnome.desktop.background picture-opacity    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity")
+    fi
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color" ]; then
+        gsettings set org.gnome.desktop.background primary-color      $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color")
+    fi
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color" ]; then
+        gsettings set org.gnome.desktop.background secondary-color    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color")
+    fi
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri" ]; then
+        gsettings set org.gnome.desktop.background picture-uri        $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri")
+    fi
+
+    if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options" ]; then
+        gsettings set org.gnome.desktop.background picture-options    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options")
+    fi
+
+    printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if ! [ -f "${wallpaper_file}" ]; then

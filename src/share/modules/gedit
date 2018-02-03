@@ -60,10 +60,24 @@ if ! [ "${GEDIT_ENABLE}" == "true" ]; then
     printf "* Ignoring gedit (disabled from configuration).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Backup/restore not supported with gedit.\n"
+    printf "* Making backup of colors for gedit..."
+
+    GEDIT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gedit"
+    mkdir -p "${GEDIT_BACKUP_DIR}"
+    gsettings get org.gnome.gedit.preferences.editor scheme > "${GEDIT_BACKUP_DIR}/scheme"
+
+    printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Backup/restore not supported with gedit.\n"
+    printf "* Restoring backup of colors for gedit.\n"
+
+    GEDIT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gedit"
+    if [ -f "${GEDIT_BACKUP_DIR}/scheme" ]; then
+        gsettings set org.gnome.gedit.preferences.editor scheme $(cat "${GEDIT_BACKUP_DIR}/scheme")
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
