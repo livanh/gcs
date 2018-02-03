@@ -53,6 +53,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
     if [ -f "${VIM_BACKUP_DIR}/vimrc" ]; then
         cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
+
+        for server in $(vim --serverlist); do
+            vim --servername ${server} --remote-send "<ESC>:source ${VIM_CONFIG_FILE}<CR>"
+        done
+
         printf " done.\n"
     else
         printf " not found!\n"
@@ -105,7 +110,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         rm "${VIM_CONFIG_FILE}.gcs-bak"
 
         for server in $(vim --serverlist); do
-            vim --servername ${server} --remote-send ":colorscheme ${FULL_COLOR_THEME_NAME}<CR>"
+            vim --servername ${server} --remote-send "<ESC>:colorscheme ${FULL_COLOR_THEME_NAME}<CR>"
         done
 
         printf " done.\n"
