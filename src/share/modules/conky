@@ -36,10 +36,53 @@ if ! [ "${CONKY_ENABLE}" == "true" ]; then
     printf "* Not setting colors for conky (disabled from configuration).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Backup/restore not supported with conky.\n"
+    printf "* Making backup of conky configuration files...\n"
+
+    CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
+    mkdir -p "${CONKY_BACKUP_DIR}"
+
+    for i in ${CONKY_CONFIG_FILES}; do
+         
+        file="$i"
+        if [ ${file:0:1} == \" ]; then
+            file=${file:1}
+        fi
+        if [ ${file: -1} == \" ]; then
+            file=${file:0:-1}
+        fi
+
+        printf "  ${file}..."
+        conky_config_file_path="${file%/*}"
+        mkdir -p "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
+        cp "$file" "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
+        printf " done.\n"
+    done
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Backup/restore not supported with conky.\n"
+    printf "* Restoring backup of conky configuration files..."
+
+    CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
+
+    for i in ${CONKY_CONFIG_FILES}; do
+         
+        file="$i"
+        if [ ${file:0:1} == \" ]; then
+            file=${file:1}
+        fi
+        if [ ${file: -1} == \" ]; then
+            file=${file:0:-1}
+        fi
+
+        printf "  ${file}..."
+        if [ -f "${CONKY_BACKUP_DIR}/${file}" ]; then
+            cp "${CONKY_BACKUP_DIR}/${file}" "$file"
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+    done
+
+    $CONKY_RESTART_COMMAND &>/dev/null
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for conky...\n"
