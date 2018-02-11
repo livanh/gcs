@@ -82,7 +82,7 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
         dump_xsettings | awk '/Net\/IconThemeName/{print $2}' > "${GTK_BACKUP_DIR}/IconThemeName"
         printf " done.\n"
 
-    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
+    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
         gsettings get org.gnome.desktop.interface gtk-theme  > ""
         gsettings get org.gnome.desktop.interface gtk-theme  > "${GTK_BACKUP_DIR}/ThemeName"
         gsettings get org.gnome.desktop.interface icon-theme > "${GTK_BACKUP_DIR}/IconThemeName"
@@ -119,7 +119,7 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
             printf " not found!\n"
         fi
 
-    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
+    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
 
         printf "  colors..."
         if [ -f "${GTK_BACKUP_DIR}/ThemeName" ]; then
@@ -294,8 +294,9 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
     echo "
 .tooltip.background, .tooltip.background.csd, tooltip.background, tooltip.background.csd {
   background-color: ${gtk_tooltip_bg_color};
-  border: 1px solid $gtk_tooltip_border_color{};
-  color: ${gtk_tooltip_fg_color}; }
+  border: 1px solid $ ${gtk_tooltip_border_color};
+  color: ${gtk_tooltip_fg_color};
+}
 " > "${gtk3_20_tooltip_temp}"
     cat "${gtk3_20_tooltip_temp}" >> "${HOME}/.themes/${FULL_COLOR_THEME_NAME}/gtk-3.20/gtk.css"
 
@@ -332,7 +333,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
 
 
-    elif ps -e | grep -E "(gnome-settings-daemon|gsd-xsettings)" >/dev/null; then
+    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
 
         printf "  colors..."
         gsettings set org.gnome.desktop.interface gtk-theme ""
