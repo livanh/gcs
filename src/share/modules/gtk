@@ -167,18 +167,8 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     echo "SPACING=${gtk_spacing}" >> "${GTK_OOMOX_THEME}"
     echo "GRADIENT=${gtk_gradient}" >> "${GTK_OOMOX_THEME}"
 
+    oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
 
-    if [ "${GCS_THEMES_DIR_USER}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ] && \
-        [ "${GCS_THEMES_DIR_LOCAL}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ] && \
-        [ "${GCS_THEMES_DIR_SYSTEM}/${FULL_COLOR_THEME_NAME}/colortheme" -ot "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" ]; then
-        rm -r "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" &>/dev/null
-        cp -r "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" "${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
-    else
-        oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
-        mkdir -p "${HOME}/.cache/gcs/gtk-themes"
-        rm -r "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}" &>/dev/null
-        cp -r "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" "${HOME}/.cache/gcs/gtk-themes/${FULL_COLOR_THEME_NAME}"
-    fi
 
     unity_decoration_temp="${GTK_TMP_DIR}/unity_decoration_temp.css"
     echo "
