@@ -1,9 +1,18 @@
-PREFIX=/usr/local
+prefix=/usr/local
 
-all install:
-	install -D src/gcs ${PREFIX}/bin/gcs
-	install -d ${PREFIX}/share/gcs/colorthemes
-	install -d ${PREFIX}/share/gcs/modules
-	cp -u -r src/config/colorthemes/* ${PREFIX}/share/gcs/colorthemes
-	cp -u -r src/share/modules/* ${PREFIX}/share/gcs/modules
-	install -D src/etc/bash_completion.d/gcs /etc/bash_completion.d/gcs
+all:
+
+install:
+	mkdir -p $(DESTDIR)$(prefix)/bin
+	install -D src/gcs $(DESTDIR)$(prefix)/bin/gcs
+	install -d $(DESTDIR)$(prefix)/share/gcs/colorthemes
+	install -d $(DESTDIR)$(prefix)/share/gcs/modules
+	mkdir -p $(DESTDIR)$(prefix)/share/gcs/colorthemes
+	cp -u -r src/config/colorthemes/* $(DESTDIR)$(prefix)/share/gcs/colorthemes
+	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules
+	cp -u -r src/share/modules/* $(DESTDIR)$(prefix)/share/gcs/modules
+	mkdir -p $(DESTDIR)/etc/bash_completion.d
+	install -D src/etc/bash_completion.d/gcs $(DESTDIR)/etc/bash_completion.d/gcs
+
+.PHONY: install all
+
