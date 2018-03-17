@@ -1,1 +1,8 @@
- 
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Contact: Livanh <livanh@bulletmail.org>
+Source: https://github.com/livanh/gcs
+
+Files: *
+Copyright: 2018 Livanh
+License: GPL-3+
+
