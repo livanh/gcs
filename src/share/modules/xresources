@@ -1,5 +1,7 @@
 #!/bin/bash
 
+which xrdb >/dev/null || return
+
 XRESOURCES_ENABLE_DEFAULT="true"
 XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
 XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"

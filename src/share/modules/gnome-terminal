@@ -1,6 +1,7 @@
 #!/bin/bash
 
 which gnome-terminal >/dev/null || return
+which dconf >/dev/null || return
 
 : ${gnome_terminal_bg_color:=${terminal_bg_color}}
 : ${gnome_terminal_fg_color:=${terminal_fg_color}}
