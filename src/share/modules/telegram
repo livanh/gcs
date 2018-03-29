@@ -1,5 +1,7 @@
 #!/bin/bash
 
+which zip >/dev/null || return
+
 # basic colors
 : ${telegram_windowActiveTextFg=${link_color}}
 : ${telegram_windowBg:=${bg_color}}

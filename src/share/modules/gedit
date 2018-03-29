@@ -1,6 +1,7 @@
 #!/bin/bash
 
 which gedit >/dev/null || return
+which gsettings >/dev/null || return
 
 : ${gedit_bg:=${editor_bg}}
 : ${gedit_fg:=${editor_fg}}
