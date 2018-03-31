@@ -24,6 +24,8 @@ GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
 GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
 GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
 GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
+GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
 GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
 
 GCS_CONFIG_DIR="$HOME/.config/gcs"
@@ -44,6 +46,7 @@ help() {
     echo "Available options:"
     echo "  -m <module>    execute only one module"
     echo "  -h             show this help screen"
+    echo "  -u             update base16 schemes"
     echo
     echo "Avilable color themes:"
     find "${GCS_THEMES_DIR_USER}" "${GCS_THEMES_DIR_LOCAL}" "${GCS_THEMES_DIR_SYSTEM}" \
@@ -55,7 +58,29 @@ help() {
     exit 1
 }
 
-while getopts ":m:b:r:h" opt; do
+update_base16_schemes() {
+    local GCS_BASE16_LIST="${GCS_TMP_DIR}/base16-list"
+    local GCS_BASE16_TEMP="${GCS_TMP_DIR}/base16-temp"
+    [ -d "${GCS_BASE16_SCHEMES_DIR_USER}" ] || mkdir -p "${GCS_BASE16_SCHEMES_DIR_USER}"
+    printf "Downloading base16 scheme list..."
+    git clone "${GCS_BASE16_SCHEMES_REPOSITORY}" "${GCS_BASE16_LIST}" &> /dev/null
+    if [ "$?" == "0" ]; then
+        printf " done.\n"
+    else
+        printf " failed!\n"
+        return
+    fi
+    echo "Downloading base16 schemes..."
+    for i in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
+        echo "  $i..."
+        git clone "$i" "${GCS_BASE16_TEMP}" &> /dev/null
+        cp "${GCS_BASE16_TEMP}/"*.yaml "${GCS_BASE16_SCHEMES_DIR_USER}" &> /dev/null
+        rm -rf "${GCS_BASE16_TEMP}" &> /dev/null
+    done
+    echo "Done."
+}
+
+while getopts ":m:b:r:hu" opt; do
     case $opt in
       m)
         FORCED_MODULE="$OPTARG"
@@ -73,6 +98,10 @@ while getopts ":m:b:r:h" opt; do
         ;;
       h)
         help
+        ;;
+      u)
+        update_base16_schemes
+        exit 1
         ;;
       \?)
         echo "Invalid option: -$OPTARG" >&2
