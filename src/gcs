@@ -129,6 +129,39 @@ if [ "$#" -ne 0 ]; then
     help
 fi
 
+load_base16_scheme() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: load_base16_scheme() requires 1 argument!"
+        exit 2
+    fi
+
+    local base16_scheme_file="${GCS_BASE16_SCHEMES_DIR_USER}/$1.yaml"
+    if ! [ -f "${base16_scheme_file}" ]; then
+        update_base16_schemes
+        if ! [ -f "${base16_scheme_file}" ]; then
+            echo "Error: base16 scheme $1 not found!"
+            exit 3
+        fi
+    fi
+
+    base00="$(awk '/base00:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base01="$(awk '/base01:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base02="$(awk '/base02:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base03="$(awk '/base03:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base04="$(awk '/base04:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base05="$(awk '/base05:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base06="$(awk '/base06:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base07="$(awk '/base07:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base08="$(awk '/base08:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base09="$(awk '/base09:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0A="$(awk '/base0A:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0B="$(awk '/base0B:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0C="$(awk '/base0C:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0D="$(awk '/base0D:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0E="$(awk '/base0E:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+}
+
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
 # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
