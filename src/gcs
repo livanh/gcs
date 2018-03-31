@@ -162,6 +162,28 @@ load_base16_scheme() {
     base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
 }
 
+compare_brightness() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: compare_brightness() requires 2 arguments!"
+        exit 2
+    fi
+
+    color1="${1}"
+    color2="${2}"
+
+    r1="$(printf "%d" 0x${color1:1:2})"
+    g1="$(printf "%d" 0x${color1:3:2})"
+    b1="$(printf "%d" 0x${color1:5:2})"
+    r2="$(printf "%d" 0x${color2:1:2})"
+    g2="$(printf "%d" 0x${color2:3:2})"
+    b2="$(printf "%d" 0x${color2:5:2})"
+
+    l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
+    l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
+
+    printf "$(bc <<< "${l1} > ${l2}")"
+}
+
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
 # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
@@ -255,26 +277,52 @@ load_color_theme() {
     : ${wallpaper_text_color:=${text_color}}
     : ${wallpaper_shadow_color:=${bg_color}}
 
+    # load base16 scheme if specified
+    if ! [ -z "${base16_scheme}" ]; then
+        load_base16_scheme "${base16_scheme}"
+    fi
+
     # terminal
-    : ${terminal_bg_color:=${fg_color}}
-    : ${terminal_fg_color:=${bg_color}}
-    #~ unset terminal_palette_black
-    #~ unset terminal_palette_red
-    #~ unset terminal_palette_green
-    #~ unset terminal_palette_yellow
-    #~ unset terminal_palette_blue
-    #~ unset terminal_palette_purple
-    #~ unset terminal_palette_cyan
-    #~ unset terminal_palette_white
-    #~ unset terminal_palette_light_black
-    #~ unset terminal_palette_light_red
-    #~ unset terminal_palette_light_green
-    #~ unset terminal_palette_light_yellow
-    #~ unset terminal_palette_light_blue
-    #~ unset terminal_palette_light_purple
-    #~ unset terminal_palette_light_cyan
-    #~ unset terminal_palette_light_white
-    #~ unset terminal_transparency
+    if ! [ -z "${base00}" ]; then
+        : ${terminal_bg_color:=${base00}}
+    else
+        : ${terminal_bg_color:=${fg_color}}
+    fi
+    if ! [ -z "${base05}" ]; then
+        : ${terminal_fg_color:=${base05}}
+    else
+        : ${terminal_fg_color:=${bg_color}}
+    fi
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
+            : ${terminal_palette_white:=${base03}}
+            : ${terminal_palette_black:=${base05}}
+        else
+            : ${terminal_palette_white:=${base05}}
+            : ${terminal_palette_black:=${base03}}
+        fi
+    fi
+    : ${terminal_palette_red:=${base08}}
+    : ${terminal_palette_yellow:=${base0A}}
+    : ${terminal_palette_green:=${base0B}}
+    : ${terminal_palette_cyan:=${base0C}}
+    : ${terminal_palette_blue:=${base0D}}
+    : ${terminal_palette_purple:=${base0E}}
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
+            : ${terminal_palette_light_white:=${base03}}
+            : ${terminal_palette_light_black:=${base05}}
+        else
+            : ${terminal_palette_light_white:=${base05}}
+            : ${terminal_palette_light_black:=${base03}}
+        fi
+    fi
+    : ${terminal_palette_light_red:=${base08}}
+    : ${terminal_palette_light_yellow:=${base0A}}
+    : ${terminal_palette_light_green:=${base0B}}
+    : ${terminal_palette_light_cyan:=${base0C}}
+    : ${terminal_palette_light_blue:=${base0D}}
+    : ${terminal_palette_light_purple:=${base0E}}
 
     # notifications
     : ${notification_border_color:=${bg_color}}
