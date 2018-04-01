@@ -331,42 +331,51 @@ load_color_theme() {
 
     # text editors with syntax highlighting
     : ${editor_syntax_enable:=false}
+    : ${editor_bg:=${base00}}
     : ${editor_bg:=${base_color}}
+    : ${editor_fg:=${base05}}
     : ${editor_fg:=${text_color}}
     : ${editor_selected_bg:=${selected_bg_color}}
     : ${editor_selected_fg:=${selected_fg_color}}
     : ${editor_frame_bg:=${bg_color}}
     : ${editor_frame_fg:=${fg_color}}
+    : ${editor_current_line_bg:=${base02}}
     : ${editor_current_line_bg:=${bg_color}}
+    : ${editor_indent_guide:=${base03}}
     : ${editor_indent_guide:=${editor_string}}
+    : ${editor_long_line_marker:=${base03}}
     : ${editor_long_line_marker:=${editor_current_line_bg}}
+    : ${editor_caret:=${base05}}
     : ${editor_caret:=${text_color}}
     : ${editor_error:=${error_color}}
-    : ${editor_brace_good:=${editor_string}}
     : ${editor_brace_bad:=${error_color}}
 
-    #~ unset editor_comment
+    : ${editor_variable:=${base08}}
+    : ${editor_variable:=${editor_class}}
+    : ${editor_comment:=${base03}}
     : ${editor_white_space:=${editor_comment}}
-    #~ unset editor_number
-    #~ unset editor_string
+    : ${editor_number:=${base09}}
+    : ${editor_string:=${base0B}}
+    : ${editor_brace_good:=${editor_string}}
+    : ${editor_keyword:=${base0E}}
     : ${editor_keyword:=${selected_bg_color}}
-    #~ unset editor_operator
-    #~ unset editor_preprocessor
+    : ${editor_operator:=${base05}}
+    : ${editor_preprocessor:=${base0D}}
     : ${editor_section_header:=${editor_preprocessor}}
-    #~ unset editor_class
+    : ${editor_class:=${base0A}}
     : ${editor_character:=${editor_number}}
 
-    #~ unset editor_tag
-    #~ unset editor_tag_unknown
-    #~ unset editor_tag_end
-    #~ unset editor_attribute
-    #~ unset editor_attribute_unknown
-    #~ unset editor_value
-    #~ unset editor_entity
+    : ${editor_tag:=${base08}}
+    : ${editor_tag_unknown:=${base0F}}
+    : ${editor_tag_end:=${base08}}
+    : ${editor_attribute:=${base0D}}
+    : ${editor_attribute_unknown:=${base0F}}
+    : ${editor_value:=${base09}}
+    : ${editor_entity:=${base0C}}
 
-    #~ unset editor_diff_added
-    #~ unset editor_diff_removed
-    #~ unset editor_diff_changed
+    : ${editor_diff_added:=${base0B}}
+    : ${editor_diff_removed:=${base08}}
+    : ${editor_diff_changed:=${base0E}}
 
 }
 
