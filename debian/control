@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9)
 
 Package: gcs
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, coreutils, sed, grep, awk, xmlstarlet, perl, oomox, crudini
+Depends: ${shlibs:Depends}, ${misc:Depends}, coreutils, sed, grep, awk, bc, git, xmlstarlet, perl, oomox, crudini
 Recommends: dconf-cli, libglib2.0-bin, procps, x11-server-utils, xsettingsd|gnome-settings-daemon, zip
 Priority: optional
 Section: misc
