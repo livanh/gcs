@@ -41,3 +41,22 @@ tray_unfocused_fg_color=#FFFFFF
 notification_border_color=#000000
 notification_bg_color=#ffffe1
 notification_fg_color=#000000
+
+# terminal
+terminal_palette_black="#222222"
+terminal_palette_red="#aa0000"
+terminal_palette_green="#00aa00"
+terminal_palette_yellow="#aa5500"
+terminal_palette_blue="#0000aa"
+terminal_palette_purple="#aa00aa"
+terminal_palette_cyan="#00aaaa"
+terminal_palette_white="#aaaaaa"
+terminal_palette_light_black="#555555"
+terminal_palette_light_red="#ff5555"
+terminal_palette_light_green="#55ff55"
+terminal_palette_light_yellow="#ffff55"
+terminal_palette_light_blue="#5555ff"
+terminal_palette_light_purple="#ff55ff"
+terminal_palette_light_cyan="#55ffff"
+terminal_palette_light_white="#ffffff"
+terminal_transparency="1"
