@@ -245,8 +245,10 @@ load_color_theme() {
     #~ unset cursor_theme_name
 
     # error/warning
-    #~ unset error_color
-    #~ unset warning_bg_color
+    : ${error_color:=${base08}}
+    : ${error_color:=#FF0000}
+    : ${warning_bg_color:=${base09}}
+    : ${warning_bg_color:=#FF8800}
 
     # window manager colors
     : ${titlebar_urgent_bg_color:=${selected_bg_color}}
