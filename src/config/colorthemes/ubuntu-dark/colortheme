@@ -45,25 +45,24 @@ wallpaper_text_color=#FFFFFF
 wallpaper_shadow_color=#3C3C3C
 
 # terminal
-terminal_bg_color=#300A24
-terminal_fg_color=#FFFFFF
-#-----------------------------------------
-terminal_palette_black="#000000"
-terminal_palette_red="#ff352b"
-terminal_palette_green="#00aa00"
-terminal_palette_yellow="#77a600"
-terminal_palette_blue="#0000aa"
-terminal_palette_purple="#aa00aa"
-terminal_palette_cyan="#00aaaa"
-terminal_palette_white="#aaaaaa"
-terminal_palette_light_black="#555555"
-terminal_palette_light_red="#ff6a6a"
-terminal_palette_light_green="#55ff55"
-terminal_palette_light_yellow="#ffff39"
-terminal_palette_light_blue="#5555ff"
-terminal_palette_light_purple="#ff55ff"
-terminal_palette_light_cyan="#55ffff"
-terminal_palette_light_white="#ffffff"
+terminal_bg_color="#300A24"
+terminal_fg_color="#FFFFFF"
+terminal_palette_black="#2E3436"
+terminal_palette_red="#CC0000"
+terminal_palette_green="#4B910B"
+terminal_palette_yellow="#C4A000"
+terminal_palette_blue="#3465A4"
+terminal_palette_purple="#755079"
+terminal_palette_cyan="#06989A"
+terminal_palette_white="#D3D7CF"
+terminal_palette_light_black="#555753"
+terminal_palette_light_red="#EF2929"
+terminal_palette_light_green="#8AE234"
+terminal_palette_light_yellow="#FCE94F"
+terminal_palette_light_blue="#729FCF"
+terminal_palette_light_purple="#AD7FA8"
+terminal_palette_light_cyan="#34E2E2"
+terminal_palette_light_white="#EEEEEC"
 terminal_transparency="1"
 
 

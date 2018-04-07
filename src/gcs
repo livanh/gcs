@@ -24,6 +24,8 @@ GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
 GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
 GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
 GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
+GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
 GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
 
 GCS_CONFIG_DIR="$HOME/.config/gcs"
@@ -44,6 +46,7 @@ help() {
     echo "Available options:"
     echo "  -m <module>    execute only one module"
     echo "  -h             show this help screen"
+    echo "  -u             update base16 schemes"
     echo
     echo "Avilable color themes:"
     find "${GCS_THEMES_DIR_USER}" "${GCS_THEMES_DIR_LOCAL}" "${GCS_THEMES_DIR_SYSTEM}" \
@@ -55,7 +58,29 @@ help() {
     exit 1
 }
 
-while getopts ":m:b:r:h" opt; do
+update_base16_schemes() {
+    local GCS_BASE16_LIST="${GCS_TMP_DIR}/base16-list"
+    local GCS_BASE16_TEMP="${GCS_TMP_DIR}/base16-temp"
+    [ -d "${GCS_BASE16_SCHEMES_DIR_USER}" ] || mkdir -p "${GCS_BASE16_SCHEMES_DIR_USER}"
+    printf "Downloading base16 scheme list..."
+    git clone "${GCS_BASE16_SCHEMES_REPOSITORY}" "${GCS_BASE16_LIST}" &> /dev/null
+    if [ "$?" == "0" ]; then
+        printf " done.\n"
+    else
+        printf " failed!\n"
+        return
+    fi
+    echo "Downloading base16 schemes..."
+    for i in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
+        echo "  $i..."
+        git clone "$i" "${GCS_BASE16_TEMP}" &> /dev/null
+        cp "${GCS_BASE16_TEMP}/"*.yaml "${GCS_BASE16_SCHEMES_DIR_USER}" &> /dev/null
+        rm -rf "${GCS_BASE16_TEMP}" &> /dev/null
+    done
+    echo "Done."
+}
+
+while getopts ":m:b:r:hu" opt; do
     case $opt in
       m)
         FORCED_MODULE="$OPTARG"
@@ -73,6 +98,10 @@ while getopts ":m:b:r:h" opt; do
         ;;
       h)
         help
+        ;;
+      u)
+        update_base16_schemes
+        exit 1
         ;;
       \?)
         echo "Invalid option: -$OPTARG" >&2
@@ -99,6 +128,61 @@ fi
 if [ "$#" -ne 0 ]; then
     help
 fi
+
+load_base16_scheme() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: load_base16_scheme() requires 1 argument!"
+        exit 2
+    fi
+
+    local base16_scheme_file="${GCS_BASE16_SCHEMES_DIR_USER}/$1.yaml"
+    if ! [ -f "${base16_scheme_file}" ]; then
+        update_base16_schemes
+        if ! [ -f "${base16_scheme_file}" ]; then
+            echo "Error: base16 scheme $1 not found!"
+            exit 3
+        fi
+    fi
+
+    base00="$(awk '/base00:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base01="$(awk '/base01:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base02="$(awk '/base02:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base03="$(awk '/base03:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base04="$(awk '/base04:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base05="$(awk '/base05:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base06="$(awk '/base06:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base07="$(awk '/base07:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base08="$(awk '/base08:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base09="$(awk '/base09:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0A="$(awk '/base0A:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0B="$(awk '/base0B:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0C="$(awk '/base0C:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0D="$(awk '/base0D:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0E="$(awk '/base0E:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+    base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
+}
+
+compare_brightness() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: compare_brightness() requires 2 arguments!"
+        exit 2
+    fi
+
+    color1="${1}"
+    color2="${2}"
+
+    r1="$(printf "%d" 0x${color1:1:2})"
+    g1="$(printf "%d" 0x${color1:3:2})"
+    b1="$(printf "%d" 0x${color1:5:2})"
+    r2="$(printf "%d" 0x${color2:1:2})"
+    g2="$(printf "%d" 0x${color2:3:2})"
+    b2="$(printf "%d" 0x${color2:5:2})"
+
+    l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
+    l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
+
+    printf "$(bc <<< "${l1} > ${l2}")"
+}
 
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
@@ -161,8 +245,10 @@ load_color_theme() {
     #~ unset cursor_theme_name
 
     # error/warning
-    #~ unset error_color
-    #~ unset warning_bg_color
+    : ${error_color:=${base08}}
+    : ${error_color:=#FF0000}
+    : ${warning_bg_color:=${base09}}
+    : ${warning_bg_color:=#FF8800}
 
     # window manager colors
     : ${titlebar_urgent_bg_color:=${selected_bg_color}}
@@ -193,26 +279,63 @@ load_color_theme() {
     : ${wallpaper_text_color:=${text_color}}
     : ${wallpaper_shadow_color:=${bg_color}}
 
+    # load base16 scheme if specified
+    if ! [ -z "${base16_scheme}" ]; then
+        load_base16_scheme "${base16_scheme}"
+    fi
+
     # terminal
-    : ${terminal_bg_color:=${fg_color}}
-    : ${terminal_fg_color:=${bg_color}}
-    #~ unset terminal_palette_black
-    #~ unset terminal_palette_red
-    #~ unset terminal_palette_green
-    #~ unset terminal_palette_yellow
-    #~ unset terminal_palette_blue
-    #~ unset terminal_palette_purple
-    #~ unset terminal_palette_cyan
-    #~ unset terminal_palette_white
-    #~ unset terminal_palette_light_black
-    #~ unset terminal_palette_light_red
-    #~ unset terminal_palette_light_green
-    #~ unset terminal_palette_light_yellow
-    #~ unset terminal_palette_light_blue
-    #~ unset terminal_palette_light_purple
-    #~ unset terminal_palette_light_cyan
-    #~ unset terminal_palette_light_white
-    #~ unset terminal_transparency
+    if ! [[ -z "${base00}" || -z "${base07}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base07})" == "1" ]; then
+            : ${terminal_bg_color:=${base00}}
+            : ${terminal_fg_color:=${base07}}
+        else
+            : ${terminal_bg_color:=${base07}}
+            : ${terminal_fg_color:=${base00}}
+        fi
+    fi
+
+    if ! [[ -z "${fg_color}" || -z "${bg_color}" ]]; then
+        if [ "$(compare_brightness ${bg_color} ${fg_color})" == "1" ]; then
+            : ${terminal_bg_color:=${bg_color}}
+            : ${terminal_fg_color:=${fg_color}}
+        else
+            : ${terminal_bg_color:=${fg_color}}
+            : ${terminal_fg_color:=${bg_color}}
+        fi
+    fi
+
+
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
+            : ${terminal_palette_white:=${base05}}
+            : ${terminal_palette_black:=${base03}}
+        else
+            : ${terminal_palette_white:=${base03}}
+            : ${terminal_palette_black:=${base05}}
+        fi
+    fi
+    : ${terminal_palette_red:=${base08}}
+    : ${terminal_palette_yellow:=${base0A}}
+    : ${terminal_palette_green:=${base0B}}
+    : ${terminal_palette_cyan:=${base0C}}
+    : ${terminal_palette_blue:=${base0D}}
+    : ${terminal_palette_purple:=${base0E}}
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
+            : ${terminal_palette_light_white:=${base05}}
+            : ${terminal_palette_light_black:=${base03}}
+        else
+            : ${terminal_palette_light_white:=${base03}}
+            : ${terminal_palette_light_black:=${base05}}
+        fi
+    fi
+    : ${terminal_palette_light_red:=${base08}}
+    : ${terminal_palette_light_yellow:=${base0A}}
+    : ${terminal_palette_light_green:=${base0B}}
+    : ${terminal_palette_light_cyan:=${base0C}}
+    : ${terminal_palette_light_blue:=${base0D}}
+    : ${terminal_palette_light_purple:=${base0E}}
 
     # notifications
     : ${notification_border_color:=${bg_color}}
@@ -221,42 +344,51 @@ load_color_theme() {
 
     # text editors with syntax highlighting
     : ${editor_syntax_enable:=false}
+    : ${editor_bg:=${base00}}
     : ${editor_bg:=${base_color}}
+    : ${editor_fg:=${base05}}
     : ${editor_fg:=${text_color}}
     : ${editor_selected_bg:=${selected_bg_color}}
     : ${editor_selected_fg:=${selected_fg_color}}
     : ${editor_frame_bg:=${bg_color}}
     : ${editor_frame_fg:=${fg_color}}
+    : ${editor_current_line_bg:=${base02}}
     : ${editor_current_line_bg:=${bg_color}}
+    : ${editor_indent_guide:=${base03}}
     : ${editor_indent_guide:=${editor_string}}
+    : ${editor_long_line_marker:=${base03}}
     : ${editor_long_line_marker:=${editor_current_line_bg}}
+    : ${editor_caret:=${base05}}
     : ${editor_caret:=${text_color}}
     : ${editor_error:=${error_color}}
-    : ${editor_brace_good:=${editor_string}}
     : ${editor_brace_bad:=${error_color}}
 
-    #~ unset editor_comment
+    : ${editor_variable:=${base08}}
+    : ${editor_variable:=${editor_class}}
+    : ${editor_comment:=${base03}}
     : ${editor_white_space:=${editor_comment}}
-    #~ unset editor_number
-    #~ unset editor_string
+    : ${editor_number:=${base09}}
+    : ${editor_string:=${base0B}}
+    : ${editor_brace_good:=${editor_string}}
+    : ${editor_keyword:=${base0E}}
     : ${editor_keyword:=${selected_bg_color}}
-    #~ unset editor_operator
-    #~ unset editor_preprocessor
+    : ${editor_operator:=${base05}}
+    : ${editor_preprocessor:=${base0D}}
     : ${editor_section_header:=${editor_preprocessor}}
-    #~ unset editor_class
+    : ${editor_class:=${base0A}}
     : ${editor_character:=${editor_number}}
 
-    #~ unset editor_tag
-    #~ unset editor_tag_unknown
-    #~ unset editor_tag_end
-    #~ unset editor_attribute
-    #~ unset editor_attribute_unknown
-    #~ unset editor_value
-    #~ unset editor_entity
+    : ${editor_tag:=${base08}}
+    : ${editor_tag_unknown:=${base0F}}
+    : ${editor_tag_end:=${base08}}
+    : ${editor_attribute:=${base0D}}
+    : ${editor_attribute_unknown:=${base0F}}
+    : ${editor_value:=${base09}}
+    : ${editor_entity:=${base0C}}
 
-    #~ unset editor_diff_added
-    #~ unset editor_diff_removed
-    #~ unset editor_diff_changed
+    : ${editor_diff_added:=${base0B}}
+    : ${editor_diff_removed:=${base08}}
+    : ${editor_diff_changed:=${base0E}}
 
 }
 

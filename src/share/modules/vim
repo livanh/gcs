@@ -15,7 +15,7 @@ which vim>/dev/null || return
 : ${vim_operator:=${editor_operator}}
 : ${vim_keyword:=${editor_keyword}}
 : ${vim_preprocessor:=${editor_preprocessor}}
-: ${vim_identifier:=${editor_class}}
+: ${vim_identifier:=${editor_variable}}
 : ${vim_type:=${editor_class}}
 : ${vim_character:=${editor_character}}
 : ${vim_number:=${editor_number}}
@@ -103,7 +103,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         echo ":hi Statement guifg=${vim_keyword}"                                               >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi PreProc guifg=${vim_preprocessor}"                                            >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Identifier guifg=${vim_identifier}"                                           >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Type guifg=${vim_identifier}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Type guifg=${vim_type}"                                                       >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"

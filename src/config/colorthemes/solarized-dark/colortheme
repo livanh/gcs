@@ -1,86 +1,45 @@
-# named colors
-base03=#002b36
-base02=#073642
-base01=#586e75
-base00=#657b83
-base0=#839496
-base1=#93a1a1
-base2=#eee8d5
-base3=#fdf6e3
-yellow=#b58900
-orange=#cb4b16
-red=#dc322f
-magenta=#d33682
-violet=#6c71c4
-blue=#268bd2
-cyan=#2aa198
-green=#859900
+base00="#002b36"
+base01="#073642"
+base02="#586e75"
+base03="#657b83"
+base04="#839496"
+base05="#93a1a1"
+base06="#eee8d5"
+base07="#fdf6e3"
+base08="#dc322f"
+base09="#cb4b16"
+base0A="#b58900"
+base0B="#859900"
+base0C="#2aa198"
+base0D="#268bd2"
+base0E="#6c71c4"
+base0F="#d33682"
 
 # base color theme
-base_color=$base03
-text_color=$base0
-bg_color=#333333
-fg_color=$base1
-selected_bg_color=$base3
-selected_fg_color=$base00
+base_color="$base00"
+text_color="$base04"
+bg_color="#001A21"
+fg_color="$base05"
+selected_bg_color="$base07"
+selected_fg_color="$base03"
 
 # error/warning
-error_color=$red
-warning_bg_color=$orange
+error_color="$base08"
+warning_bg_color="$base09"
 
 # icon and cursor theme
 icon_theme_name=Humanity-Dark-Graphite
 cursor_theme_name=DMZ-Black
 
 # window manager colors
-titlebar_urgent_bg_color=$red
-titlebar_unfocused_bg_color=$bg_color
-titlebar_unfocused_fg_color=$fg_color
+titlebar_urgent_bg_color="$base08"
+titlebar_unfocused_bg_color="$bg_color"
+titlebar_unfocused_fg_color="$fg_color"
 
 # background
 wallpaper_image=wallpaper.png
 wallpaper_mode=tiled
-wallpaper_bg_color=$base_color
+wallpaper_bg_color="$base_color"
 
-# terminal
-terminal_bg_color=$base_color
-terminal_fg_color=$text_color
-terminal_palette_black=$base01
-terminal_palette_red=$red
-terminal_palette_green=$green
-terminal_palette_yellow=$yellow
-terminal_palette_blue=$blue
-terminal_palette_purple=$violet
-terminal_palette_cyan=$cyan
-terminal_palette_white=$base3
-terminal_palette_light_black=$base01
-terminal_palette_light_red=$red
-terminal_palette_light_green=$green
-terminal_palette_light_yellow=$yellow
-terminal_palette_light_blue=$blue
-terminal_palette_light_purple=$violet
-terminal_palette_light_cyan=$cyan
-terminal_palette_light_white=$base3
 terminal_transparency="1"
 
-# text editors with syntax highlighting
-editor_syntax_enable=true
-editor_current_line_bg=$base02
-editor_comment=$base01
-editor_number=$cyan
-editor_class=$yellow
-editor_string=$magenta
-editor_preprocessor=$orange
-editor_operator=$base0
-
-editor_tag=
-editor_tag_unknown=
-editor_tag_end=
-editor_attribute=
-editor_attribute_unknown=
-editor_value=
-editor_entity=
-
-editor_diff_added=$green
-editor_diff_removed=$red
-editor_diff_changed=$yellow
