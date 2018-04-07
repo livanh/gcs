@@ -3,7 +3,7 @@
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
 which pcmanfm >/dev/null || return
-which procps >/dev/null || return
+which ps >/dev/null || return
 
 BACKGROUND_PCMANFM_ENABLE_DEFAULT="true"
 BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo "${BACKGROUND_PCMANFM_ENABLE_DEFAULT}")"

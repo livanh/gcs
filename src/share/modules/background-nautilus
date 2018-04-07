@@ -4,7 +4,7 @@
 
 which nautilus >/dev/null || return
 which gsettings >/dev/null || return
-which procps >/dev/null || return
+which ps >/dev/null || return
 
 BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
 BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
