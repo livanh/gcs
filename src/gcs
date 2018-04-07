@@ -283,23 +283,34 @@ load_color_theme() {
     fi
 
     # terminal
-    if ! [ -z "${base00}" ]; then
-        : ${terminal_bg_color:=${base00}}
-    else
-        : ${terminal_bg_color:=${fg_color}}
-    fi
-    if ! [ -z "${base05}" ]; then
-        : ${terminal_fg_color:=${base05}}
-    else
-        : ${terminal_fg_color:=${bg_color}}
-    fi
-    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_white:=${base03}}
-            : ${terminal_palette_black:=${base05}}
+    if ! [[ -z "${base00}" || -z "${base07}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base07})" == "1" ]; then
+            : ${terminal_bg_color:=${base00}}
+            : ${terminal_fg_color:=${base07}}
         else
+            : ${terminal_bg_color:=${base07}}
+            : ${terminal_fg_color:=${base00}}
+        fi
+    fi
+
+    if ! [[ -z "${fg_color}" || -z "${bg_color}" ]]; then
+        if [ "$(compare_brightness ${bg_color} ${fg_color})" == "1" ]; then
+            : ${terminal_bg_color:=${bg_color}}
+            : ${terminal_fg_color:=${fg_color}}
+        else
+            : ${terminal_bg_color:=${fg_color}}
+            : ${terminal_fg_color:=${bg_color}}
+        fi
+    fi
+
+
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
+        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
             : ${terminal_palette_white:=${base05}}
             : ${terminal_palette_black:=${base03}}
+        else
+            : ${terminal_palette_white:=${base03}}
+            : ${terminal_palette_black:=${base05}}
         fi
     fi
     : ${terminal_palette_red:=${base08}}
@@ -310,11 +321,11 @@ load_color_theme() {
     : ${terminal_palette_purple:=${base0E}}
     if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
         if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_light_white:=${base03}}
-            : ${terminal_palette_light_black:=${base05}}
-        else
             : ${terminal_palette_light_white:=${base05}}
             : ${terminal_palette_light_black:=${base03}}
+        else
+            : ${terminal_palette_light_white:=${base03}}
+            : ${terminal_palette_light_black:=${base05}}
         fi
     fi
     : ${terminal_palette_light_red:=${base08}}
