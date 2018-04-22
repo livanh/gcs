@@ -1,7 +1,7 @@
 #!/bin/bash
 
 which gnome-terminal >/dev/null || return
-which dconf >/dev/null || return
+which gsettings >/dev/null || return
 
 : ${gnome_terminal_bg_color:=${terminal_bg_color}}
 : ${gnome_terminal_fg_color:=${terminal_fg_color}}
@@ -12,13 +12,15 @@ GNOME_TERMINAL_PROFILE_DEFAULT="Default"
 GNOME_TERMINAL_ENABLE="$(crudini  --get ${GCS_CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
 GNOME_TERMINAL_PROFILE="$(crudini --get ${GCS_CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
 
+GNOME_TERMINAL_GSETTINGS_PATH="org.gnome.Terminal.Legacy.Profile:"
 GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
+GNOME_TERMINAL_PROFILES_LIST_PATH="org.gnome.Terminal.ProfilesList"
 
 if ! [ "${GNOME_TERMINAL_ENABLE}" == "true" ]; then
     printf "* Ignoring GNOME Terminal (disabled from configuration).\n"
 
-elif ! which dconf >/dev/null; then
-    printf "* Ignoring GNOME Terminal (dconf not found).\n"
+elif ! which gsettings >/dev/null; then
+    printf "* Ignoring GNOME Terminal (gsettings not found).\n"
 
 elif [ "${GCS_ACTION}" == "create-backup" ]; then
     printf "* Making backup of colors for GNOME Terminal..."
@@ -26,20 +28,14 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     GNOME_TERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gnome-terminal"
     mkdir -p "${GNOME_TERMINAL_BACKUP_DIR}"
 
-    shopt -s lastpipe
-    dconf dump "${GNOME_TERMINAL_DCONF_PATH}/" \
-    | awk '/\[:/||/visible-name=/' \
-    | while read i; do
-        if [ "${i:0:1}" == "[" ]; then
-            gnome_terminal_profile_id="${i:1:-1}"
-        elif [ "${i}" == "${GNOME_TERMINAL_PROFILE}" ]; then
-            break
-        fi
-    done
-    shopt -u lastpipe
-    dconf read "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/use-theme-colors" > "${GNOME_TERMINAL_BACKUP_DIR}/use-theme-colors"
-    dconf read "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/background-color" > "${GNOME_TERMINAL_BACKUP_DIR}/background-color"
-    dconf read "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/foreground-color" > "${GNOME_TERMINAL_BACKUP_DIR}/foreground-color"
+    gnome_terminal_profile_id="$(gsettings get "${GNOME_TERMINAL_PROFILES_LIST_PATH}" default)"
+    gnome_terminal_profile_id=":${gnome_terminal_profile_id:1:-1}"
+
+    gsettings get "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "use-theme-colors" > "${GNOME_TERMINAL_BACKUP_DIR}/use-theme-colors"
+    gsettings get "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "background-color" > "${GNOME_TERMINAL_BACKUP_DIR}/background-color"
+    gsettings get "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "foreground-color" > "${GNOME_TERMINAL_BACKUP_DIR}/foreground-color"
+    gsettings get "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "palette" > "${GNOME_TERMINAL_BACKUP_DIR}/palette"
+
     printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
@@ -47,48 +43,37 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
     GNOME_TERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gnome-terminal"
 
-    shopt -s lastpipe
-    dconf dump "${GNOME_TERMINAL_DCONF_PATH}/" \
-    | awk '/\[:/||/visible-name=/' \
-    | while read i; do
-        if [ "${i:0:1}" == "[" ]; then
-            gnome_terminal_profile_id="${i:1:-1}"
-        elif [ "${i}" == "${GNOME_TERMINAL_PROFILE}" ]; then
-            break
-        fi
-    done
-    shopt -u lastpipe
+    gnome_terminal_profile_id="$(gsettings get "${GNOME_TERMINAL_PROFILES_LIST_PATH}" default)"
+    gnome_terminal_profile_id=":${gnome_terminal_profile_id:1:-1}"
 
     if [ -f "${GNOME_TERMINAL_BACKUP_DIR}/use-theme-colors" ]; then
-        dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/use-theme-colors" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/use-theme-colors")
+        gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "use-theme-colors" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/use-theme-colors")
     fi
 
     if [ -f "${GNOME_TERMINAL_BACKUP_DIR}/background-color" ]; then
-        dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/background-color" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/background-color")
+        gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "background-color" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/background-color")
     fi
 
     if [ -f "${GNOME_TERMINAL_BACKUP_DIR}/foreground-color" ]; then
-        dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/foreground-color" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/foreground-color")
+        gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "foreground-color" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/foreground-color")
+    fi
+
+    if [ -f "${GNOME_TERMINAL_BACKUP_DIR}/palette" ]; then
+        gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "palette" $(cat "${GNOME_TERMINAL_BACKUP_DIR}/palette")
     fi
 
     printf " done.\n"
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     printf "* Setting colors for GNOME Terminal..."
-    shopt -s lastpipe
-    dconf dump "${GNOME_TERMINAL_DCONF_PATH}/" \
-    | awk '/\[:/||/visible-name=/' \
-    | while read i; do
-        if [ "${i:0:1}" == "[" ]; then
-            gnome_terminal_profile_id="${i:1:-1}"
-        elif [ "${i}" == "${GNOME_TERMINAL_PROFILE}" ]; then
-            break
-        fi
-    done
-    shopt -u lastpipe
-    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/use-theme-colors" "false"
-    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/background-color" "'${gnome_terminal_bg_color}'"
-    dconf write "${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/foreground-color" "'${gnome_terminal_fg_color}'"
+
+    gnome_terminal_profile_id="$(gsettings get "${GNOME_TERMINAL_PROFILES_LIST_PATH}" default)"
+    gnome_terminal_profile_id=":${gnome_terminal_profile_id:1:-1}"
+
+    gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "use-theme-colors" "false"
+    gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "background-color" "'${gnome_terminal_bg_color}'"
+    gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "foreground-color" "'${gnome_terminal_fg_color}'"
+    gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "palette" "['${terminal_palette_black}', '${terminal_palette_red}', '${terminal_palette_green}', '${terminal_palette_yellow}', '${terminal_palette_blue}', '${terminal_palette_purple}', '${terminal_palette_cyan}', '${terminal_palette_white}', '${terminal_palette_light_black}', '${terminal_palette_light_red}', '${terminal_palette_light_green}', '${terminal_palette_light_yellow}', '${terminal_palette_light_blue}', '${terminal_palette_light_purple}', '${terminal_palette_light_cyan}', '${terminal_palette_light_white}']"
     printf " done.\n"
 
 fi
