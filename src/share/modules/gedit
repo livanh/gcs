@@ -94,7 +94,6 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         gedit_template_file="${BASH_SOURCE%/*}/gedit-template.xml"
         
         if [ -f "${gedit_template_file}" ]; then
-            [ -d "$HOME/.config/gedit/colorschemes" ] || mkdir "$HOME/.config/gedit/colorschemes"
             mkdir -p "$HOME/.local/share/gtksourceview-3.0/styles"
             destfile="$HOME/.local/share/gtksourceview-3.0/styles/${FULL_COLOR_THEME_NAME}.xml"
             cp "${gedit_template_file}" "${destfile}"

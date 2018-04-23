@@ -41,7 +41,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             zoom-fill) pcmanfm --wallpaper-mode=crop    --set-wallpaper "${wallpaper_file}";;
         esac
 
-        # these require a patched version of PCManFM: https://github.com/livanh/pcmanfm (master-with improvements branch)
+        # these require a patched version of PCManFM: https://github.com/livanh/pcmanfm (master-with-improvements branch)
         pcmanfm --wallpaper-bg-color ${wallpaper_bg_color}
         pcmanfm --desktop-text-color ${wallpaper_text_color}
         pcmanfm --desktop-shadow-color ${wallpaper_shadow_color}
