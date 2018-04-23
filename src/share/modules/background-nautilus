@@ -9,6 +9,8 @@ which ps >/dev/null || return
 BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
 BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
 
+BACKGROUND_NAUTILUS_GSETTINGS_PATH="org.gnome.desktop.background"
+
 for i in ${COLOR_THEME_DIRS[@]}; do
     if [ -f "$i/${wallpaper_image}" ]; then
         wallpaper_file="$i/${wallpaper_image}"
@@ -24,12 +26,12 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
     mkdir -p "${BACKGROUND_NAUTILUS_BACKUP_DIR}"
 
-    gsettings get org.gnome.desktop.background color-shading-type > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type"
-    gsettings get org.gnome.desktop.background picture-opacity    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity"
-    gsettings get org.gnome.desktop.background primary-color      > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color"
-    gsettings get org.gnome.desktop.background secondary-color    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color"
-    gsettings get org.gnome.desktop.background picture-uri        > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri"
-    gsettings get org.gnome.desktop.background picture-options    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "color-shading-type" > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-opacity"    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "primary-color"      > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "secondary-color"    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"        > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri"
+    gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options"    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options"
 
     printf " done.\n"
 
@@ -39,27 +41,27 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type" ]; then
-        gsettings set org.gnome.desktop.background color-shading-type $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "color-shading-type" $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type")
     fi
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity" ]; then
-        gsettings set org.gnome.desktop.background picture-opacity    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-opacity"    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-opacity")
     fi
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color" ]; then
-        gsettings set org.gnome.desktop.background primary-color      $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "primary-color"      $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/primary-color")
     fi
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color" ]; then
-        gsettings set org.gnome.desktop.background secondary-color    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "secondary-color"    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/secondary-color")
     fi
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri" ]; then
-        gsettings set org.gnome.desktop.background picture-uri        $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"        $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-uri")
     fi
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options" ]; then
-        gsettings set org.gnome.desktop.background picture-options    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options")
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options"    $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options")
     fi
 
     printf " done.\n"
@@ -74,20 +76,20 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     else
         printf "* Setting wallpaper with nautilus..."
 
-        gsettings set org.gnome.desktop.background color-shading-type "solid"
-        gsettings set org.gnome.desktop.background primary-color "${wallpaper_bg_color}"
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" color-shading-type "solid"
+        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" primary-color "${wallpaper_bg_color}"
 
         case "${wallpaper_mode}" in
-            centered)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                       gsettings set org.gnome.desktop.background picture-options "centered";;
-            tiled)     gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                       gsettings set org.gnome.desktop.background picture-options "spanned";;
-            stretched) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                       gsettings set org.gnome.desktop.background picture-options "stretched";;
-            zoom-fit)  gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                       gsettings set org.gnome.desktop.background picture-options "scaled";;
-            zoom-fill) gsettings set org.gnome.desktop.background picture-uri "file://${wallpaper_file}"
-                       gsettings set org.gnome.desktop.background picture-options "zoom";;
+            centered)  gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
+                       gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "centered";;
+            tiled)     gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
+                       gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "spanned";;
+            stretched) gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
+                       gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "stretched";;
+            zoom-fit)  gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
+                       gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "scaled";;
+            zoom-fill) gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
+                       gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "zoom";;
         esac
         printf " done.\n"
 
