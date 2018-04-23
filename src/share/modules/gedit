@@ -56,6 +56,7 @@ GEDIT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gedit enable      2>/dev/n
 GCS_SYNTAX_FALLBACK_DEFAULT="true"
 GCS_SYNTAX_FALLBACK="$(crudini   --get ${GCS_CONFIG_FILE} gcs  syntax_fallback  2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
 GEDIT_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} gedit syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+GEDIT_GSETTINGS_PATH="org.gnome.gedit.preferences.editor"
 
 if ! [ "${GEDIT_ENABLE}" == "true" ]; then
     printf "* Ignoring gedit (disabled from configuration).\n"
@@ -65,7 +66,7 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
 
     GEDIT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gedit"
     mkdir -p "${GEDIT_BACKUP_DIR}"
-    gsettings get org.gnome.gedit.preferences.editor scheme > "${GEDIT_BACKUP_DIR}/scheme"
+    gsettings get "${GEDIT_GSETTINGS_PATH}" scheme > "${GEDIT_BACKUP_DIR}/scheme"
 
     printf " done.\n"
 
@@ -74,7 +75,7 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
 
     GEDIT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gedit"
     if [ -f "${GEDIT_BACKUP_DIR}/scheme" ]; then
-        gsettings set org.gnome.gedit.preferences.editor scheme $(cat "${GEDIT_BACKUP_DIR}/scheme")
+        gsettings set "${GEDIT_GSETTINGS_PATH}" scheme $(cat "${GEDIT_BACKUP_DIR}/scheme")
         printf " done.\n"
     else
         printf " not found!\n"
@@ -84,7 +85,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${GEDIT_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for gedit..."
-            gsettings set org.gnome.gedit.preferences.editor scheme "Default"
+            gsettings set "${GEDIT_GSETTINGS_PATH}" scheme "Default"
             printf " done.\n"
         fi
 
@@ -189,7 +190,7 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
             xmlstarlet ed --inplace --update "/style-scheme/style[@name='xml:element-name']/@foreground"   --value "${gedit_xml_element_name}"   "${destfile}"
             xmlstarlet ed --inplace --update "/style-scheme/style[@name='xml:entity']/@foreground"         --value "${gedit_xml_entity}"         "${destfile}"
 
-            gsettings set org.gnome.gedit.preferences.editor scheme "${FULL_COLOR_THEME_NAME}"
+            gsettings set "${GEDIT_GSETTINGS_PATH}" scheme "${FULL_COLOR_THEME_NAME}"
             printf " done.\n" 
         else
             printf " error: template file \"${gedit_template_file}\" not found!\n"

@@ -6,6 +6,8 @@
 CURSOR_THEME_ENABLE_DEFAULT="true"
 CURSOR_THEME_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cursor-theme enable      2>/dev/null || echo "${CURSOR_THEME_ENABLE_DEFAULT}")"
 
+CURSOR_THEME_DEFAULT_PATH="$HOME/.icons/default"
+
 if ! [ "${CURSOR_THEME_ENABLE}" == "true" ]; then
     printf "* Not setting cursor theme (disabled from configuration).\n"
 
@@ -25,18 +27,18 @@ elif [[ $cursor_theme_name ]] && [ "${GCS_ACTION}" == "apply-theme" ]; then
 
     printf "* Setting cursor theme: ${cursor_theme_name}..."
     if [ "${cursor_theme_found}" == "true" ]; then
-        cursor_theme_index="$HOME/.icons/default/index.theme"
+        ${CURSOR_THEME_USER_PATH}="${CURSOR_THEME_USER_PATH}/index.theme"
         if ! [ -f "${cursor_theme_index}" ]; then
-            mkdir -p "$HOME/.icons/default"
+            mkdir -p "${CURSOR_THEME_USER_PATH}"
             echo "[Icon Theme]" >  "${cursor_theme_index}"
             echo "Name=Default" >> "${cursor_theme_index}"
             echo "Comment=Default Cursor Theme" >> "${cursor_theme_index}"
             echo "Inherits=" >> "${cursor_theme_index}"
         fi
 
-        set_value "Inherits" "=" "${cursor_theme_name}" "$HOME/.icons/default/index.theme"
-        [ -L "$HOME/.icons/default/cursors" ] && rm "$HOME/.icons/default/cursors"
-        ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "$HOME/.icons/default/cursors"
+        set_value "Inherits" "=" "${cursor_theme_name}" "${cursor_theme_index}"
+        [ -L "${CURSOR_THEME_USER_PATH}/cursors" ] && rm "${CURSOR_THEME_USER_PATH}/cursors"
+        ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "${CURSOR_THEME_USER_PATH}/cursors"
         printf " done.\n"
     else
         printf " not found!\n"
