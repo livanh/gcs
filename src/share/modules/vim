@@ -24,7 +24,7 @@ function vim_check_dependencies() {
         printf "* Ignoring Vim (disabled from configuration).\n"
         return 1
 
-    elif ! [ -f "$VIM_CONFIG_FILE}" ]; then
+    elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
         printf "* Ignoring Vim (configuration file ${VIM_CONFIG_FILE} not found).\n"
         return 1
 
