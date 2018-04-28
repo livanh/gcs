@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function lxterminal_init_module() {
+function init_module() {
     LXTERMINAL_ENABLE_DEFAULT="true"
     LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/.config/lxterminal/lxterminal.conf"
 
@@ -10,7 +10,7 @@ function lxterminal_init_module() {
 
 
 
-function lxterminal_check_dependencies() {
+function check_dependencies() {
     if ! which lxterminal >/dev/null; then
         return 1
 
@@ -30,14 +30,14 @@ function lxterminal_check_dependencies() {
 
 
 
-function lxterminal_derive_colors() {
+function derive_colors() {
     : ${lxterminal_bg_color:=${terminal_bg_color}}
     : ${lxterminal_fg_color:=${terminal_fg_color}}
 }
 
 
 
-function lxterminal_create_backup() {
+function create_backup() {
     printf "* Making backup of LXTerminal configuration file..."
 
     LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
@@ -49,7 +49,7 @@ function lxterminal_create_backup() {
 
 
 
-function lxterminal_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of LXTerminal configuration file..."
 
     LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
@@ -63,7 +63,7 @@ function lxterminal_restore_backup() {
 
 
 
-function lxterminal_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for LXTerminal..."
 
     LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
@@ -78,22 +78,4 @@ function lxterminal_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-lxterminal_init_module
-lxterminal_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    lxterminal_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    lxterminal_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    lxterminal_derive_colors
-    lxterminal_apply_theme
-
-fi
 

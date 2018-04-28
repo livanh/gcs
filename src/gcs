@@ -506,10 +506,31 @@ function select_modules() {
 
 function execute_modules() {
     for module_file in ${MODULES[@]}; do
+
         # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
         load_color_theme "${COLOR_THEME_NAME}"
-        # Load a module
+
+        # Reset module functions
+        function init_module()        { true; }
+        function check_dependencies() { return 1; }
+        function derive_colors()      { true; }
+        function create_backup()      { true; }
+        function restore_backup()     { true; }
+        function apply_theme()        { true; }
+
+        # Load module
         . "${module_file}"
+
+        # Execute module
+        init_module
+        check_dependencies
+        [ $? == 1 ] && continue
+
+        case "${GCS_ACTION}" in
+            "create-backup")  create_backup;;
+            "restore-backup") restore_backup;;
+            "apply-theme")    derive_colors; apply_theme;;
+        esac
     done
 }
 

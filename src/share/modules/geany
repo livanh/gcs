@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function geany_init_module() {
+function init_module() {
     GEANY_ENABLE_DEFAULT="true"
     GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
 
@@ -14,7 +14,7 @@ function geany_init_module() {
 
 
 
-function geany_check_dependencies() {
+function check_dependencies() {
     if ! which geany >/dev/null; then
         return 1
 
@@ -34,7 +34,7 @@ function geany_check_dependencies() {
 
 
 
-function geany_derive_colors() {
+function derive_colors() {
     : ${geany_bg:=${editor_bg}}
     : ${geany_fg:=${editor_fg}}
     : ${geany_selected_bg:=${editor_selected_bg}}
@@ -78,7 +78,7 @@ function geany_derive_colors() {
 
 
 
-function geany_create_backup() {
+function create_backup() {
     printf "* Making backup of Geany configuration file..."
 
     GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
@@ -90,7 +90,7 @@ function geany_create_backup() {
 
 
 
-function geany_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of Geany configuration file..."
 
     GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
@@ -104,7 +104,7 @@ function geany_restore_backup() {
 
 
 
-function geany_apply_theme() {
+function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${GEANY_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for Geany..."
@@ -191,23 +191,4 @@ function geany_apply_theme() {
 
     fi
 }
-
-
-
-geany_init_module
-geany_check_dependencies
-[ $? == 1 ] && return
-
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    geany_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    geany_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    geany_derive_colors
-    geany_apply_theme
-
-fi
 

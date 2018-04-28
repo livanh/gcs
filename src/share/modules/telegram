@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function telegram_init_module() {
+function init_module() {
     TELEGRAM_ENABLE_DEFAULT="true"
     TELEGRAM_CONFIG_DIR_DEFAULT="$HOME/.TelegramDesktop"
     TELEGRAM_BINARY_DEFAULT="/opt/telegram/telegram"
@@ -14,7 +14,7 @@ function telegram_init_module() {
 
 
 
-function telegram_check_dependencies() {
+function check_dependencies() {
     if ! which "${TELEGRAM_BINARY}" >/dev/null; then
         return 1
 
@@ -37,7 +37,7 @@ function telegram_check_dependencies() {
 
 
 
-function telegram_derive_colors() {
+function derive_colors() {
     # basic colors
     : ${telegram_windowActiveTextFg=${link_color}}
     : ${telegram_windowBg:=${bg_color}}
@@ -235,19 +235,19 @@ function telegram_derive_colors() {
 
 
 
-function telegram_create_backup() {
+function create_backup() {
     printf "* Backup/restore not supported with Telegram.\n"
 }
 
 
 
-function telegram_restore_backup() {
+function restore_backup() {
     printf "* Backup/restore not supported with Telegram.\n"
 }
 
 
 
-function telegram_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for Telegram..."
     
     TELEGRAM_TMP_DIR="${GCS_TMP_DIR}/telegram"
@@ -468,22 +468,4 @@ function telegram_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-telegram_init_module
-telegram_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    telegram_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    telegram_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    telegram_derive_colors
-    telegram_apply_theme
-
-fi
 

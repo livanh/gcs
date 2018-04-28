@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function rofi_init_module() {
+function init_module() {
     ROFI_ENABLE_DEFAULT="true"
     ROFI_CONFIG_FILE_DEFAULT="$HOME/.config/rofi/config"
     ROFI_RESTART_COMMAND_DEFAULT=""
@@ -12,7 +12,7 @@ function rofi_init_module() {
 
 
 
-function rofi_check_dependencies() {
+function check_dependencies() {
     if ! which rofi >/dev/null; then
         return 1
 
@@ -32,7 +32,7 @@ function rofi_check_dependencies() {
 
 
 
-function rofi_derive_colors() {
+function derive_colors() {
     : ${rofi_normal_bg:=${base_color}}
     : ${rofi_normal_fg:=${text_color}}
     : ${rofi_normal_bg_alt:=${base_color}}
@@ -54,7 +54,7 @@ function rofi_derive_colors() {
 
 
 
-function rofi_create_backup() {
+function create_backup() {
     printf "* Making backup of rofi configuration file..."
 
     ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
@@ -66,7 +66,7 @@ function rofi_create_backup() {
 
 
 
-function rofi_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of rofi configuration file..."
 
     ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
@@ -83,7 +83,7 @@ function rofi_restore_backup() {
 
 
 
-function rofi_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for rofi..."
 
     ROFI_TMP_DIR="${GCS_TMP_DIR}/rofi"
@@ -102,22 +102,4 @@ function rofi_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-rofi_init_module
-rofi_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    rofi_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    rofi_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    rofi_derive_colors
-    rofi_apply_theme
-
-fi
 

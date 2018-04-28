@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function openbox_init_module() {
+function init_module() {
     OPENBOX_ENABLE_DEFAULT="true"
     OPENBOX_CONFIG_FILE_DEFAULT="$HOME/.config/openbox/rc.xml"
     OPENBOX_RESTART_COMMAND_DEFAULT="openbox --reconfigure"
@@ -16,7 +16,7 @@ function openbox_init_module() {
 
 
 
-function openbox_check_dependencies() {
+function check_dependencies() {
     if ! which openbox >/dev/null; then
         return 1
 
@@ -39,7 +39,7 @@ function openbox_check_dependencies() {
 
 
 
-function openbox_derive_colors() {
+function derive_colors() {
     : ${openbox_window_active_title_bg_color:=${titlebar_focused_bg_color}}
     : ${openbox_window_active_label_text_color:=${titlebar_focused_fg_color}}
     : ${openbox_window_inactive_title_bg_color:=${titlebar_unfocused_bg_color}}
@@ -61,7 +61,7 @@ function openbox_derive_colors() {
 
 
 
-function openbox_create_backup() {
+function create_backup() {
     printf "* Making backup of openbox configuration file..."
 
     OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
@@ -73,7 +73,7 @@ function openbox_create_backup() {
 
 
 
-function openbox_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of openbox configuration file..."
 
     OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
@@ -90,7 +90,7 @@ function openbox_restore_backup() {
 
 
 
-function openbox_apply_theme() {
+function apply_theme() {
     if ! pgrep openbox &>/dev/null; then
         printf "* Not setting colors for openbox (not active).\n"
 
@@ -123,22 +123,4 @@ function openbox_apply_theme() {
         printf " done.\n"
     fi
 }
-
-
-
-openbox_init_module
-openbox_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    openbox_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    openbox_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    openbox_derive_colors
-    openbox_apply_theme
-
-fi
 

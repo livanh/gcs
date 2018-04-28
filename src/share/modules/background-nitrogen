@@ -2,14 +2,14 @@
 
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
-function nitrogen_init_module() {
+function init_module() {
     NITROGEN_ENABLE_DEFAULT="true"
     NITROGEN_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nitrogen enable 2>/dev/null || echo "${NITROGEN_ENABLE_DEFAULT}")"
 }
 
 
 
-function nitrogen_check_dependencies() {
+function check_dependencies() {
     if ! which nitrogen >/dev/null; then
         return 1
 
@@ -25,7 +25,7 @@ function nitrogen_check_dependencies() {
 
 
 
-function nitrogen_derive_colors() {
+function derive_colors() {
     for i in ${COLOR_THEME_DIRS[@]}; do
         if [ -f "$i/${wallpaper_image}" ]; then
             wallpaper_file="$i/${wallpaper_image}"
@@ -35,19 +35,19 @@ function nitrogen_derive_colors() {
 
 
 
-function nitrogen_create_backup() {
+function create_backup() {
     printf "* Backup/restore not supported with nitrogen.\n"
 }
 
 
 
-function nitrogen_restore_backup() {
+function restore_backup() {
     printf "* Backup/restore not supported with nitrogen.\n"
 }
 
 
 
-function nitrogen_apply_theme() {
+function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"
 
@@ -64,22 +64,4 @@ function nitrogen_apply_theme() {
 
     fi
 }
-
-
-
-nitrogen_init_module
-nitrogen_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    nitrogen_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    nitrogen_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    nitrogen_derive_colors
-    nitrogen_apply_theme
-
-fi
 
