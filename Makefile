@@ -21,7 +21,7 @@ install:
 	done;
 	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules
 	for module in $(MODULES); do \
-		install src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
+		install -m 644 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
 	done;
 	mkdir -p $(DESTDIR)/etc/bash_completion.d
 	install -D src/etc/bash_completion.d/gcs $(DESTDIR)/etc/bash_completion.d/gcs
