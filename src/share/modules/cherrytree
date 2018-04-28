@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function cherrytree_init_module() {
+function init_module() {
     CHERRYTREE_ENABLE_DEFAULT="true"
     CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
     CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
@@ -9,7 +9,7 @@ function cherrytree_init_module() {
 
 
 
-function cherrytree_check_dependencies() {
+function check_dependencies() {
     if ! which cherrytree >/dev/null; then
         return 1
 
@@ -29,7 +29,7 @@ function cherrytree_check_dependencies() {
 
 
 
-function cherrytree_derive_colors() {
+function derive_colors() {
     : ${cherrytree_window_fg:=${text_color}}
     : ${cherrytree_window_bg:=${base_color}}
     : ${cherrytree_tree_fg:=${text_color}}
@@ -42,7 +42,7 @@ function cherrytree_derive_colors() {
 
 
 
-function cherrytree_create_backup() {
+function create_backup() {
     printf "* Making backup of cherrytree configuration file..."
 
     CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
@@ -54,7 +54,7 @@ function cherrytree_create_backup() {
 
 
 
-function cherrytree_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of cherrytree configuration file..."
 
     CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
@@ -68,7 +68,7 @@ function cherrytree_restore_backup() {
 
 
 
-function cherrytree_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for cherrytree..."
 
     CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
@@ -89,22 +89,4 @@ function cherrytree_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-cherrytree_init_module
-cherrytree_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    cherrytree_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    cherrytree_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    cherrytree_derive_colors
-    cherrytree_apply_theme
-
-fi
 

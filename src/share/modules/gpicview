@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function gpicview_init_module() {
+function init_module() {
     GPICVIEW_ENABLE_DEFAULT="true"
     GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
 
@@ -10,7 +10,7 @@ function gpicview_init_module() {
 
 
 
-function gpicview_check_dependencies() {
+function check_dependencies() {
     if ! which gpicview >/dev/null; then
         return 1
 
@@ -30,14 +30,14 @@ function gpicview_check_dependencies() {
 
 
 
-function gpicview_derive_colors() {
+function derive_colors() {
     : ${gpicview_bg_color:=${base_color}}
     : ${gpicview_bg_full_color:=${base_color}}
 }
 
 
 
-function gpicview_create_backup() {
+function create_backup() {
     printf "* Making backup of gpicview configuration file..."
 
     GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
@@ -49,7 +49,7 @@ function gpicview_create_backup() {
 
 
 
-function gpicview_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of gpicview configuration file..."
 
     GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
@@ -63,7 +63,7 @@ function gpicview_restore_backup() {
 
 
 
-function gpicview_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for gpicview..."
 
     GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"
@@ -78,22 +78,4 @@ function gpicview_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-gpicview_init_module
-gpicview_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    gpicview_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    gpicview_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    gpicview_derive_colors
-    gpicview_apply_theme
-
-fi
 

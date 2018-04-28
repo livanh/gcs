@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function gtk_init_module() {
+function init_module() {
     GTK_ENABLE_DEFAULT="true"
     GTK_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
 
@@ -9,7 +9,7 @@ function gtk_init_module() {
 
 
 
-function gtk_check_dependencies() {
+function check_dependencies() {
     if ! which oomox-cli >/dev/null; then
         printf "* Ignoring colors and icon theme for GTK+ (oomox not installed).\n"
         return 1
@@ -26,7 +26,7 @@ function gtk_check_dependencies() {
 
 
 
-function gtk_derive_colors() {
+function derive_colors() {
     : ${gtk_base_color:=${base_color}}
     : ${gtk_text_color:=${text_color}}
     : ${gtk_bg_color:=${bg_color}}
@@ -62,7 +62,7 @@ function gtk_derive_colors() {
 
 
 
-function gtk_create_backup() {
+function create_backup() {
     printf "* Making backup of colors and icon theme for GTK+..."
 
     GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
@@ -87,7 +87,7 @@ function gtk_create_backup() {
 
 
 
-function gtk_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of colors and icon theme for GTK+...\n"
 
     GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
@@ -136,7 +136,7 @@ function gtk_restore_backup() {
 
 
 
-function gtk_apply_theme() {
+function apply_theme() {
     printf "* Setting colors and icon theme for GTK+...\n"
 
     GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
@@ -374,22 +374,4 @@ function mix_hex_colors(){
 
     printf "#%x%x%x" "${r}" "${g}" "${b}"
 }
-
-
-
-gtk_init_module
-gtk_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    gtk_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    gtk_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    gtk_derive_colors
-    gtk_apply_theme
-
-fi
 

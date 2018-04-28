@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function dunst_init_module() {
+function init_module() {
     DUNST_ENABLE_DEFAULT="true"
     DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"
     DUNST_RESTART_COMMAND_DEFAULT=""
@@ -12,7 +12,7 @@ function dunst_init_module() {
 
 
 
-function dunst_check_dependencies() {
+function check_dependencies() {
     if ! which dunst >/dev/null; then
         return 1
 
@@ -32,7 +32,7 @@ function dunst_check_dependencies() {
 
 
 
-function dunst_derive_colors() {
+function derive_colors() {
     : ${dunst_frame:=${selected_bg_color}}
     : ${dunst_urgency_low_bg:=${notification_bg_color}}
     : ${dunst_urgency_low_fg:=${notification_fg_color}}
@@ -44,7 +44,7 @@ function dunst_derive_colors() {
 
 
 
-function dunst_create_backup() {
+function create_backup() {
     printf "* Making backup of dunst configuration file..."
 
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
@@ -56,7 +56,7 @@ function dunst_create_backup() {
 
 
 
-function dunst_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of dunst configuration file..."
 
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
@@ -73,7 +73,7 @@ function dunst_restore_backup() {
 
 
 
-function dunst_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for dunst..."
 
     DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
@@ -95,22 +95,4 @@ function dunst_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-dunst_init_module
-dunst_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    dunst_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    dunst_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    dunst_derive_colors
-    dunst_apply_theme
-
-fi
 

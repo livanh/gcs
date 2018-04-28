@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function xresources_init_module() {
+function init_module() {
     XRESOURCES_ENABLE_DEFAULT="true"
     XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
     XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
@@ -14,7 +14,7 @@ function xresources_init_module() {
 
 
 
-function xresources_check_dependencies() {
+function check_dependencies() {
     if ! which xrdb >/dev/null; then
         return 1
 
@@ -30,7 +30,7 @@ function xresources_check_dependencies() {
 
 
 
-function xresources_derive_colors() {
+function derive_colors() {
     : ${xresources_bg_color:=${bg_color}}
     : ${xresources_fg_color:=${fg_color}}
     : ${xresources_base_color:=${base_color}}
@@ -55,7 +55,7 @@ function xresources_derive_colors() {
 
 
 
-function xresources_create_backup() {
+function create_backup() {
     printf "* Making backup of Xresources file..."
 
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
@@ -67,7 +67,7 @@ function xresources_create_backup() {
 
 
 
-function xresources_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of Xresources file..."
 
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
@@ -85,7 +85,7 @@ function xresources_restore_backup() {
 
 
 
-function xresources_apply_theme() {
+function apply_theme() {
     [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"
 
     printf "* Setting Xresources colors..."
@@ -123,23 +123,4 @@ function xresources_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-xresources_init_module
-xresources_check_dependencies
-[ $? == 1 ] && return
-
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    xresources_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    xresources_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    xresources_derive_colors
-    xresources_apply_theme
-
-fi
 

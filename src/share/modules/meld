@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function meld_init_module() {
+function init_module() {
     MELD_ENABLE_DEFAULT="true"
     MELD_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} meld enable 2>/dev/null || echo "${MELD_ENABLE_DEFAULT}")"
     MELD_DEFAULT_STYLE_FILE="/usr/share/meld/styles/meld-base.xml"
@@ -14,7 +14,7 @@ function meld_init_module() {
 
 
 
-function meld_check_dependencies() {
+function check_dependencies() {
     if ! which neld >/dev/null; then
         return 1
 
@@ -41,7 +41,7 @@ function meld_check_dependencies() {
 
 
 
-function meld_derive_colors() {
+function derive_colors() {
     : ${meld_insert_text:=$selected_fg_color}
     : ${meld_insert_bg:=$editor_diff_added}
     : ${meld_insert_outline:=$editor_diff_added}
@@ -72,7 +72,7 @@ function meld_derive_colors() {
 
 
 
-function meld_create_backup() {
+function create_backup() {
     printf "* Making backup of colors for Meld..."
 
     MELD_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/meld"
@@ -84,7 +84,7 @@ function meld_create_backup() {
 
 
 
-function meld_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of colors for Meld..."
 
     MELD_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/meld"
@@ -98,7 +98,7 @@ function meld_restore_backup() {
 
 
 
-function meld_apply_theme() {
+function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [[ "$(gsettings get org.gnome.meld style-scheme)" == "'gcs"* ]]; then
             if [ "${MELD_SYNTAX_FALLBACK}" == "true" ]; then
@@ -154,25 +154,7 @@ function meld_apply_theme() {
 
 
 
-hex2rgb(){
+function hex2rgb(){
     printf "%d, %d, %d" 0x${1:1:2} 0x${1:3:2} 0x${1:5:2}
 }
-
-
-
-meld_init_module
-meld_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    meld_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    meld_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    meld_derive_colors
-    meld_apply_theme
-
-fi
 

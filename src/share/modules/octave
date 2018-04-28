@@ -2,7 +2,7 @@
 
 # FIXME: set_value_section doesn't work, why?
 
-function octave_init_module() {
+function init_module() {
     OCTAVE_ENABLE_DEFAULT="true"
     OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
 
@@ -16,7 +16,7 @@ function octave_init_module() {
 
 
 
-function octave_check_dependencies() {
+function check_dependencies() {
     if ! which octave >/dev/null; then
         return 1
 
@@ -36,7 +36,7 @@ function octave_check_dependencies() {
 
 
 
-function octave_derive_colors() {
+function derive_colors() {
     : ${octave_terminal_bg:=${terminal_bg_color}}
     : ${octave_terminal_fg:=${terminal_fg_color}}
     : ${octave_terminal_selection:=${selected_bg_color}}
@@ -76,7 +76,7 @@ function octave_derive_colors() {
 
 
 
-function octave_create_backup() {
+function create_backup() {
     printf "* Making backup of Octave configuration file..."
 
     OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
@@ -88,7 +88,7 @@ function octave_create_backup() {
 
 
 
-function octave_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of Octave configuration file..."
 
     OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
@@ -102,7 +102,7 @@ function octave_restore_backup() {
 
 
 
-function octave_apply_theme() {
+function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
 
         if [ -f "${OCTAVE_CONFIG_FILE}" ]; then
@@ -208,22 +208,4 @@ function octave_apply_theme() {
 
     fi
 }
-
-
-
-octave_init_module
-octave_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    octave_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    octave_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    octave_derive_colors
-    octave_apply_theme
-
-fi
 

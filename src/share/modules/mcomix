@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function mcomix_init_module() {
+function init_module() {
     MCOMIX_ENABLE_DEFAULT="true"
     MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
 
@@ -10,7 +10,7 @@ function mcomix_init_module() {
 
 
 
-function mcomix_check_dependencies() {
+function check_dependencies() {
     if ! which mcomix >/dev/null; then
         return 1
 
@@ -30,14 +30,14 @@ function mcomix_check_dependencies() {
 
 
 
-function mcomix_derive_colors() {
+function derive_colors() {
     : ${mcomix_bg_color:=${base_color}}
     : ${mcomix_thumb_bg_color:=${bg_color}}
 }
 
 
 
-function mcomix_create_backup() {
+function create_backup() {
     printf "* Making backup of MComix configuration file..."
 
     MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
@@ -49,7 +49,7 @@ function mcomix_create_backup() {
 
 
 
-function mcomix_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of MComix configuration file..."
 
     MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
@@ -63,7 +63,7 @@ function mcomix_restore_backup() {
 
 
 
-function mcomix_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for MComix..."
 
     MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
@@ -108,22 +108,4 @@ set_color_mcomix() {
     }
     " "${file}"
 }
-
-
-
-mcomix_init_module
-mcomix_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    mcomix_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    mcomix_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    mcomix_derive_colors
-    mcomix_apply_theme
-
-fi
 

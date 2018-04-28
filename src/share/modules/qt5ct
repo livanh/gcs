@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function qt5ct_init_module() {
+function init_module() {
     QT5CT_ENABLE_DEFAULT="true"
     QT5CT_CONFIG_FILE_DEFAULT="$HOME/.config/qt5ct/qt5ct.conf"
 
@@ -10,7 +10,7 @@ function qt5ct_init_module() {
 
 
 
-function qt5ct_check_dependencies() {
+function check_dependencies() {
     if ! which qt5ct >/dev/null; then
         return 1
 
@@ -30,13 +30,13 @@ function qt5ct_check_dependencies() {
 
 
 
-function qt5ct_derive_colors() {
+function derive_colors() {
     : ${qt5ct_icon_theme_name:=${icon_theme_name}}
 }
 
 
 
-function qt5ct_create_backup() {
+function create_backup() {
     printf "* Making backup of qt5ct configuration file..."
 
     QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
@@ -48,7 +48,7 @@ function qt5ct_create_backup() {
 
 
 
-function qt5ct_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of qt5ct configuration file..."
 
     QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
@@ -62,7 +62,7 @@ function qt5ct_restore_backup() {
 
 
 
-function qt5ct_apply_theme() {
+function apply_theme() {
     printf "* Setting icon theme for qt5..."
 
 
@@ -87,22 +87,4 @@ function qt5ct_apply_theme() {
 
     printf " done.\n"
 }
-
-
-
-qt5ct_init_module
-qt5ct_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    qt5ct_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    qt5ct_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    qt5ct_derive_colors
-    qt5ct_apply_theme
-
-fi
 

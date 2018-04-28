@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function terminator_init_module() {
+function init_module() {
     TERMINATOR_ENABLE_DEFAULT="true"
     TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
 
@@ -10,7 +10,7 @@ function terminator_init_module() {
 
 
 
-function terminator_check_dependencies() {
+function check_dependencies() {
     if ! which terminator >/dev/null; then
         return 1
 
@@ -30,7 +30,7 @@ function terminator_check_dependencies() {
 
 
 
-function terminator_derive_colors() {
+function derive_colors() {
     : ${terminator_bg_color:=${terminal_bg_color}}
     : ${terminator_fg_color:=${terminal_fg_color}}
     : ${terminator_cursos_color:=${selected_fg_color}}
@@ -40,7 +40,7 @@ function terminator_derive_colors() {
 
 
 
-function terminator_create_backup() {
+function create_backup() {
     printf "* Making backup of terminator configuration file..."
 
     TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
@@ -52,7 +52,7 @@ function terminator_create_backup() {
 
 
 
-function terminator_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of terminator configuration file..."
 
     TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
@@ -66,7 +66,7 @@ function terminator_restore_backup() {
 
 
 
-function terminator_apply_theme() {
+function apply_theme() {
     printf "* Setting colors for terminator..."
 
     TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
@@ -117,22 +117,4 @@ terminator_set_value_default_profile() {
     }
     " "${file}"
 }
-
-
-
-terminator_init_module
-terminator_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    terminator_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    terminator_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    terminator_derive_colors
-    terminator_apply_theme
-
-fi
 

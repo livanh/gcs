@@ -1,7 +1,7 @@
 #!/bin/bash
 # FIXME: sed gives errors if the relevant lines have also commented copies
 
-function i3wm_init_module() {
+function init_module() {
     I3_ENABLE_DEFAULT="true"
     I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
     I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
@@ -13,7 +13,7 @@ function i3wm_init_module() {
 
 
 
-function i3wm_check_dependencies() {
+function check_dependencies() {
     if ! which i3 >/dev/null; then
         return 1
 
@@ -33,7 +33,7 @@ function i3wm_check_dependencies() {
 
 
 
-function i3wm_derive_colors() {
+function derive_colors() {
     : ${i3_client_focused_border:=${titlebar_focused_bg_color}}
     : ${i3_client_focused_bg:=${titlebar_focused_bg_color}}
     : ${i3_client_focused_fg:=${titlebar_focused_fg_color}}
@@ -82,7 +82,7 @@ function i3wm_derive_colors() {
 
 
 
-function i3wm_create_backup() {
+function create_backup() {
     printf "* Making backup of i3 window manager configuration file..."
 
     I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
@@ -94,7 +94,7 @@ function i3wm_create_backup() {
 
 
 
-function i3wm_restore_backup() {
+function restore_backup() {
     printf "* Restoring backup of i3 window manager configuration file..."
 
     I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
@@ -111,7 +111,7 @@ function i3wm_restore_backup() {
 
 
 
-function i3wm_apply_theme() {
+function apply_theme() {
     if ! i3 --get-socketpath &>/dev/null; then
         printf "* Not setting colors for i3 window manager (not currently active).\n"
 
@@ -146,22 +146,4 @@ function i3wm_apply_theme() {
         printf " done.\n"
     fi
 }
-
-
-
-i3wm_init_module
-i3wm_check_dependencies
-[ $? == 1 ] && return
-
-if [ "${GCS_ACTION}" == "create-backup" ]; then
-    i3wm_create_backup
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    i3wm_restore_backup
-
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    i3wm_derive_colors
-    i3wm_apply_theme
-
-fi
 
