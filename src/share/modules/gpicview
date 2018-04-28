@@ -1,23 +1,43 @@
 #!/bin/bash
 
-which gpicview >/dev/null || return
+function gpicview_init_module() {
+    GPICVIEW_ENABLE_DEFAULT="true"
+    GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
 
-: ${gpicview_bg_color:=${base_color}}
-: ${gpicview_bg_full_color:=${base_color}}
+    GPICVIEW_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
+    GPICVIEW_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
+}
 
-GPICVIEW_ENABLE_DEFAULT="true"
-GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
 
-GPICVIEW_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
-GPICVIEW_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
 
-if ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
-    printf "* Ignoring gpicview (disabled from configuration).\n"
+function gpicview_check_dependencies() {
+    if ! which gpicview >/dev/null; then
+        return 1
 
-elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
-    printf "* Ignoring gpicview (configuration file \"${GPICVIEW_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
+        printf "* Ignoring gpicview (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
+        printf "* Ignoring gpicview (configuration file ${GPICVIEW_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function gpicview_derive_colors() {
+    : ${gpicview_bg_color:=${base_color}}
+    : ${gpicview_bg_full_color:=${base_color}}
+}
+
+
+
+function gpicview_create_backup() {
     printf "* Making backup of gpicview configuration file..."
 
     GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
@@ -25,8 +45,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_BACKUP_DIR}/gpicview.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function gpicview_restore_backup() {
     printf "* Restoring backup of gpicview configuration file..."
 
     GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
@@ -36,8 +59,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function gpicview_apply_theme() {
     printf "* Setting colors for gpicview..."
 
     GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"
@@ -51,4 +77,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     mv "${GPICVIEW_TMP_CONFIG_FILE}" "${GPICVIEW_CONFIG_FILE}"
 
     printf " done.\n"
+}
+
+
+
+gpicview_init_module
+gpicview_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    gpicview_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    gpicview_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    gpicview_derive_colors
+    gpicview_apply_theme
+
 fi
+

@@ -1,28 +1,46 @@
 #!/bin/bash
 
-which gnome-terminal >/dev/null || return
-which gsettings >/dev/null || return
+function gnome_terminal_init_module() {
+    GNOME_TERMINAL_ENABLE_DEFAULT="true"
+    GNOME_TERMINAL_PROFILE_DEFAULT="Default"
 
-: ${gnome_terminal_bg_color:=${terminal_bg_color}}
-: ${gnome_terminal_fg_color:=${terminal_fg_color}}
+    GNOME_TERMINAL_ENABLE="$(crudini  --get ${GCS_CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
+    GNOME_TERMINAL_PROFILE="$(crudini --get ${GCS_CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
 
-GNOME_TERMINAL_ENABLE_DEFAULT="true"
-GNOME_TERMINAL_PROFILE_DEFAULT="Default"
+    GNOME_TERMINAL_GSETTINGS_PATH="org.gnome.Terminal.Legacy.Profile:"
+    GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
+    GNOME_TERMINAL_PROFILES_LIST_PATH="org.gnome.Terminal.ProfilesList"
+}
 
-GNOME_TERMINAL_ENABLE="$(crudini  --get ${GCS_CONFIG_FILE} gnome-terminal enable  2>/dev/null || echo "${GNOME_TERMINAL_ENABLE_DEFAULT}")"
-GNOME_TERMINAL_PROFILE="$(crudini --get ${GCS_CONFIG_FILE} gnome-terminal profile 2>/dev/null || echo "${GNOME_TERMINAL_PROFILE_DEFAULT}")"
 
-GNOME_TERMINAL_GSETTINGS_PATH="org.gnome.Terminal.Legacy.Profile:"
-GNOME_TERMINAL_DCONF_PATH="/org/gnome/terminal/legacy/profiles:"
-GNOME_TERMINAL_PROFILES_LIST_PATH="org.gnome.Terminal.ProfilesList"
 
-if ! [ "${GNOME_TERMINAL_ENABLE}" == "true" ]; then
-    printf "* Ignoring GNOME Terminal (disabled from configuration).\n"
+function gnome_terminal_check_dependencies() {
+    if ! which gnome-terminal >/dev/null; then
+        return 1
 
-elif ! which gsettings >/dev/null; then
-    printf "* Ignoring GNOME Terminal (gsettings not found).\n"
+    elif ! which gsettings >/dev/null; then
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ "${GNOME_TERMINAL_ENABLE}" == "true" ]; then
+        printf "* Ignoring GNOME Terminal (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function gnome_terminal_derive_colors() {
+    : ${gnome_terminal_bg_color:=${terminal_bg_color}}
+    : ${gnome_terminal_fg_color:=${terminal_fg_color}}
+}
+
+
+
+function gnome_terminal_create_backup() {
     printf "* Making backup of colors for GNOME Terminal..."
 
     GNOME_TERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gnome-terminal"
@@ -37,8 +55,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     gsettings get "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "palette" > "${GNOME_TERMINAL_BACKUP_DIR}/palette"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function gnome_terminal_restore_backup() {
     printf "* Restoring backup of colors for GNOME Terminal..."
 
     GNOME_TERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gnome-terminal"
@@ -63,8 +84,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     fi
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function gnome_terminal_apply_theme() {
     printf "* Setting colors for GNOME Terminal..."
 
     gnome_terminal_profile_id="$(gsettings get "${GNOME_TERMINAL_PROFILES_LIST_PATH}" default)"
@@ -75,6 +99,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "foreground-color" "'${gnome_terminal_fg_color}'"
     gsettings set "${GNOME_TERMINAL_GSETTINGS_PATH}${GNOME_TERMINAL_DCONF_PATH}/${gnome_terminal_profile_id}/" "palette" "['${terminal_palette_black}', '${terminal_palette_red}', '${terminal_palette_green}', '${terminal_palette_yellow}', '${terminal_palette_blue}', '${terminal_palette_purple}', '${terminal_palette_cyan}', '${terminal_palette_white}', '${terminal_palette_light_black}', '${terminal_palette_light_red}', '${terminal_palette_light_green}', '${terminal_palette_light_yellow}', '${terminal_palette_light_blue}', '${terminal_palette_light_purple}', '${terminal_palette_light_cyan}', '${terminal_palette_light_white}']"
     printf " done.\n"
+}
+
+
+
+gnome_terminal_init_module
+gnome_terminal_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    gnome_terminal_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    gnome_terminal_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    gnome_terminal_derive_colors
+    gnome_terminal_apply_theme
 
 fi
 

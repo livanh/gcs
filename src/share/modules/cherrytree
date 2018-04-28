@@ -1,29 +1,48 @@
 #!/bin/bash
 
-which cherrytree >/dev/null || return
+function cherrytree_init_module() {
+    CHERRYTREE_ENABLE_DEFAULT="true"
+    CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
+    CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
+    CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
+}
 
-: ${cherrytree_window_fg:=${text_color}}
-: ${cherrytree_window_bg:=${base_color}}
-: ${cherrytree_tree_fg:=${text_color}}
-: ${cherrytree_tree_bg:=${base_color}}
-: ${cherrytree_link_web:=${link_color}}
-: ${cherrytree_link_node:=${link_color}}
-: ${cherrytree_link_file:=${link_color}}
-: ${cherrytree_link_directory:=${link_color}}
 
-CHERRYTREE_ENABLE_DEFAULT="true"
-CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
 
-CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
-CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
+function cherrytree_check_dependencies() {
+    if ! which cherrytree >/dev/null; then
+        return 1
 
-if ! [ "${CHERRYTREE_ENABLE}" == "true" ]; then
-    printf "* Ignoring cherrytree (disabled from configuration).\n"
+    elif ! [ "${CHERRYTREE_ENABLE}" == "true" ]; then
+        printf "* Ignoring cherrytree (disabled from configuration).\n"
+        return 1
 
-elif ! [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
-    printf "* Ignoring cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
+    elif ! [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
+        printf "* Ignoring cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    else
+        return 0
+
+    fi
+}
+
+
+
+function cherrytree_derive_colors() {
+    : ${cherrytree_window_fg:=${text_color}}
+    : ${cherrytree_window_bg:=${base_color}}
+    : ${cherrytree_tree_fg:=${text_color}}
+    : ${cherrytree_tree_bg:=${base_color}}
+    : ${cherrytree_link_web:=${link_color}}
+    : ${cherrytree_link_node:=${link_color}}
+    : ${cherrytree_link_file:=${link_color}}
+    : ${cherrytree_link_directory:=${link_color}}
+}
+
+
+
+function cherrytree_create_backup() {
     printf "* Making backup of cherrytree configuration file..."
 
     CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
@@ -31,8 +50,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_BACKUP_DIR}/config.cfg"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function cherrytree_restore_backup() {
     printf "* Restoring backup of cherrytree configuration file..."
 
     CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
@@ -42,8 +64,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function cherrytree_apply_theme() {
     printf "* Setting colors for cherrytree..."
 
     CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
@@ -63,5 +88,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     mv "${CHERRYTREE_TMP_CONFIG_FILE}" "${CHERRYTREE_CONFIG_FILE}"
 
     printf " done.\n"
+}
+
+
+
+cherrytree_init_module
+cherrytree_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    cherrytree_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    cherrytree_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    cherrytree_derive_colors
+    cherrytree_apply_theme
+
 fi
 

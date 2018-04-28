@@ -1,34 +1,32 @@
 #!/bin/bash
 
-mix_hex_colors(){
+function gtk_init_module() {
+    GTK_ENABLE_DEFAULT="true"
+    GTK_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
 
-    if [ "$#" -ne 3 ]; then
-        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-        exit 2
-    fi
-
-    color1="${1}"
-    color2="${2}"
-    balance="${3}"
-
-    r1="$(printf "%d" 0x${color1:1:2})"
-    g1="$(printf "%d" 0x${color1:3:2})"
-    b1="$(printf "%d" 0x${color1:5:2})"
-    r2="$(printf "%d" 0x${color2:1:2})"
-    g2="$(printf "%d" 0x${color2:3:2})"
-    b2="$(printf "%d" 0x${color2:5:2})"
-
-    r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
-    g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
-    b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
-    LC_ALL=C r="$(printf "%.0f" "${r}")"
-    LC_ALL=C g="$(printf "%.0f" "${g}")"
-    LC_ALL=C b="$(printf "%.0f" "${b}")"
-
-    printf "#%x%x%x" "${r}" "${g}" "${b}"
+    GTK_GSETTINGS_PATH="org.gnome.desktop.interface"
 }
 
-gtk_get_colors() {
+
+
+function gtk_check_dependencies() {
+    if ! which oomox-cli >/dev/null; then
+        printf "* Ignoring colors and icon theme for GTK+ (oomox not installed).\n"
+        return 1
+
+    elif ! [ "${GTK_ENABLE}" == "true" ]; then
+        printf "* Ignoring colors and icon theme for GTK+ (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function gtk_derive_colors() {
     : ${gtk_base_color:=${base_color}}
     : ${gtk_text_color:=${text_color}}
     : ${gtk_bg_color:=${bg_color}}
@@ -62,18 +60,9 @@ gtk_get_colors() {
     gtk_gradient=$(crudini  --get ${GCS_CONFIG_FILE} gtk gradient  2>/dev/null || echo 0.14)
 }
 
-GTK_ENABLE_DEFAULT="true"
-GTK_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} gtk enable 2>/dev/null || echo "${GTK_ENABLE_DEFAULT}")"
 
-GTK_GSETTINGS_PATH="org.gnome.desktop.interface"
 
-if ! [ "${GTK_ENABLE}" == "true" ]; then
-    printf "* Ignoring colors and icon theme for GTK+ (disabled from configuration).\n"
-
-elif ! which oomox-cli >/dev/null; then 
-    printf "* Ignoring colors and icon theme for GTK+ (oomox not installed).\n"
-
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+function gtk_create_backup() {
     printf "* Making backup of colors and icon theme for GTK+..."
 
     GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
@@ -94,8 +83,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
         printf " no supported XSettings manager found!\n"
         # TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
     fi
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function gtk_restore_backup() {
     printf "* Restoring backup of colors and icon theme for GTK+...\n"
 
     GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
@@ -140,12 +132,13 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
         fi
 
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function gtk_apply_theme() {
     printf "* Setting colors and icon theme for GTK+...\n"
 
-    gtk_get_colors
-    
     GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
     mkdir "${GTK_TMP_DIR}"
 
@@ -350,6 +343,53 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         printf " no supported XSettings manager found!\n"
         # TODO: configure theme/colors with .gtkrc-2.0 and .config/gtk-3.0/settings.ini
     fi
+}
+
+
+
+function mix_hex_colors(){
+
+    if [ "$#" -ne 3 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
+    fi
+
+    color1="${1}"
+    color2="${2}"
+    balance="${3}"
+
+    r1="$(printf "%d" 0x${color1:1:2})"
+    g1="$(printf "%d" 0x${color1:3:2})"
+    b1="$(printf "%d" 0x${color1:5:2})"
+    r2="$(printf "%d" 0x${color2:1:2})"
+    g2="$(printf "%d" 0x${color2:3:2})"
+    b2="$(printf "%d" 0x${color2:5:2})"
+
+    r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
+    g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
+    b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
+    LC_ALL=C r="$(printf "%.0f" "${r}")"
+    LC_ALL=C g="$(printf "%.0f" "${g}")"
+    LC_ALL=C b="$(printf "%.0f" "${b}")"
+
+    printf "#%x%x%x" "${r}" "${g}" "${b}"
+}
+
+
+
+gtk_init_module
+gtk_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    gtk_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    gtk_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    gtk_derive_colors
+    gtk_apply_theme
 
 fi
 

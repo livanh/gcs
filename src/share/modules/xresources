@@ -1,42 +1,61 @@
 #!/bin/bash
 
-which xrdb >/dev/null || return
+function xresources_init_module() {
+    XRESOURCES_ENABLE_DEFAULT="true"
+    XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
+    XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
+    XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT=""
 
-XRESOURCES_ENABLE_DEFAULT="true"
-XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
-XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
-XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT=""
+    XRESOURCES_ENABLE="$(crudini              --get ${GCS_CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
+    XRESOURCES_CONFIG_FILE="$(crudini         --get ${GCS_CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
+    XRESOURCES_RESTART_COMMAND="$(crudini     --get ${GCS_CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+    XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${GCS_CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+}
 
-XRESOURCES_ENABLE="$(crudini              --get ${GCS_CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
-XRESOURCES_CONFIG_FILE="$(crudini         --get ${GCS_CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
-XRESOURCES_RESTART_COMMAND="$(crudini     --get ${GCS_CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
-XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${GCS_CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
 
-: ${xresources_bg_color:=${bg_color}}
-: ${xresources_fg_color:=${fg_color}}
-: ${xresources_base_color:=${base_color}}
-: ${xresources_text_color:=${text_color}}
-: ${xresources_selected_bg_color:=${selected_bg_color}}
-: ${xresources_selected_fg_color:=${selected_fg_color}}
-: ${xresources_titlebar_focused_bg_color:=${titlebar_focused_bg_color}}
-: ${xresources_titlebar_focused_fg_color:=${titlebar_focused_fg_color}}
-: ${xresources_titlebar_unfocused_bg_color:=${titlebar_unfocused_bg_color}}
-: ${xresources_titlebar_unfocused_fg_color:=${titlebar_unfocused_fg_color}}
-: ${xresources_titlebar_urgent_bg_color:=${titlebar_urgent_bg_color}}
-: ${xresources_titlebar_urgent_fg_color:=${titlebar_urgent_fg_color}}
-: ${xresources_tray_bg_color:=${tray_bg_color}}
-: ${xresources_tray_fg_color:=${tray_fg_color}}
-: ${xresources_tray_focused_bg_color:=${tray_focused_bg_color}}
-: ${xresources_tray_focused_fg_color:=${tray_focused_fg_color}}
-: ${xresources_tray_unfocused_bg_color:=${tray_unfocused_bg_color}}
-: ${xresources_tray_unfocused_fg_color:=${tray_unfocused_fg_color}}
-: ${xresources_tray_urgent_bg_color:=${tray_urgent_bg_color}}
-: ${xresources_tray_urgent_fg_color:=${tray_urgent_fg_color}}
 
-if ! [ "${XRESOURCES_ENABLE}" == "true" ]; then
-    printf "* Ignoring Xresources colors (disabled from configuration).\n"
+function xresources_check_dependencies() {
+    if ! which xrdb >/dev/null; then
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ "${XRESOURCES_ENABLE}" == "true" ]; then
+        printf "* Ignoring Xresources colors (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function xresources_derive_colors() {
+    : ${xresources_bg_color:=${bg_color}}
+    : ${xresources_fg_color:=${fg_color}}
+    : ${xresources_base_color:=${base_color}}
+    : ${xresources_text_color:=${text_color}}
+    : ${xresources_selected_bg_color:=${selected_bg_color}}
+    : ${xresources_selected_fg_color:=${selected_fg_color}}
+    : ${xresources_titlebar_focused_bg_color:=${titlebar_focused_bg_color}}
+    : ${xresources_titlebar_focused_fg_color:=${titlebar_focused_fg_color}}
+    : ${xresources_titlebar_unfocused_bg_color:=${titlebar_unfocused_bg_color}}
+    : ${xresources_titlebar_unfocused_fg_color:=${titlebar_unfocused_fg_color}}
+    : ${xresources_titlebar_urgent_bg_color:=${titlebar_urgent_bg_color}}
+    : ${xresources_titlebar_urgent_fg_color:=${titlebar_urgent_fg_color}}
+    : ${xresources_tray_bg_color:=${tray_bg_color}}
+    : ${xresources_tray_fg_color:=${tray_fg_color}}
+    : ${xresources_tray_focused_bg_color:=${tray_focused_bg_color}}
+    : ${xresources_tray_focused_fg_color:=${tray_focused_fg_color}}
+    : ${xresources_tray_unfocused_bg_color:=${tray_unfocused_bg_color}}
+    : ${xresources_tray_unfocused_fg_color:=${tray_unfocused_fg_color}}
+    : ${xresources_tray_urgent_bg_color:=${tray_urgent_bg_color}}
+    : ${xresources_tray_urgent_fg_color:=${tray_urgent_fg_color}}
+}
+
+
+
+function xresources_create_backup() {
     printf "* Making backup of Xresources file..."
 
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
@@ -44,8 +63,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${XRESOURCES_CONFIG_FILE}" "${XRESOURCES_BACKUP_DIR}/Xresources"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function xresources_restore_backup() {
     printf "* Restoring backup of Xresources file..."
 
     XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
@@ -59,8 +81,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function xresources_apply_theme() {
     [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"
 
     printf "* Setting Xresources colors..."
@@ -97,6 +122,24 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     $XRESOURCES_ADDITIONAL_COMMANDS &>/dev/null
 
     printf " done.\n"
+}
+
+
+
+xresources_init_module
+xresources_check_dependencies
+[ $? == 1 ] && return
+
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    xresources_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    xresources_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    xresources_derive_colors
+    xresources_apply_theme
 
 fi
 

@@ -1,26 +1,47 @@
 #!/bin/bash
-
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
-which nautilus >/dev/null || return
-which gsettings >/dev/null || return
-which ps >/dev/null || return
+function nautilus_init_module() {
+    BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
+    BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
+    BACKGROUND_NAUTILUS_GSETTINGS_PATH="org.gnome.desktop.background"
+}
 
-BACKGROUND_NAUTILUS_ENABLE_DEFAULT="true"
-BACKGROUND_NAUTILUS_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-nautilus enable 2>/dev/null || echo "${BACKGROUND_NAUTILUS_ENABLE_DEFAULT}")"
 
-BACKGROUND_NAUTILUS_GSETTINGS_PATH="org.gnome.desktop.background"
 
-for i in ${COLOR_THEME_DIRS[@]}; do
-    if [ -f "$i/${wallpaper_image}" ]; then
-        wallpaper_file="$i/${wallpaper_image}"
+function nautilus_check_dependencies() {
+    if ! which nautilus >/dev/null; then
+        return 1
+
+    elif ! which gsettings >/dev/null; then
+        return 1
+
+    elif ! which pgrep >/dev/null; then
+        return 1
+
+    elif ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
+        printf "* Ignoring wallpaper for nautilus (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
     fi
-done
+}
 
-if ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
-    printf "* Ignoring wallpaper for nautilus (disabled from configuration).\n"
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+
+function nautilus_derive_colors() {
+    for i in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "$i/${wallpaper_image}" ]; then
+            wallpaper_file="$i/${wallpaper_image}"
+        fi
+    done
+}
+
+
+
+function nautilus_create_backup() {
     printf "* Making backup of wallpaper for nautilus..."
 
     BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
@@ -34,8 +55,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options"    > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/picture-options"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function nautilus_restore_backup() {
     printf "* Restoring backup of wallpaper for nautilus..."
 
     BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
@@ -65,8 +89,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     fi
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function nautilus_apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with nautilus (image file not found: \"${wallpaper_image}\").\n"
 
@@ -94,6 +121,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         printf " done.\n"
 
     fi
+}
+
+
+
+nautilus_init_module
+nautilus_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    nautilus_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    nautilus_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    nautilus_derive_colors
+    nautilus_apply_theme
 
 fi
 

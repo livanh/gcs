@@ -1,6 +1,85 @@
 #!/bin/bash
 
-which mcomix >/dev/null || return
+function mcomix_init_module() {
+    MCOMIX_ENABLE_DEFAULT="true"
+    MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
+
+    MCOMIX_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
+    MCOMIX_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function mcomix_check_dependencies() {
+    if ! which mcomix >/dev/null; then
+        return 1
+
+    elif ! [ "${MCOMIX_ENABLE}" == "true" ]; then
+        printf "* Ignoring MComix (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
+        printf "* Ignoring MComix (configuration file ${MCOMIX_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function mcomix_derive_colors() {
+    : ${mcomix_bg_color:=${base_color}}
+    : ${mcomix_thumb_bg_color:=${bg_color}}
+}
+
+
+
+function mcomix_create_backup() {
+    printf "* Making backup of MComix configuration file..."
+
+    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
+    mkdir -p "${MCOMIX_BACKUP_DIR}"
+    cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_BACKUP_DIR}/preferences.conf"
+
+    printf " done.\n"
+}
+
+
+
+function mcomix_restore_backup() {
+    printf "* Restoring backup of MComix configuration file..."
+
+    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
+    if [ -f "${MCOMIX_BACKUP_DIR}/preferences.conf" ]; then
+        cp "${MCOMIX_BACKUP_DIR}/preferences.conf" "${MCOMIX_CONFIG_FILE}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
+}
+
+
+
+function mcomix_apply_theme() {
+    printf "* Setting colors for MComix..."
+
+    MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
+    MCOMIX_TMP_CONFIG_FILE="${MCOMIX_TMP_DIR}/preferences.conf"
+    mkdir "${MCOMIX_TMP_DIR}"
+    cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_TMP_CONFIG_FILE}"
+
+    set_color_mcomix "bg colour"       "${mcomix_bg_color}"       "${MCOMIX_TMP_CONFIG_FILE}"
+    set_color_mcomix "thumb bg colour" "${mcomix_thumb_bg_color}" "${MCOMIX_TMP_CONFIG_FILE}"
+
+    mv "${MCOMIX_TMP_CONFIG_FILE}" "${MCOMIX_CONFIG_FILE}"
+
+    printf " done.\n"
+}
+
+
 
 set_color_mcomix() {
     
@@ -30,55 +109,21 @@ set_color_mcomix() {
     " "${file}"
 }
 
-: ${mcomix_bg_color:=${base_color}}
-: ${mcomix_thumb_bg_color:=${bg_color}}
 
-MCOMIX_ENABLE_DEFAULT="true"
-MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
 
-MCOMIX_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
-MCOMIX_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
+mcomix_init_module
+mcomix_check_dependencies
+[ $? == 1 ] && return
 
-if ! [ "${MCOMIX_ENABLE}" == "true" ]; then
-    printf "* Ignoring MComix (disabled from configuration).\n"
-
-elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
-    printf "* Ignoring MComix (configuration file \"${MCOMIX_CONFIG_FILE}\" not found).\n"
-
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    printf "* Making backup of MComix configuration file..."
-
-    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
-    mkdir -p "${MCOMIX_BACKUP_DIR}"
-    cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_BACKUP_DIR}/preferences.conf"
-
-    printf " done.\n"
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    mcomix_create_backup
 
 elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    printf "* Restoring backup of MComix configuration file..."
-
-    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
-    if [ -f "${MCOMIX_BACKUP_DIR}/preferences.conf" ]; then
-        cp "${MCOMIX_BACKUP_DIR}/preferences.conf" "${MCOMIX_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    mcomix_restore_backup
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    printf "* Setting colors for MComix..."
-
-    MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
-    MCOMIX_TMP_CONFIG_FILE="${MCOMIX_TMP_DIR}/preferences.conf"
-    mkdir "${MCOMIX_TMP_DIR}"
-    cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_TMP_CONFIG_FILE}"
-
-    set_color_mcomix "bg colour"       "${mcomix_bg_color}"       "${MCOMIX_TMP_CONFIG_FILE}"
-    set_color_mcomix "thumb bg colour" "${mcomix_thumb_bg_color}" "${MCOMIX_TMP_CONFIG_FILE}"
-
-    mv "${MCOMIX_TMP_CONFIG_FILE}" "${MCOMIX_CONFIG_FILE}"
-
-    printf " done.\n"
+    mcomix_derive_colors
+    mcomix_apply_theme
 
 fi
 

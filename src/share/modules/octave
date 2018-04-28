@@ -2,61 +2,81 @@
 
 # FIXME: set_value_section doesn't work, why?
 
-which octave >/dev/null || return
+function octave_init_module() {
+    OCTAVE_ENABLE_DEFAULT="true"
+    OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
 
-: ${octave_terminal_bg:=${terminal_bg_color}}
-: ${octave_terminal_fg:=${terminal_fg_color}}
-: ${octave_terminal_selection:=${selected_bg_color}}
-: ${octave_terminal_cursor:=${terminal_fg_color}}
+    OCTAVE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
+    OCTAVE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
 
-: ${octave_current_line_bg:=${editor_current_line_bg}}
+    GCS_SYNTAX_FALLBACK_DEFAULT="true"
+    GCS_SYNTAX_FALLBACK="$(crudini    --get ${GCS_CONFIG_FILE} gcs    syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+    OCTAVE_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} octave syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+}
 
-: ${octave_workpace_automatic:=${editor_class}}
-: ${octave_workpace_function:=${editor_number}}
-: ${octave_workpace_global:=${editor_keyword}}
-: ${octave_workpace_hidden:=${editor_operator}}
-: ${octave_workpace_inherited:=${editor_string}}
-: ${octave_workpace_persistent:=${editor_preprocessor}}
 
-: ${octave_text_fg:=${editor_fg}}
-: ${octave_text_bg:=${editor_bg}}
 
-: ${octave_matlab_default_fg:=${editor_fg}}
-: ${octave_matlab_default_bg:=${editor_bg}}
-: ${octave_matlab_comment_fg:=${editor_comment}}
-: ${octave_matlab_comment_bg:=${editor_bg}}
-: ${octave_matlab_command_fg:=${editor_class}}
-: ${octave_matlab_command_bg:=${editor_bg}}
-: ${octave_matlab_number_fg:=${editor_number}}
-: ${octave_matlab_number_bg:=${editor_bg}}
-: ${octave_matlab_keyword_fg:=${editor_keyword}}
-: ${octave_matlab_keyword_bg:=${editor_bg}}
-: ${octave_matlab_string_single_quote_fg:=${editor_string}}
-: ${octave_matlab_string_single_quote_bg:=${editor_bg}}
-: ${octave_matlab_operator_fg:=${editor_operator}}
-: ${octave_matlab_operator_bg:=${editor_bg}}
-: ${octave_matlab_identifier_fg:=${editor_fg}}
-: ${octave_matlab_identifier_bg:=${editor_bg}}
-: ${octave_matlab_string_double_quote_fg:=${editor_string}}
-: ${octave_matlab_string_double_quote_bg:=${editor_bg}}
+function octave_check_dependencies() {
+    if ! which octave >/dev/null; then
+        return 1
 
-OCTAVE_ENABLE_DEFAULT="true"
-OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
+    elif ! [ "${OCTAVE_ENABLE}" == "true" ]; then
+        printf "* Ignoring Octave (disabled from configuration).\n"
+        return 1
 
-OCTAVE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
-OCTAVE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
+    elif ! [ -f "${OCTAVE_CONFIG_FILE}" ]; then
+        printf "* Ignoring Octave (configuration file ${OCTAVE_CONFIG_FILE} not found).\n"
+        return 1
 
-GCS_SYNTAX_FALLBACK_DEFAULT="true"
-GCS_SYNTAX_FALLBACK="$(crudini    --get ${GCS_CONFIG_FILE} gcs    syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
-OCTAVE_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} octave syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+    else
+        return 0
 
-if ! [ "${OCTAVE_ENABLE}" == "true" ]; then
-    printf "* Ignoring Octave (disabled from configuration).\n"
+    fi
+}
 
-elif ! [ -f "${OCTAVE_CONFIG_FILE}" ]; then
-    printf "* Ignoring Octave (configuration \"${OCTAVE_CONFIG_FILE}\" not found).\n"
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+
+function octave_derive_colors() {
+    : ${octave_terminal_bg:=${terminal_bg_color}}
+    : ${octave_terminal_fg:=${terminal_fg_color}}
+    : ${octave_terminal_selection:=${selected_bg_color}}
+    : ${octave_terminal_cursor:=${terminal_fg_color}}
+
+    : ${octave_current_line_bg:=${editor_current_line_bg}}
+
+    : ${octave_workpace_automatic:=${editor_class}}
+    : ${octave_workpace_function:=${editor_number}}
+    : ${octave_workpace_global:=${editor_keyword}}
+    : ${octave_workpace_hidden:=${editor_operator}}
+    : ${octave_workpace_inherited:=${editor_string}}
+    : ${octave_workpace_persistent:=${editor_preprocessor}}
+
+    : ${octave_text_fg:=${editor_fg}}
+    : ${octave_text_bg:=${editor_bg}}
+
+    : ${octave_matlab_default_fg:=${editor_fg}}
+    : ${octave_matlab_default_bg:=${editor_bg}}
+    : ${octave_matlab_comment_fg:=${editor_comment}}
+    : ${octave_matlab_comment_bg:=${editor_bg}}
+    : ${octave_matlab_command_fg:=${editor_class}}
+    : ${octave_matlab_command_bg:=${editor_bg}}
+    : ${octave_matlab_number_fg:=${editor_number}}
+    : ${octave_matlab_number_bg:=${editor_bg}}
+    : ${octave_matlab_keyword_fg:=${editor_keyword}}
+    : ${octave_matlab_keyword_bg:=${editor_bg}}
+    : ${octave_matlab_string_single_quote_fg:=${editor_string}}
+    : ${octave_matlab_string_single_quote_bg:=${editor_bg}}
+    : ${octave_matlab_operator_fg:=${editor_operator}}
+    : ${octave_matlab_operator_bg:=${editor_bg}}
+    : ${octave_matlab_identifier_fg:=${editor_fg}}
+    : ${octave_matlab_identifier_bg:=${editor_bg}}
+    : ${octave_matlab_string_double_quote_fg:=${editor_string}}
+    : ${octave_matlab_string_double_quote_bg:=${editor_bg}}
+}
+
+
+
+function octave_create_backup() {
     printf "* Making backup of Octave configuration file..."
 
     OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
@@ -64,8 +84,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_BACKUP_DIR}/qt-settings"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function octave_restore_backup() {
     printf "* Restoring backup of Octave configuration file..."
 
     OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
@@ -75,8 +98,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function octave_apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
 
         if [ -f "${OCTAVE_CONFIG_FILE}" ]; then
@@ -181,6 +207,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         printf " done.\n"
 
     fi
+}
+
+
+
+octave_init_module
+octave_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    octave_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    octave_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    octave_derive_colors
+    octave_apply_theme
 
 fi
 

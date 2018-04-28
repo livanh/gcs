@@ -1,29 +1,56 @@
 #!/bin/bash
-
 # TODO: handle cases when $wallpaper_image, $wallpaper_mode or $wallpaper_bg_color is not set by the theme
 
-which pcmanfm >/dev/null || return
-which ps >/dev/null || return
+function pcmanfm_init_module() {
+    BACKGROUND_PCMANFM_ENABLE_DEFAULT="true"
+    BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo "${BACKGROUND_PCMANFM_ENABLE_DEFAULT}")"
+}
 
-BACKGROUND_PCMANFM_ENABLE_DEFAULT="true"
-BACKGROUND_PCMANFM_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} background-pcmanfm enable 2>/dev/null || echo "${BACKGROUND_PCMANFM_ENABLE_DEFAULT}")"
 
-for i in ${COLOR_THEME_DIRS[@]}; do
-    if [ -f "$i/${wallpaper_image}" ]; then
-        wallpaper_file="$i/${wallpaper_image}"
+
+function pcmanfm_check_dependencies() {
+    if ! which pcmanfm >/dev/null; then
+        return 1
+
+    elif ! which pgrep >/dev/null; then
+        return 1
+
+    elif ! [ "${BACKGROUND_PCMANFM_ENABLE}" == "true" ]; then
+        printf "* Ignoring wallpaper for pcmanfm (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
     fi
-done
 
-if ! [ "${BACKGROUND_PCMANFM_ENABLE}" == "true" ]; then
-    printf "* Ignoring wallpaper for pcmanfm (disabled from configuration).\n"
+}
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+
+
+function pcmanfm_derive_colors() {
+    for i in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "$i/${wallpaper_image}" ]; then
+            wallpaper_file="$i/${wallpaper_image}"
+        fi
+    done
+}
+
+
+
+function pcmanfm_create_backup() {
     printf "* Backup/restore not supported with pcmanfm wallpaper.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function pcmanfm_restore_backup() {
     printf "* Backup/restore not supported with pcmanfm wallpaper.\n"
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function pcmanfm_apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with pcmanfm (image file not found: \"${wallpaper_image}\").\n"
 
@@ -49,6 +76,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         printf " done.\n"
 
     fi
+}
+
+
+
+pcmanfm_init_module
+pcmanfm_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    pcmanfm_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    pcmanfm_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    pcmanfm_derive_colors
+    pcmanfm_apply_theme
 
 fi
 
