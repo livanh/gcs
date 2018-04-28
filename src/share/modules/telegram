@@ -25,8 +25,8 @@ function telegram_check_dependencies() {
         printf "* Ignoring Telegram (disabled from configuration).\n"
         return 1
 
-    elif ! [ -f "${TELEGRAM_CONFIG_DIR}" ]; then
-        printf "* Ignoring Telegram (configuration file ${TELEGRAM_CONFIG_DIR} not found).\n"
+    elif ! [ -d "${TELEGRAM_CONFIG_DIR}" ]; then
+        printf "* Ignoring Telegram (configuration directody ${TELEGRAM_CONFIG_DIR} not found).\n"
         return 1
 
     else
