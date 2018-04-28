@@ -17,27 +17,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+function initialize_environment() {
+    GCS_MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
+    GCS_MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
+    GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
+    GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
+    GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
+    GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+    GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
+    GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
+    GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
 
-GCS_MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
-GCS_MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
-GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
-GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
-GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
-GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
-GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
-GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
-GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
+    GCS_CONFIG_DIR="$HOME/.config/gcs"
+    GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
+    GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
+    GCS_LOCK_FILE="/tmp/.gcs_lock"
 
-GCS_CONFIG_DIR="$HOME/.config/gcs"
-GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
-GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
-GCS_LOCK_FILE="/tmp/.gcs_lock"
+    GCS_ACTION="apply-theme"
+    GCS_BACKUP_NAME=""
+}
 
-GCS_ACTION="apply-theme"
-GCS_BACKUP_NAME=""
-
-
-help() {
+function print_help() {
     echo "Usage:"
     echo "  to apply a color theme:   $0 [options] <color_theme_name>"
     echo "  to create a backup:       $0 [options] -b <backup_name>"
@@ -58,7 +58,7 @@ help() {
     exit 1
 }
 
-update_base16_schemes() {
+function update_base16_schemes() {
     local GCS_BASE16_LIST="${GCS_TMP_DIR}/base16-list"
     local GCS_BASE16_TEMP="${GCS_TMP_DIR}/base16-temp"
     [ -d "${GCS_BASE16_SCHEMES_DIR_USER}" ] || mkdir -p "${GCS_BASE16_SCHEMES_DIR_USER}"
@@ -80,56 +80,58 @@ update_base16_schemes() {
     echo "Done."
 }
 
-while getopts ":m:b:r:hu" opt; do
-    case $opt in
-      m)
-        FORCED_MODULE="$OPTARG"
-        shift $((OPTIND-1))
-        ;;
-      b)
-        GCS_ACTION="create-backup"
-        GCS_BACKUP_NAME="$OPTARG"
-        shift $((OPTIND-1))
-        ;;
-      r)
-        GCS_ACTION="restore-backup"
-        GCS_BACKUP_NAME="$OPTARG"
-        shift $((OPTIND-1))
-        ;;
-      h)
-        help
-        ;;
-      u)
-        update_base16_schemes
-        exit 1
-        ;;
-      \?)
-        echo "Invalid option: -$OPTARG" >&2
-        exit 1
-        ;;
-      :)
-        echo "Option -$OPTARG requires an argument." >&2
-        exit 1
-        ;;
-    esac
-    OPTIND=1
-done
+function parse_options() {
+    while getopts ":m:b:r:hu" opt; do
+        case $opt in
+          m)
+            FORCED_MODULE="$OPTARG"
+            shift $((OPTIND-1))
+            ;;
+          b)
+            GCS_ACTION="create-backup"
+            GCS_BACKUP_NAME="$OPTARG"
+            shift $((OPTIND-1))
+            ;;
+          r)
+            GCS_ACTION="restore-backup"
+            GCS_BACKUP_NAME="$OPTARG"
+            shift $((OPTIND-1))
+            ;;
+          h)
+            print_help
+            ;;
+          u)
+            update_base16_schemes
+            exit 1
+            ;;
+          \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+          :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 1
+            ;;
+        esac
+        OPTIND=1
+    done
 
-if [ "${GCS_ACTION}" == "apply-theme" ]; then
-    COLOR_THEME_NAME="$1"
-    shift
-fi
+    if [ "${GCS_ACTION}" == "apply-theme" ]; then
+        COLOR_THEME_NAME="$1"
+        shift
+    fi
+
+    if [[ "${GCS_ACTION}" == "apply-theme" && "${COLOR_THEME_NAME}" == "" ]]; then
+        print_help
+    fi
+
+    if [ "$#" -ne 0 ]; then
+        print_help
+    fi
+}
 
 
-if [[ "${GCS_ACTION}" == "apply-theme" && "${COLOR_THEME_NAME}" == "" ]]; then
-    help
-fi
-
-if [ "$#" -ne 0 ]; then
-    help
-fi
-
-load_base16_scheme() {
+function load_base16_scheme() {
     if [ "$#" -ne 1 ]; then
         echo "Error: load_base16_scheme() requires 1 argument!"
         exit 2
@@ -162,7 +164,7 @@ load_base16_scheme() {
     base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
 }
 
-compare_brightness() {
+function compare_brightness() {
     if [ "$#" -ne 1 ]; then
         echo "Error: compare_brightness() requires 2 arguments!"
         exit 2
@@ -189,7 +191,7 @@ compare_brightness() {
 # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
 # (to reuse other variables, i.e. var=$var_2), dots (for filenames) and hyphens (for icon theme names).
 # Single or double quotes are permitted.
-load_color_theme() {
+function load_color_theme() {
 
     if [ "$#" -ne 1 ]; then
         echo "Error: load_color_theme() requires 1 argument!"
@@ -396,7 +398,7 @@ load_color_theme() {
 # assuming they are separated by $SEPARATOR
 # warning: do not use for config file with different sections, because
 # if the key does not exist, it will be created at the end of the file
-set_value() {
+function set_value() {
     if [ "$#" -ne 4 ]; then
         echo "Error: set_value() requires 4 arguments!"
         exit 2
@@ -415,7 +417,7 @@ set_value() {
 # set the value of the key named $KEY (in section [section] on text
 # file $FILE) equal to $VALUE, assuming they are separated by $SEPARATOR
 # TODO: define behaviour when $SECTION is not found
-set_value_section() {
+function set_value_section() {
     if [ "$#" -ne 5 ]; then
         echo "Error: set_value_section() requires 5 arguments!"
         exit 2
@@ -433,75 +435,92 @@ set_value_section() {
     rm $tmp_file
 }
 
-cleanup() {
+function cleanup() {
     rm "${GCS_LOCK_FILE}"
     rm -r "${GCS_TMP_DIR}" &>/dev/null
 }
 
-if [ -f "${GCS_LOCK_FILE}" ]; then
-    echo "Error: lockfile \"${GCS_LOCK_FILE}\" exists, exiting."
-    exit 3
-fi
-
-if [ "${GCS_ACTION}" == "apply-theme" ]; then
-    if [ -f "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
-    elif  [ -f "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
-    elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
-    else
-        echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
-        exit 2
-    fi
-
-    echo "Applying color theme ${COLOR_THEME_NAME}"
-
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
-    if [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
-        echo "Error: backup \"${GCS_BACKUP_NAME}\" already exists!"
+function lock() {
+    if [ -f "${GCS_LOCK_FILE}" ]; then
+        echo "Error: lockfile \"${GCS_LOCK_FILE}\" exists, exiting."
         exit 3
     fi
+    touch "${GCS_LOCK_FILE}"
+    trap cleanup EXIT
+}
 
-    echo "Creating backup in \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
-
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
-    if ! [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
-        echo "Error: backup \"${GCS_BACKUP_NAME}\" does not exist!"
-        exit 4
-    fi
-
-    echo "Restoring backup from \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
-
-fi
-
-touch "${GCS_LOCK_FILE}"
-trap cleanup EXIT
-
-# create an array of modules to execute
-MODULES=()
-
-for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
-    if [ -x "$i" ]; then
-        MODULE_NAME="${i##/*/}"
-
-        if ! [ -z "${FORCED_MODULE}" ]; then
-            if ! [ "$MODULE_NAME" == "${FORCED_MODULE}" ]; then
-                continue
-            fi
+function select_action() {
+    if [ "${GCS_ACTION}" == "apply-theme" ]; then
+        if [ -f "${GCS_THEMES_DIR_USER}/${COLOR_THEME_NAME}/colortheme" ]; then true
+        elif  [ -f "${GCS_THEMES_DIR_LOCAL}/${COLOR_THEME_NAME}/colortheme" ]; then true
+        elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
+        else
+            echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
+            exit 2
         fi
 
-        for j in ${!MODULES[@]}; do
-            if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
-                MODULES[$j]=''
-            fi
-        done
-        MODULES+=("$i")
-    fi
-done
+        echo "Applying color theme ${COLOR_THEME_NAME}"
 
-# execute modules
-for module_file in ${MODULES[@]}; do
-    # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
-    load_color_theme "${COLOR_THEME_NAME}"
-    # Load a module
-    . "${module_file}"
-done
+    elif [ "${GCS_ACTION}" == "create-backup" ]; then
+        if [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
+            echo "Error: backup \"${GCS_BACKUP_NAME}\" already exists!"
+            exit 3
+        fi
+
+        echo "Creating backup in \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
+
+    elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+        if ! [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
+            echo "Error: backup \"${GCS_BACKUP_NAME}\" does not exist!"
+            exit 4
+        fi
+
+        echo "Restoring backup from \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
+
+    fi
+}
+
+# create an array of modules to execute
+function select_modules() {
+    MODULES=()
+
+    for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
+        if [ -x "$i" ]; then
+            MODULE_NAME="${i##/*/}"
+
+            if ! [ -z "${FORCED_MODULE}" ]; then
+                if ! [ "$MODULE_NAME" == "${FORCED_MODULE}" ]; then
+                    continue
+                fi
+            fi
+
+            for j in ${!MODULES[@]}; do
+                if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
+                    MODULES[$j]=''
+                fi
+            done
+            MODULES+=("$i")
+        fi
+    done
+}
+
+function execute_modules() {
+    for module_file in ${MODULES[@]}; do
+        # Load color theme file. It is loaded before each module to prevent modules from modifying the colors.
+        load_color_theme "${COLOR_THEME_NAME}"
+        # Load a module
+        . "${module_file}"
+    done
+}
+
+function main() {
+    initialize_environment
+    parse_options $*
+    lock
+    select_action
+    select_modules
+    execute_modules
+}
+
+main $*
 

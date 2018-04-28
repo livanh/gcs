@@ -1,22 +1,42 @@
 #!/bin/bash
 
-which qt5ct >/dev/null || return
+function qt5ct_init_module() {
+    QT5CT_ENABLE_DEFAULT="true"
+    QT5CT_CONFIG_FILE_DEFAULT="$HOME/.config/qt5ct/qt5ct.conf"
 
-: ${qt5ct_icon_theme_name:=${icon_theme_name}}
+    QT5CT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} qt5ct enable      2>/dev/null || echo "${QT5CT_ENABLE_DEFAULT}")"
+    QT5CT_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} qt5ct config_file 2>/dev/null || echo "${QT5CT_CONFIG_FILE_DEFAULT}")"
+}
 
-QT5CT_ENABLE_DEFAULT="true"
-QT5CT_CONFIG_FILE_DEFAULT="$HOME/.config/qt5ct/qt5ct.conf"
 
-QT5CT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} qt5ct enable      2>/dev/null || echo "${QT5CT_ENABLE_DEFAULT}")"
-QT5CT_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} qt5ct config_file 2>/dev/null || echo "${QT5CT_CONFIG_FILE_DEFAULT}")"
 
-if ! [ "${QT5CT_ENABLE}" == "true" ]; then
-    printf "* Ignoring qt5ct (disabled from configuration).\n"
+function qt5ct_check_dependencies() {
+    if ! which qt5ct >/dev/null; then
+        return 1
 
-elif ! [ -f "${QT5CT_CONFIG_FILE}" ]; then
-    printf "* Ignoring qt5ct (configuration file \"${QT5CT_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${QT5CT_ENABLE}" == "true" ]; then
+        printf "* Ignoring qt5ct (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "${QT5CT_CONFIG_FILE}" ]; then
+        printf "* Ignoring qt5ct (configuration file ${QT5CT_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function qt5ct_derive_colors() {
+    : ${qt5ct_icon_theme_name:=${icon_theme_name}}
+}
+
+
+
+function qt5ct_create_backup() {
     printf "* Making backup of qt5ct configuration file..."
 
     QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
@@ -24,8 +44,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${QT5CT_CONFIG_FILE}" "${QT5CT_BACKUP_DIR}/qt5ct.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function qt5ct_restore_backup() {
     printf "* Restoring backup of qt5ct configuration file..."
 
     QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
@@ -35,8 +58,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function qt5ct_apply_theme() {
     printf "* Setting icon theme for qt5..."
 
 
@@ -60,6 +86,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     mv "${QT5CT_TMP_CONFIG_FILE}" "${QT5CT_CONFIG_FILE}"
 
     printf " done.\n"
+}
+
+
+
+qt5ct_init_module
+qt5ct_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    qt5ct_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    qt5ct_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    qt5ct_derive_colors
+    qt5ct_apply_theme
 
 fi
 

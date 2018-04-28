@@ -1,41 +1,60 @@
 #!/bin/bash
 # TODO: print messages only if some config file exist
 
-which conky >/dev/null || return
+function conky_init_module() {
+    CONKY_ENABLE_DEFAULT="true"
+    CONKY_CONFIG_FILES_DEFAULT="$HOME/.conkyrc"
+    CONKY_RESTART_COMMAND_DEFAULT=""
 
-: ${conky_default_color:=${wallpaper_text_color}}
-: ${conky_shade_color:=${wallpaper_shadow_color}}
-: ${conky_own_window_colour:=${wallpaper_bg_color}}
+    CONKY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} conky enable          2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
+    CONKY_CONFIG_FILES="$(crudini    --get ${GCS_CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
+    CONKY_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} conky restart_command 2>/dev/null || echo "${CONKY_RESTART_COMMAND_DEFAULT}")"
+}
 
-#
-# color0 through color9 can be set in the theme or in the configuration file.
-# The configuration file takes precedence. In both cases, other variables can be referenced (e.g. $text_color).
-# By default, no default color is assumed/modified, since the meaning of the colors depends on the specific
-# conky configuration
-#
-eval conky_color0="$(crudini --get ${GCS_CONFIG_FILE} conky color0 2>/dev/null || echo "${conky_color0}" )"
-eval conky_color1="$(crudini --get ${GCS_CONFIG_FILE} conky color1 2>/dev/null || echo "${conky_color1}" )"
-eval conky_color2="$(crudini --get ${GCS_CONFIG_FILE} conky color2 2>/dev/null || echo "${conky_color2}" )"
-eval conky_color3="$(crudini --get ${GCS_CONFIG_FILE} conky color3 2>/dev/null || echo "${conky_color3}" )"
-eval conky_color4="$(crudini --get ${GCS_CONFIG_FILE} conky color4 2>/dev/null || echo "${conky_color4}" )"
-eval conky_color5="$(crudini --get ${GCS_CONFIG_FILE} conky color5 2>/dev/null || echo "${conky_color5}" )"
-eval conky_color6="$(crudini --get ${GCS_CONFIG_FILE} conky color6 2>/dev/null || echo "${conky_color6}" )"
-eval conky_color7="$(crudini --get ${GCS_CONFIG_FILE} conky color7 2>/dev/null || echo "${conky_color7}" )"
-eval conky_color8="$(crudini --get ${GCS_CONFIG_FILE} conky color8 2>/dev/null || echo "${conky_color8}" )"
-eval conky_color9="$(crudini --get ${GCS_CONFIG_FILE} conky color9 2>/dev/null || echo "${conky_color9}" )"
 
-CONKY_ENABLE_DEFAULT="true"
-CONKY_CONFIG_FILES_DEFAULT="$HOME/.conkyrc"
-CONKY_RESTART_COMMAND_DEFAULT=""
 
-CONKY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} conky enable          2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
-CONKY_CONFIG_FILES="$(crudini    --get ${GCS_CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
-CONKY_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} conky restart_command 2>/dev/null || echo "${CONKY_RESTART_COMMAND_DEFAULT}")"
+function conky_check_dependencies() {
+    if ! which conky >/dev/null; then
+        return 1
 
-if ! [ "${CONKY_ENABLE}" == "true" ]; then
-    printf "* Not setting colors for conky (disabled from configuration).\n"
+    elif ! [ "${CONKY_ENABLE}" == "true" ]; then
+        printf "* Ignoring conky (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    else
+        return 0
+
+    fi
+}
+
+
+
+function conky_derive_colors() {
+    : ${conky_default_color:=${wallpaper_text_color}}
+    : ${conky_shade_color:=${wallpaper_shadow_color}}
+    : ${conky_own_window_colour:=${wallpaper_bg_color}}
+
+    #
+    # color0 through color9 can be set in the theme or in the configuration file.
+    # The configuration file takes precedence. In both cases, other variables can be referenced (e.g. $text_color).
+    # By default, no default color is assumed/modified, since the meaning of the colors depends on the specific
+    # conky configuration
+    #
+    eval conky_color0="$(crudini --get ${GCS_CONFIG_FILE} conky color0 2>/dev/null || echo "${conky_color0}" )"
+    eval conky_color1="$(crudini --get ${GCS_CONFIG_FILE} conky color1 2>/dev/null || echo "${conky_color1}" )"
+    eval conky_color2="$(crudini --get ${GCS_CONFIG_FILE} conky color2 2>/dev/null || echo "${conky_color2}" )"
+    eval conky_color3="$(crudini --get ${GCS_CONFIG_FILE} conky color3 2>/dev/null || echo "${conky_color3}" )"
+    eval conky_color4="$(crudini --get ${GCS_CONFIG_FILE} conky color4 2>/dev/null || echo "${conky_color4}" )"
+    eval conky_color5="$(crudini --get ${GCS_CONFIG_FILE} conky color5 2>/dev/null || echo "${conky_color5}" )"
+    eval conky_color6="$(crudini --get ${GCS_CONFIG_FILE} conky color6 2>/dev/null || echo "${conky_color6}" )"
+    eval conky_color7="$(crudini --get ${GCS_CONFIG_FILE} conky color7 2>/dev/null || echo "${conky_color7}" )"
+    eval conky_color8="$(crudini --get ${GCS_CONFIG_FILE} conky color8 2>/dev/null || echo "${conky_color8}" )"
+    eval conky_color9="$(crudini --get ${GCS_CONFIG_FILE} conky color9 2>/dev/null || echo "${conky_color9}" )"
+}
+
+
+
+function conky_create_backup() {
     printf "* Making backup of conky configuration files...\n"
 
     CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
@@ -57,8 +76,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
         cp "$file" "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
         printf " done.\n"
     done
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function conky_restore_backup() {
     printf "* Restoring backup of conky configuration files..."
 
     CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
@@ -83,8 +105,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     done
 
     $CONKY_RESTART_COMMAND &>/dev/null
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function conky_apply_theme() {
     printf "* Setting colors for conky...\n"
 
     CONKY_TMP_DIR="${GCS_TMP_DIR}/conky"
@@ -130,5 +155,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     done
 
     $CONKY_RESTART_COMMAND &>/dev/null
+}
+
+
+
+conky_init_module
+conky_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    conky_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    conky_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    conky_derive_colors
+    conky_apply_theme
+
 fi
 

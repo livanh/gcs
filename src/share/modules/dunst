@@ -1,30 +1,50 @@
 #!/bin/bash
 
-which dunst >/dev/null || return
+function dunst_init_module() {
+    DUNST_ENABLE_DEFAULT="true"
+    DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"
+    DUNST_RESTART_COMMAND_DEFAULT=""
 
-DUNST_ENABLE_DEFAULT="true"
-DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"
-DUNST_RESTART_COMMAND_DEFAULT=""
+    DUNST_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} dunst enable          2>/dev/null || echo "${DUNST_ENABLE_DEFAULT}")"
+    DUNST_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} dunst config_file     2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
+    DUNST_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} dunst restart_command 2>/dev/null || echo "${DUNST_RESTART_COMMAND_DEFAULT}")"
+}
 
-DUNST_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} dunst enable          2>/dev/null || echo "${DUNST_ENABLE_DEFAULT}")"
-DUNST_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} dunst config_file     2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
-DUNST_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} dunst restart_command 2>/dev/null || echo "${DUNST_RESTART_COMMAND_DEFAULT}")"
 
-: ${dunst_frame:=${selected_bg_color}}
-: ${dunst_urgency_low_bg:=${notification_bg_color}}
-: ${dunst_urgency_low_fg:=${notification_fg_color}}
-: ${dunst_urgency_normal_bg:=${selected_bg_color}}
-: ${dunst_urgency_normal_fg:=${selected_fg_color}}
-: ${dunst_urgency_critical_bg:=${titlebar_urgent_bg_color}}
-: ${dunst_urgency_critical_fg:=${selected_fg_color}}
 
-if ! [ "${DUNST_ENABLE}" == "true" ]; then
-    printf "* Ignoring dunst (disabled from configuration).\n"
+function dunst_check_dependencies() {
+    if ! which dunst >/dev/null; then
+        return 1
 
-elif ! [ -f "${DUNST_CONFIG_FILE}" ]; then
-    printf "* Ignoring dunst (configuration file \"${DUNST_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${DUNST_ENABLE}" == "true" ]; then
+        printf "* Ignoring dunst (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "${DUNST_CONFIG_FILE}" ]; then
+        printf "* Ignoring dunst (configuration file ${DUNST_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function dunst_derive_colors() {
+    : ${dunst_frame:=${selected_bg_color}}
+    : ${dunst_urgency_low_bg:=${notification_bg_color}}
+    : ${dunst_urgency_low_fg:=${notification_fg_color}}
+    : ${dunst_urgency_normal_bg:=${selected_bg_color}}
+    : ${dunst_urgency_normal_fg:=${selected_fg_color}}
+    : ${dunst_urgency_critical_bg:=${titlebar_urgent_bg_color}}
+    : ${dunst_urgency_critical_fg:=${selected_fg_color}}
+}
+
+
+
+function dunst_create_backup() {
     printf "* Making backup of dunst configuration file..."
 
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
@@ -32,8 +52,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${DUNST_CONFIG_FILE}" "${DUNST_BACKUP_DIR}/dunstrc"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function dunst_restore_backup() {
     printf "* Restoring backup of dunst configuration file..."
 
     DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
@@ -46,8 +69,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function dunst_apply_theme() {
     printf "* Setting colors for dunst..."
 
     DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
@@ -68,6 +94,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     $DUNST_RESTART_COMMAND &>/dev/null
 
     printf " done.\n"
+}
+
+
+
+dunst_init_module
+dunst_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    dunst_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    dunst_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    dunst_derive_colors
+    dunst_apply_theme
 
 fi
 

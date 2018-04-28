@@ -1,64 +1,84 @@
 #!/bin/bash
 
-which geany >/dev/null || return
+function geany_init_module() {
+    GEANY_ENABLE_DEFAULT="true"
+    GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
 
-: ${geany_bg:=${editor_bg}}
-: ${geany_fg:=${editor_fg}}
-: ${geany_selected_bg:=${editor_selected_bg}}
-: ${geany_selected_fg:=${editor_selected_fg}}
-: ${geany_frame_bg:=${editor_frame_bg}}
-: ${geany_frame_fg:=${editor_frame_fg}}
-: ${geany_current_line_bg:=${editor_current_line_bg}}
-: ${geany_indent_guide:=${editor_indent_guide}}
+    GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
+    GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
 
-: ${geany_number:=${editor_number}}
-: ${geany_class:=${editor_class}}
-: ${geany_string:=${editor_string}}
-: ${geany_operator:=${editor_operator}}
-: ${geany_comment:=${editor_comment}}
-: ${geany_error:=${editor_error}}
-: ${geany_keyword:=${editor_keyword}}
-: ${geany_character:=${editor_character}}
-: ${geany_preprocessor:=${editor_preprocessor}}
-: ${geany_brace_good:=${editor_brace_good}}
-: ${geany_white_space:=${editor_white_space}}
+    GCS_SYNTAX_FALLBACK_DEFAULT="true"
+    GCS_SYNTAX_FALLBACK="$(crudini   --get ${GCS_CONFIG_FILE} gcs   syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+    GEANY_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} geany syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+}
 
-: ${geany_margin_folding_bg:=${editor_frame_bg}}
-: ${geany_margin_folding_fg:=${editor_frame_fg}}
-: ${geany_fold_symbol_highlight:=${editor_frame_bg}}
-: ${geany_marker_search_bg:=${editor_selected_bg}}
-: ${geany_marker_search_fg:=${editor_selected_fg}}
-: ${geany_marker_mark_bg:=${editor_frame_bg}}
-: ${geany_marker_mark_fg:=${editor_frame_fg}}
-: ${geany_type:=${editor_section_header}}
-: ${geany_function_bg:=${editor_bg}}
-: ${geany_function_fg:=${editor_class}}
-: ${geany_parameter_bg:=${editor_bg}}
-: ${geany_parameter_fg:=${editor_class}}
-: ${geany_here_doc_bg:=${editor_bg}}
-: ${geany_here_doc_fg:=${editor_string}}
 
-: ${geany_diff_added:=${editor_diff_added}}
-: ${geany_diff_removed:=${editor_diff_removed}}
-: ${geany_diff_changed:=${editor_diff_changed}}
 
-GEANY_ENABLE_DEFAULT="true"
-GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
+function geany_check_dependencies() {
+    if ! which geany >/dev/null; then
+        return 1
 
-GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
-GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
+    elif ! [ "${GEANY_ENABLE}" == "true" ]; then
+        printf "* Ignoring Geany (disabled from configuration).\n"
+        return 1
 
-GCS_SYNTAX_FALLBACK_DEFAULT="true"
-GCS_SYNTAX_FALLBACK="$(crudini   --get ${GCS_CONFIG_FILE} gcs   syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
-GEANY_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} geany syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+    elif ! [ -f "${GEANY_CONFIG_FILE}" ]; then
+        printf "* Ignoring Geany (configuration file ${GEANY_CONFIG_FILE} not found).\n"
+        return 1
 
-if ! [ "${GEANY_ENABLE}" == "true" ]; then
-    printf "* Ignoring Geany (disabled from configuration).\n"
+    else
+        return 0
 
-elif ! [ -f "${GEANY_CONFIG_FILE}" ]; then
-    printf "* Ignoring Geany (configuration file \"${GEANY_CONFIG_FILE}\" not found).\n"
+    fi
+}
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+
+
+function geany_derive_colors() {
+    : ${geany_bg:=${editor_bg}}
+    : ${geany_fg:=${editor_fg}}
+    : ${geany_selected_bg:=${editor_selected_bg}}
+    : ${geany_selected_fg:=${editor_selected_fg}}
+    : ${geany_frame_bg:=${editor_frame_bg}}
+    : ${geany_frame_fg:=${editor_frame_fg}}
+    : ${geany_current_line_bg:=${editor_current_line_bg}}
+    : ${geany_indent_guide:=${editor_indent_guide}}
+
+    : ${geany_number:=${editor_number}}
+    : ${geany_class:=${editor_class}}
+    : ${geany_string:=${editor_string}}
+    : ${geany_operator:=${editor_operator}}
+    : ${geany_comment:=${editor_comment}}
+    : ${geany_error:=${editor_error}}
+    : ${geany_keyword:=${editor_keyword}}
+    : ${geany_character:=${editor_character}}
+    : ${geany_preprocessor:=${editor_preprocessor}}
+    : ${geany_brace_good:=${editor_brace_good}}
+    : ${geany_white_space:=${editor_white_space}}
+
+    : ${geany_margin_folding_bg:=${editor_frame_bg}}
+    : ${geany_margin_folding_fg:=${editor_frame_fg}}
+    : ${geany_fold_symbol_highlight:=${editor_frame_bg}}
+    : ${geany_marker_search_bg:=${editor_selected_bg}}
+    : ${geany_marker_search_fg:=${editor_selected_fg}}
+    : ${geany_marker_mark_bg:=${editor_frame_bg}}
+    : ${geany_marker_mark_fg:=${editor_frame_fg}}
+    : ${geany_type:=${editor_section_header}}
+    : ${geany_function_bg:=${editor_bg}}
+    : ${geany_function_fg:=${editor_class}}
+    : ${geany_parameter_bg:=${editor_bg}}
+    : ${geany_parameter_fg:=${editor_class}}
+    : ${geany_here_doc_bg:=${editor_bg}}
+    : ${geany_here_doc_fg:=${editor_string}}
+
+    : ${geany_diff_added:=${editor_diff_added}}
+    : ${geany_diff_removed:=${editor_diff_removed}}
+    : ${geany_diff_changed:=${editor_diff_changed}}
+}
+
+
+
+function geany_create_backup() {
     printf "* Making backup of Geany configuration file..."
 
     GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
@@ -66,8 +86,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${GEANY_CONFIG_FILE}" "${GEANY_BACKUP_DIR}/geany.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function geany_restore_backup() {
     printf "* Restoring backup of Geany configuration file..."
 
     GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
@@ -77,8 +100,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function geany_apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${GEANY_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for Geany..."
@@ -164,6 +190,24 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         fi
 
     fi
+}
+
+
+
+geany_init_module
+geany_check_dependencies
+[ $? == 1 ] && return
+
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    geany_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    geany_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    geany_derive_colors
+    geany_apply_theme
 
 fi
 

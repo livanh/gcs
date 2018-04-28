@@ -1,44 +1,64 @@
 #!/bin/bash
 
-which vim>/dev/null || return
+function vim_init_module() {
+    VIM_ENABLE_DEFAULT="true"
+    VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
+    VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
 
-: ${vim_normal_fg_color:=${editor_fg}}
-: ${vim_normal_bg_color:=${editor_bg}}
-: ${vim_linenr_fg_color:=${editor_frame_fg}}
-: ${vim_linenr_bg_color:=${editor_frame_bg}}
-: ${vim_white_space_color:=${editor_white_space}}
-: ${vim_current_line_bg:=${editor_current_line_bg}}
-: ${vim_selected_fg:=${editor_selected_fg}}
-: ${vim_selected_bg:=${editor_selected_bg}}
-: ${vim_comment:=${editor_comment}}
-: ${vim_string:=${editor_string}}
-: ${vim_operator:=${editor_operator}}
-: ${vim_keyword:=${editor_keyword}}
-: ${vim_preprocessor:=${editor_preprocessor}}
-: ${vim_identifier:=${editor_variable}}
-: ${vim_type:=${editor_class}}
-: ${vim_character:=${editor_character}}
-: ${vim_number:=${editor_number}}
+    VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
+    VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
+    VIM_COLORSCHEME_FILE="$(crudini --get ${GCS_CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
 
-VIM_ENABLE_DEFAULT="true"
-VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
-VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
+    GCS_SYNTAX_FALLBACK_DEFAULT="true"
+    GCS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} gcs syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+    VIM_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} vim syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+}
 
-VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
-VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
-VIM_COLORSCHEME_FILE="$(crudini --get ${GCS_CONFIG_FILE} vim colorscheme_file 2>/dev/null || echo "${VIM_COLORSCHEME_FILE_DEFAULT}")"
 
-GCS_SYNTAX_FALLBACK_DEFAULT="true"
-GCS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} gcs syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
-VIM_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} vim syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
 
-if ! [ "${VIM_ENABLE}" == "true" ]; then
-    printf "* Ignoring Vim (disabled from configuration).\n"
+function vim_check_dependencies() {
+    if ! which vim >/dev/null; then
+        return 1
 
-elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
-    printf "* Ignoring Vim (config file \"${VIM_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${VIM_ENABLE}" == "true" ]; then
+        printf "* Ignoring Vim (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "$VIM_CONFIG_FILE}" ]; then
+        printf "* Ignoring Vim (configuration file ${VIM_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function vim_derive_colors() {
+    : ${vim_normal_fg_color:=${editor_fg}}
+    : ${vim_normal_bg_color:=${editor_bg}}
+    : ${vim_linenr_fg_color:=${editor_frame_fg}}
+    : ${vim_linenr_bg_color:=${editor_frame_bg}}
+    : ${vim_white_space_color:=${editor_white_space}}
+    : ${vim_current_line_bg:=${editor_current_line_bg}}
+    : ${vim_selected_fg:=${editor_selected_fg}}
+    : ${vim_selected_bg:=${editor_selected_bg}}
+    : ${vim_comment:=${editor_comment}}
+    : ${vim_string:=${editor_string}}
+    : ${vim_operator:=${editor_operator}}
+    : ${vim_keyword:=${editor_keyword}}
+    : ${vim_preprocessor:=${editor_preprocessor}}
+    : ${vim_identifier:=${editor_variable}}
+    : ${vim_type:=${editor_class}}
+    : ${vim_character:=${editor_character}}
+    : ${vim_number:=${editor_number}}
+}
+
+
+
+function vim_create_backup() {
     printf "* Making backup of Vim configuration file..."
 
     VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
@@ -46,8 +66,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${VIM_CONFIG_FILE}" "${VIM_BACKUP_DIR}/vimrc"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function vim_restore_backup() {
     printf "* Restoring backup of Vim configuration file..."
 
     VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
@@ -62,8 +85,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function vim_apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${VIM_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for Vim GUI..."
@@ -118,6 +144,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         printf " done.\n"
 
     fi
+}
+
+
+
+vim_init_module
+vim_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    vim_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    vim_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    vim_derive_colors
+    vim_apply_theme
 
 fi
 

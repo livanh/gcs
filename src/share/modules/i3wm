@@ -1,71 +1,88 @@
 #!/bin/bash
 # FIXME: sed gives errors if the relevant lines have also commented copies
 
-which i3 >/dev/null || return
+function i3wm_init_module() {
+    I3_ENABLE_DEFAULT="true"
+    I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
+    I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
 
-: ${i3_client_focused_border:=${titlebar_focused_bg_color}}
-: ${i3_client_focused_bg:=${titlebar_focused_bg_color}}
-: ${i3_client_focused_fg:=${titlebar_focused_fg_color}}
-: ${i3_client_focused_indicator:=${titlebar_focused_bg_color}}
+    I3_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
+    I3_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
+    I3_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
+}
 
-: ${i3_client_focused_inactive_border:=${titlebar_unfocused_bg_color}}
-: ${i3_client_focused_inactive_bg:=${titlebar_unfocused_bg_color}}
-: ${i3_client_focused_inactive_fg:=${titlebar_unfocused_fg_color}}
-: ${i3_client_focused_inactive_indicator:=${titlebar_unfocused_bg_color}}
 
-: ${i3_client_unfocused_border:=${titlebar_unfocused_bg_color}}
-: ${i3_client_unfocused_bg:=${titlebar_unfocused_bg_color}}
-: ${i3_client_unfocused_fg:=${titlebar_unfocused_fg_color}}
-: ${i3_client_unfocused_indicator:=${titlebar_unfocused_bg_color}}
 
-: ${i3_client_urgent_border:=${titlebar_urgent_bg_color}}
-: ${i3_client_urgent_bg:=${titlebar_urgent_bg_color}}
-: ${i3_client_urgent_fg:=${titlebar_urgent_fg_color}}
-: ${i3_client_urgent_indicator:=${titlebar_urgent_bg_color}}
+function i3wm_check_dependencies() {
+    if ! which i3 >/dev/null; then
+        return 1
 
-: ${i3_client_placeholder_border:=${bg_color}}
-: ${i3_client_placeholder_bg:=${bg_color}}
-: ${i3_client_placeholder_fg:=${fg_color}}
-: ${i3_client_placeholder_indicator:=${bg_color}}
+    elif ! [ "${I3_ENABLE}" == "true" ]; then
+        printf "* Ignoring i3 window manager (disabled from configuration).\n"
+        return 1
 
-: ${i3_bar_separator:=${selected_bg_color}}
-: ${i3_bar_background:=${tray_bg_color}}
-: ${i3_bar_statusline:=${tray_fg_color}}
+    elif ! [ -f "${I3_CONFIG_FILE}" ]; then
+        printf "* Ignoring i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+        return 1
 
-: ${i3_bar_focused_workspace_border:=${tray_focused_bg_color}}
-: ${i3_bar_focused_workspace_bg:=${tray_focused_bg_color}}
-: ${i3_bar_focused_workspace_fg:=${tray_focused_fg_color}}
+    else
+        return 0
 
-: ${i3_bar_active_workspace_border:=${tray_unfocused_bg_color}}
-: ${i3_bar_active_workspace_bg:=${tray_unfocused_bg_color}}
-: ${i3_bar_active_workspace_fg:=${tray_unfocused_fg_color}}
+    fi
+}
 
-: ${i3_bar_inactive_workspace_border:=${tray_unfocused_bg_color}}
-: ${i3_bar_inactive_workspace_bg:=${tray_unfocused_bg_color}}
-: ${i3_bar_inactive_workspace_fg:=${tray_unfocused_fg_color}}
 
-: ${i3_bar_urgent_workspace_border:=${tray_urgent_bg_color}}
-: ${i3_bar_urgent_workspace_bg:=${tray_urgent_bg_color}}
-: ${i3_bar_urgent_workspace_fg:=${tray_urgent_fg_color}}
 
-I3_ENABLE_DEFAULT="true"
-I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
-I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
+function i3wm_derive_colors() {
+    : ${i3_client_focused_border:=${titlebar_focused_bg_color}}
+    : ${i3_client_focused_bg:=${titlebar_focused_bg_color}}
+    : ${i3_client_focused_fg:=${titlebar_focused_fg_color}}
+    : ${i3_client_focused_indicator:=${titlebar_focused_bg_color}}
 
-I3_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
-I3_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
-I3_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
+    : ${i3_client_focused_inactive_border:=${titlebar_unfocused_bg_color}}
+    : ${i3_client_focused_inactive_bg:=${titlebar_unfocused_bg_color}}
+    : ${i3_client_focused_inactive_fg:=${titlebar_unfocused_fg_color}}
+    : ${i3_client_focused_inactive_indicator:=${titlebar_unfocused_bg_color}}
 
-if ! [ "${I3_ENABLE}" == "true" ]; then
-    printf "* Ignoring i3 window manager (disabled from configuration).\n"
+    : ${i3_client_unfocused_border:=${titlebar_unfocused_bg_color}}
+    : ${i3_client_unfocused_bg:=${titlebar_unfocused_bg_color}}
+    : ${i3_client_unfocused_fg:=${titlebar_unfocused_fg_color}}
+    : ${i3_client_unfocused_indicator:=${titlebar_unfocused_bg_color}}
 
-elif ! [ -f "${I3_CONFIG_FILE}" ]; then
-    printf "* Ignoring i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+    : ${i3_client_urgent_border:=${titlebar_urgent_bg_color}}
+    : ${i3_client_urgent_bg:=${titlebar_urgent_bg_color}}
+    : ${i3_client_urgent_fg:=${titlebar_urgent_fg_color}}
+    : ${i3_client_urgent_indicator:=${titlebar_urgent_bg_color}}
 
-elif ! i3 --get-socketpath &>/dev/null; then
-    printf "* Not setting colors for i3 window manager (not currently active).\n"
+    : ${i3_client_placeholder_border:=${bg_color}}
+    : ${i3_client_placeholder_bg:=${bg_color}}
+    : ${i3_client_placeholder_fg:=${fg_color}}
+    : ${i3_client_placeholder_indicator:=${bg_color}}
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    : ${i3_bar_separator:=${selected_bg_color}}
+    : ${i3_bar_background:=${tray_bg_color}}
+    : ${i3_bar_statusline:=${tray_fg_color}}
+
+    : ${i3_bar_focused_workspace_border:=${tray_focused_bg_color}}
+    : ${i3_bar_focused_workspace_bg:=${tray_focused_bg_color}}
+    : ${i3_bar_focused_workspace_fg:=${tray_focused_fg_color}}
+
+    : ${i3_bar_active_workspace_border:=${tray_unfocused_bg_color}}
+    : ${i3_bar_active_workspace_bg:=${tray_unfocused_bg_color}}
+    : ${i3_bar_active_workspace_fg:=${tray_unfocused_fg_color}}
+
+    : ${i3_bar_inactive_workspace_border:=${tray_unfocused_bg_color}}
+    : ${i3_bar_inactive_workspace_bg:=${tray_unfocused_bg_color}}
+    : ${i3_bar_inactive_workspace_fg:=${tray_unfocused_fg_color}}
+
+    : ${i3_bar_urgent_workspace_border:=${tray_urgent_bg_color}}
+    : ${i3_bar_urgent_workspace_bg:=${tray_urgent_bg_color}}
+    : ${i3_bar_urgent_workspace_fg:=${tray_urgent_fg_color}}
+}
+
+
+
+function i3wm_create_backup() {
     printf "* Making backup of i3 window manager configuration file..."
 
     I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
@@ -73,8 +90,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${I3_CONFIG_FILE}" "${I3_BACKUP_DIR}/config"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function i3wm_restore_backup() {
     printf "* Restoring backup of i3 window manager configuration file..."
 
     I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
@@ -87,35 +107,61 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
+
+
+
+function i3wm_apply_theme() {
+    if ! i3 --get-socketpath &>/dev/null; then
+        printf "* Not setting colors for i3 window manager (not currently active).\n"
+
+    else
+
+        printf "* Setting colors for i3 window manager..."
+
+        I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
+        I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
+        mkdir "${I3_TMP_DIR}"
+        cp "${I3_CONFIG_FILE}" "${I3_TMP_CONFIG_FILE}"
+
+        set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_TMP_CONFIG_FILE}"
+        set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_TMP_CONFIG_FILE}"
+        set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_TMP_CONFIG_FILE}"
+        set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_TMP_CONFIG_FILE}"
+        set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_TMP_CONFIG_FILE}"
+
+        set_value "separator"  " " " ${i3_bar_separator}"  "${I3_TMP_CONFIG_FILE}"
+        set_value "background" " " " ${i3_bar_background}" "${I3_TMP_CONFIG_FILE}"
+        set_value "statusline" " " " ${i3_bar_statusline}" "${I3_TMP_CONFIG_FILE}"
+
+        set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_TMP_CONFIG_FILE}"
+        set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
+        set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_TMP_CONFIG_FILE}"
+        set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
+
+        mv "${I3_TMP_CONFIG_FILE}" "${I3_CONFIG_FILE}"
+
+        ${I3_RESTART_COMMAND} &>/dev/null
+
+        printf " done.\n"
+    fi
+}
+
+
+
+i3wm_init_module
+i3wm_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    i3wm_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    i3wm_restore_backup
 
 elif [ "${GCS_ACTION}" == "apply-theme" ]; then
-    printf "* Setting colors for i3 window manager..."
-
-    I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
-    I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
-    mkdir "${I3_TMP_DIR}"
-    cp "${I3_CONFIG_FILE}" "${I3_TMP_CONFIG_FILE}"
-
-    set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_TMP_CONFIG_FILE}"
-    set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_TMP_CONFIG_FILE}"
-    set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_TMP_CONFIG_FILE}"
-    set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_TMP_CONFIG_FILE}"
-    set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_TMP_CONFIG_FILE}"
-
-    set_value "separator"  " " " ${i3_bar_separator}"  "${I3_TMP_CONFIG_FILE}"
-    set_value "background" " " " ${i3_bar_background}" "${I3_TMP_CONFIG_FILE}"
-    set_value "statusline" " " " ${i3_bar_statusline}" "${I3_TMP_CONFIG_FILE}"
-
-    set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_TMP_CONFIG_FILE}"
-    set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
-    set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_TMP_CONFIG_FILE}"
-    set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
-
-    mv "${I3_TMP_CONFIG_FILE}" "${I3_CONFIG_FILE}"
-
-    ${I3_RESTART_COMMAND} &>/dev/null
-
-    printf " done.\n"
+    i3wm_derive_colors
+    i3wm_apply_theme
 
 fi
 

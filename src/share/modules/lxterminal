@@ -1,23 +1,43 @@
 #!/bin/bash
 
-which lxterminal >/dev/null || return
+function lxterminal_init_module() {
+    LXTERMINAL_ENABLE_DEFAULT="true"
+    LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/.config/lxterminal/lxterminal.conf"
 
-: ${lxterminal_bg_color:=${terminal_bg_color}}
-: ${lxterminal_fg_color:=${terminal_fg_color}}
+    LXTERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} lxterminal enable      2>/dev/null || echo "${LXTERMINAL_ENABLE_DEFAULT}")"
+    LXTERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} lxterminal config_file 2>/dev/null || echo "${LXTERMINAL_CONFIG_FILE_DEFAULT}")"
+}
 
-LXTERMINAL_ENABLE_DEFAULT="true"
-LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/.config/lxterminal/lxterminal.conf"
 
-LXTERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} lxterminal enable      2>/dev/null || echo "${LXTERMINAL_ENABLE_DEFAULT}")"
-LXTERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} lxterminal config_file 2>/dev/null || echo "${LXTERMINAL_CONFIG_FILE_DEFAULT}")"
 
-if ! [ "${LXTERMINAL_ENABLE}" == "true" ]; then
-    printf "* Ignoring LXTerminal (disabled from configuration).\n"
+function lxterminal_check_dependencies() {
+    if ! which lxterminal >/dev/null; then
+        return 1
 
-elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
-    printf "* Ignoring LXTerminal (configuration file \"${LXTERMINAL_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${LXTERMINAL_ENABLE}" == "true" ]; then
+        printf "* Ignoring LXTerminal (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
+        printf "* Ignoring LXTerminal (configuration file ${LXTERMINAL_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function lxterminal_derive_colors() {
+    : ${lxterminal_bg_color:=${terminal_bg_color}}
+    : ${lxterminal_fg_color:=${terminal_fg_color}}
+}
+
+
+
+function lxterminal_create_backup() {
     printf "* Making backup of LXTerminal configuration file..."
 
     LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
@@ -25,8 +45,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function lxterminal_restore_backup() {
     printf "* Restoring backup of LXTerminal configuration file..."
 
     LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
@@ -36,8 +59,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function lxterminal_apply_theme() {
     printf "* Setting colors for LXTerminal..."
 
     LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
@@ -51,6 +77,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     mv "${LXTERMINAL_TMP_CONFIG_FILE}" "${LXTERMINAL_CONFIG_FILE}"
 
     printf " done.\n"
+}
+
+
+
+lxterminal_init_module
+lxterminal_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    lxterminal_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    lxterminal_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    lxterminal_derive_colors
+    lxterminal_apply_theme
 
 fi
 

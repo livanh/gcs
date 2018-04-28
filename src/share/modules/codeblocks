@@ -1,144 +1,94 @@
 #!/bin/bash
-
 # TODO: set bold font on some styles
 
-which codeblocks >/dev/null || return
+function codeblocks_init_module() {
+    CB_STYLE_CTR=0
+    CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
+    CB_COLORSET_NAME="${FULL_COLOR_THEME_NAME}"
+    CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 
-: ${codeblocks_c_default_fg:=${editor_fg}}
-: ${codeblocks_c_default_bg:=${editor_bg}}
-: ${codeblocks_c_selected_fg:=${editor_selected_fg}}
-: ${codeblocks_c_selected_bg:=${editor_selected_bg}}
-: ${codeblocks_c_number:=${editor_number}}
-: ${codeblocks_c_class:=${editor_class}}
-: ${codeblocks_c_string:=${editor_string}}
-: ${codeblocks_c_operator:=${editor_operator}}
-: ${codeblocks_c_comment:=${editor_comment}}
-: ${codeblocks_c_comment_line:=${editor_comment}}
-: ${codeblocks_c_comment_doc:=${editor_comment}}
-: ${codeblocks_c_comment_line_doc:=${editor_comment}}
-: ${codeblocks_c_comment_keyword_doc:=${editor_preprocessor}}
-: ${codeblocks_c_comment_keyword_error_doc:=${editor_error}}
-: ${codeblocks_c_keyword:=${editor_keyword}}
-: ${codeblocks_c_character:=${editor_character}}
-: ${codeblocks_c_preprocessor:=${editor_preprocessor}}
-: ${codeblocks_c_brace_good_fg:=${editor_brace_good}}
-: ${codeblocks_c_brace_good_bg:=${editor_bg}}
-: ${codeblocks_c_current_line:=${editor_current_line_bg}}
+    CODEBLOCKS_ENABLE_DEFAULT="true"
+    CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 
-: ${codeblocks_diff_default_fg:=${editor_fg}}
-: ${codeblocks_diff_default_bg:=${editor_bg}}
-: ${codeblocks_diff_comment:=${editor_comment}}
-: ${codeblocks_diff_command:=${editor_keyword}}
-: ${codeblocks_diff_header:=${editor_preprocessor}}
-: ${codeblocks_diff_position:=${editor_number}}
-: ${codeblocks_diff_deleted:=${editor_diff_removed}}
-: ${codeblocks_diff_added:=${editor_diff_added}}
+    CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
+    CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
-: ${codeblocks_active_caption_colour:=${titlebar_focused_bg_color}}
-: ${codeblocks_active_caption_gradient_colour:=${titlebar_focused_bg_color}}
-: ${codeblocks_active_caption_text_colour:=${titlebar_focused_fg_color}}
-: ${codeblocks_inactive_caption_colour:=${titlebar_unfocused_bg_color}}
-: ${codeblocks_inactive_caption_gradient_colour:=${titlebar_unfocused_bg_color}}
-: ${codeblocks_inactive_caption_text_colour:=${titlebar_unfocused_fg_color}}
-: ${codeblocks_project_tree_non_source_files:=${editor_comment}}
-
-: ${codeblocks_editor_margin_chrome:=${editor_frame_bg}}
-: ${codeblocks_editor_margin_chrome_highlight:=${editor_frame_bg}}
-: ${codeblocks_editor_linenumbers_bg:=${editor_frame_bg}}
-: ${codeblocks_editor_linenumbers_fg:=${editor_frame_fg}}
-: ${codeblocks_editor_gutter:=${editor_long_line_marker}}
-
-# declare some constants
-CB_STYLE_CTR=0
-CB_PREFIX="/CodeBlocksConfig/editor/colour_sets"
-CB_COLORSET_NAME="${FULL_COLOR_THEME_NAME}"
-CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
-
-# helper function to set styles in Code::blocks config file
-codeblocks_add_style() {
-
-    if [ "$#" -ne 5 ]; then
-        echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
-        exit 2
-    fi
-
-    local name="$1"
-    local lang="$2"
-    local fg_color="$3"
-    local bg_color="$4"
-    local file="$5"
-
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}"                           --type elem -n "style${CB_STYLE_CTR}"  "${file}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"      --type elem -n "NAME"                  "${file}"
-    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
-
-    if [ "${fg_color}" != "default" ]; then
-        local fg_red="$(   printf "%d" 0x${fg_color:1:2})"
-        local fg_green="$( printf "%d" 0x${fg_color:3:2})"
-        local fg_blue="$(  printf "%d" 0x${fg_color:5:2})"
-        
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "FORE"                         "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"        --type elem -n "colour"                       "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "r"      --value "${fg_red}"   "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "g"      --value "${fg_green}" "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "b"      --value "${fg_blue}"  "${file}"
-    fi
-
-    if [ "${bg_color}" != "default" ]; then
-    #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
-    #else
-        local bg_red="$(   printf "%d" 0x${bg_color:1:2})"
-        local bg_green="$( printf "%d" 0x${bg_color:3:2})"
-        local bg_blue="$(  printf "%d" 0x${bg_color:5:2})"
-        
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "BACK"                         "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"        --type elem -n "colour"                       "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "r"      --value "${bg_red}"   "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "g"      --value "${bg_green}" "${file}"
-        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
-    fi
-
-    CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
+    GCS_SYNTAX_FALLBACK_DEFAULT="true"
+    GCS_SYNTAX_FALLBACK="$(crudini        --get ${GCS_CONFIG_FILE} gcs        syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
+    CODEBLOCKS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} codeblocks syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
 }
 
-# helper function to set colors outside colorsets
-codeblocks_set_color (){
 
-    if [ "$#" -ne 3 ]; then
-        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-        exit 2
+
+function codeblocks_check_dependencies() {
+    if ! which codeblocks >/dev/null; then
+        return 1
+
+    elif ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
+        printf "* Ignoring Code::Blocks (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
+        printf "* Ignoring Code::Blocks (configuration file ${CODEBLOCKS_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
     fi
-
-    local path="$1"
-    local color="$2"
-    local file="$3"
-
-    local red="$(   printf "%d" 0x${color:1:2})"
-    local green="$( printf "%d" 0x${color:3:2})"
-    local blue="$(  printf "%d" 0x${color:5:2})"
-
-    xmlstarlet ed --inplace --update "${path}/colour/@r" --value "${red}"   "${file}"
-    xmlstarlet ed --inplace --update "${path}/colour/@g" --value "${green}" "${file}"
-    xmlstarlet ed --inplace --update "${path}/colour/@b" --value "${blue}"  "${file}"
 }
 
-CODEBLOCKS_ENABLE_DEFAULT="true"
-CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
 
-CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
-CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
 
-GCS_SYNTAX_FALLBACK_DEFAULT="true"
-GCS_SYNTAX_FALLBACK="$(crudini        --get ${GCS_CONFIG_FILE} gcs        syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK_DEFAULT}")"
-CODEBLOCKS_SYNTAX_FALLBACK="$(crudini --get ${GCS_CONFIG_FILE} codeblocks syntax_fallback 2>/dev/null || echo "${GCS_SYNTAX_FALLBACK}")"
+function codeblocks_derive_colors() {
+    : ${codeblocks_c_default_fg:=${editor_fg}}
+    : ${codeblocks_c_default_bg:=${editor_bg}}
+    : ${codeblocks_c_selected_fg:=${editor_selected_fg}}
+    : ${codeblocks_c_selected_bg:=${editor_selected_bg}}
+    : ${codeblocks_c_number:=${editor_number}}
+    : ${codeblocks_c_class:=${editor_class}}
+    : ${codeblocks_c_string:=${editor_string}}
+    : ${codeblocks_c_operator:=${editor_operator}}
+    : ${codeblocks_c_comment:=${editor_comment}}
+    : ${codeblocks_c_comment_line:=${editor_comment}}
+    : ${codeblocks_c_comment_doc:=${editor_comment}}
+    : ${codeblocks_c_comment_line_doc:=${editor_comment}}
+    : ${codeblocks_c_comment_keyword_doc:=${editor_preprocessor}}
+    : ${codeblocks_c_comment_keyword_error_doc:=${editor_error}}
+    : ${codeblocks_c_keyword:=${editor_keyword}}
+    : ${codeblocks_c_character:=${editor_character}}
+    : ${codeblocks_c_preprocessor:=${editor_preprocessor}}
+    : ${codeblocks_c_brace_good_fg:=${editor_brace_good}}
+    : ${codeblocks_c_brace_good_bg:=${editor_bg}}
+    : ${codeblocks_c_current_line:=${editor_current_line_bg}}
 
-if ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then
-    printf "* Ignoring Code::Blocks (disabled from configuration).\n"
+    : ${codeblocks_diff_default_fg:=${editor_fg}}
+    : ${codeblocks_diff_default_bg:=${editor_bg}}
+    : ${codeblocks_diff_comment:=${editor_comment}}
+    : ${codeblocks_diff_command:=${editor_keyword}}
+    : ${codeblocks_diff_header:=${editor_preprocessor}}
+    : ${codeblocks_diff_position:=${editor_number}}
+    : ${codeblocks_diff_deleted:=${editor_diff_removed}}
+    : ${codeblocks_diff_added:=${editor_diff_added}}
 
-elif ! [ -f "${CODEBLOCKS_CONFIG_FILE}" ]; then
-    printf "* Ignoring Code::Blocks (configuration file not found: ${CODEBLOCKS_CONFIG_FILE}).\n"
+    : ${codeblocks_active_caption_colour:=${titlebar_focused_bg_color}}
+    : ${codeblocks_active_caption_gradient_colour:=${titlebar_focused_bg_color}}
+    : ${codeblocks_active_caption_text_colour:=${titlebar_focused_fg_color}}
+    : ${codeblocks_inactive_caption_colour:=${titlebar_unfocused_bg_color}}
+    : ${codeblocks_inactive_caption_gradient_colour:=${titlebar_unfocused_bg_color}}
+    : ${codeblocks_inactive_caption_text_colour:=${titlebar_unfocused_fg_color}}
+    : ${codeblocks_project_tree_non_source_files:=${editor_comment}}
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    : ${codeblocks_editor_margin_chrome:=${editor_frame_bg}}
+    : ${codeblocks_editor_margin_chrome_highlight:=${editor_frame_bg}}
+    : ${codeblocks_editor_linenumbers_bg:=${editor_frame_bg}}
+    : ${codeblocks_editor_linenumbers_fg:=${editor_frame_fg}}
+    : ${codeblocks_editor_gutter:=${editor_long_line_marker}}
+}
+
+
+
+function codeblocks_create_backup() {
     printf "* Making backup of Code::Blocks configuration file..."
 
     CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
@@ -146,8 +96,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_BACKUP_DIR}/default.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function codeblocks_restore_backup() {
     printf "* Restoring backup of Code::Blocks configuration file..."
 
     CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
@@ -157,8 +110,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function codeblocks_apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${CODEBLOCKS_SYNTAX_FALLBACK}" == "true" ]; then
             if [ "$(xmlstarlet sel -t -v "${CB_PREFIX}/ACTIVE_COLOUR_SET/str" "${CODEBLOCKS_CONFIG_FILE}")" == "${CB_COLORSET_NAME}" ]; then
@@ -246,6 +202,95 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
         printf " done.\n"
 
     fi
+}
+
+
+
+# helper function to set styles in Code::blocks config file
+function codeblocks_add_style() {
+
+    if [ "$#" -ne 5 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 5 arguments!"
+        exit 2
+    fi
+
+    local name="$1"
+    local lang="$2"
+    local fg_color="$3"
+    local bg_color="$4"
+    local file="$5"
+
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}"                           --type elem -n "style${CB_STYLE_CTR}"  "${file}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"      --type elem -n "NAME"                  "${file}"
+    xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/NAME" --type elem -n "str" --value "${name}" "${file}"
+
+    if [ "${fg_color}" != "default" ]; then
+        local fg_red="$(   printf "%d" 0x${fg_color:1:2})"
+        local fg_green="$( printf "%d" 0x${fg_color:3:2})"
+        local fg_blue="$(  printf "%d" 0x${fg_color:5:2})"
+        
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "FORE"                         "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE"        --type elem -n "colour"                       "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "r"      --value "${fg_red}"   "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "g"      --value "${fg_green}" "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/FORE/colour" --type attr -n "b"      --value "${fg_blue}"  "${file}"
+    fi
+
+    if [ "${bg_color}" != "default" ]; then
+    #xmlstarlet ed --inplace --delete "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"
+    #else
+        local bg_red="$(   printf "%d" 0x${bg_color:1:2})"
+        local bg_green="$( printf "%d" 0x${bg_color:3:2})"
+        local bg_blue="$(  printf "%d" 0x${bg_color:5:2})"
+        
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}"             --type elem -n "BACK"                         "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK"        --type elem -n "colour"                       "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "r"      --value "${bg_red}"   "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "g"      --value "${bg_green}" "${file}"
+        xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
+    fi
+
+    CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
+}
+
+
+
+# helper function to set colors outside colorsets
+function codeblocks_set_color (){
+
+    if [ "$#" -ne 3 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
+    fi
+
+    local path="$1"
+    local color="$2"
+    local file="$3"
+
+    local red="$(   printf "%d" 0x${color:1:2})"
+    local green="$( printf "%d" 0x${color:3:2})"
+    local blue="$(  printf "%d" 0x${color:5:2})"
+
+    xmlstarlet ed --inplace --update "${path}/colour/@r" --value "${red}"   "${file}"
+    xmlstarlet ed --inplace --update "${path}/colour/@g" --value "${green}" "${file}"
+    xmlstarlet ed --inplace --update "${path}/colour/@b" --value "${blue}"  "${file}"
+}
+
+
+
+codeblocks_init_module
+codeblocks_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    codeblocks_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    codeblocks_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    codeblocks_derive_colors
+    codeblocks_apply_theme
 
 fi
 

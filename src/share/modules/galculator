@@ -1,26 +1,46 @@
 #!/bin/bash
 
-which galculator >/dev/null || return
+function galculator_init_module() {
+    GALCULATOR_ENABLE_DEFAULT="true"
+    GALCULATOR_CONFIG_FILE_DEFAULT="$HOME/.config/galculator/galculator.conf"
 
-: ${galculator_bg_color:=${base_color}}
-: ${galculator_result_color:=${text_color}}
-: ${galculator_stack_color:=${text_color}}
-: ${galculator_module_active_color:=${selected_bg_color}}
-: ${galculator_module_inactive_color:=${unfocused_text_color}}
+    GALCULATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
+    GALCULATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
+}
 
-GALCULATOR_ENABLE_DEFAULT="true"
-GALCULATOR_CONFIG_FILE_DEFAULT="$HOME/.config/galculator/galculator.conf"
 
-GALCULATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
-GALCULATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
 
-if ! [ "${GALCULATOR_ENABLE}" == "true" ]; then
-    printf "* Ignoring Galculator (disabled from configuration).\n"
+function galculator_check_dependencies() {
+    if ! which galculator >/dev/null; then
+        return 1
 
-elif ! [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
-    printf "* Ignoring Galculator (config file \"${GALCULATOR_CONFIG_FILE}\" not found).\n"
+    elif ! [ "${GALCULATOR_ENABLE}" == "true" ]; then
+        printf "* Ignoring Galculator (disabled from configuration).\n"
+        return 1
 
-elif [ "${GCS_ACTION}" == "create-backup" ]; then
+    elif ! [ -f "${GALCULATOR_CONFIG_FILE}" ]; then
+        printf "* Ignoring Galculator (configuration file ${GALCULATOR_CONFIG_FILE} not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function galculator_derive_colors() {
+    : ${galculator_bg_color:=${base_color}}
+    : ${galculator_result_color:=${text_color}}
+    : ${galculator_stack_color:=${text_color}}
+    : ${galculator_module_active_color:=${selected_bg_color}}
+    : ${galculator_module_inactive_color:=${unfocused_text_color}}
+}
+
+
+
+function galculator_create_backup() {
     printf "* Making backup of Galculator configuration file..."
 
     GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
@@ -28,8 +48,11 @@ elif [ "${GCS_ACTION}" == "create-backup" ]; then
     cp "${GALCULATOR_CONFIG_FILE}" "${GALCULATOR_BACKUP_DIR}/galculator.conf"
 
     printf " done.\n"
+}
 
-elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+
+
+function galculator_restore_backup() {
     printf "* Restoring backup of Galculator configuration file..."
 
     GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
@@ -39,8 +62,11 @@ elif [ "${GCS_ACTION}" == "restore-backup" ]; then
     else
         printf " not found!\n"
     fi
+}
 
-elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+
+
+function galculator_apply_theme() {
     printf "* Setting colors for Galculator..."
 
     GALCULATOR_TMP_DIR="${GCS_TMP_DIR}/galculator"
@@ -57,6 +83,23 @@ elif [ "${GCS_ACTION}" == "apply-theme" ]; then
     mv "${GALCULATOR_TMP_CONFIG_FILE}" "${GALCULATOR_CONFIG_FILE}"
 
     printf " done.\n"
+}
+
+
+
+galculator_init_module
+galculator_check_dependencies
+[ $? == 1 ] && return
+
+if [ "${GCS_ACTION}" == "create-backup" ]; then
+    galculator_create_backup
+
+elif [ "${GCS_ACTION}" == "restore-backup" ]; then
+    galculator_restore_backup
+
+elif [ "${GCS_ACTION}" == "apply-theme" ]; then
+    galculator_derive_colors
+    galculator_apply_theme
 
 fi
 
