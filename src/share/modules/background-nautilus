@@ -20,7 +20,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then
-        printf "* Ignoring wallpaper for nautilus (disabled from configuration).\n"
+        printf "* Ignoring wallpaper for Nautilus (disabled from configuration).\n"
         return 1
 
     else
@@ -93,15 +93,21 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Nautilus: set desktop wallpaper.\n"
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
-        printf "* Not setting wallpaper with nautilus (image file not found: \"${wallpaper_image}\").\n"
+        printf "* Not setting wallpaper with Nautilus (image file not found: \"${wallpaper_image}\").\n"
 
     elif ! pgrep "nautilus" >/dev/null; then
-        printf "* Not setting wallpaper with nautilus (desktop manager is not active).\n"
+        printf "* Not setting wallpaper with Nautilus (desktop manager is not active).\n"
 
     else
-        printf "* Setting wallpaper with nautilus..."
+        printf "* Setting wallpaper with Nautilus..."
 
         gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" color-shading-type "solid"
         gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" primary-color "${wallpaper_bg_color}"

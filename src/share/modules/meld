@@ -98,6 +98,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* meld: create a new syntax highlighting scheme and set it as default via GSettings.\n"
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [[ "$(gsettings get org.gnome.meld style-scheme)" == "'gcs"* ]]; then

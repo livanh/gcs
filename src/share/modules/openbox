@@ -90,6 +90,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* openbox: create new theme in \"${OPENBOX_THEME_FILE}\" and set it in \"${OPENBOX_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     if ! pgrep openbox &>/dev/null; then
         printf "* Not setting colors for openbox (not active).\n"
@@ -116,7 +122,7 @@ function apply_theme() {
         set_value "menu.separator.color:" " " "${openbox_menu_separator_color}" "${OPENBOX_THEME_FILE}"
         set_value "menu.items.active.text.color:" " " "${openbox_menu_items_active_text_color}" "${OPENBOX_THEME_FILE}"
 
-        xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "${FULL_COLOR_THEME_NAME}" "${OPENBOX_TMP_CONFIG_FILE}"
+        xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "${FULL_COLOR_THEME_NAME}" "${OPENBOX_CONFIG_FILE}"
 
         $OPENBOX_RESTART_COMMAND &>/dev/null
 

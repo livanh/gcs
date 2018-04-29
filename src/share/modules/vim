@@ -89,6 +89,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Vim: create a new syntax highlighting scheme in \"${VIM_COLORSCHEME_FILE}\" and set it as default in \"${VIM_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${VIM_SYNTAX_FALLBACK}" == "true" ]; then

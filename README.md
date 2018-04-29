@@ -41,6 +41,8 @@ By default, these actions call as many available modules as possible. If a modul
 
 For all the three actions, it is possible to restrict operation to a single module using the ```-m <module_name>``` option.
 
+For the first action (apply a theme), the -n flag performs a "dry run": no action is actually executed, each module just briefly describes what it would do to apply a theme.
+
 TAB completion for options, theme names, backup names, and module names is suppported in bash using the provided completion file.
 
 
@@ -50,7 +52,7 @@ TAB completion for options, theme names, backup names, and module names is suppp
 ### Warnings
 
 GCS directly manipulates the configuration files of other programs!
-This might have unexpected consequences. While I've been using it for quite some time and it works reliably for me, you should use it with care. Be sure to always have a backup of the involved configuration files, either with the embedded backup functinality or otherwise.
+This might have unexpected consequences. While I've been using it for quite some time and it works reliably for me, you should use it with care. Be sure to always have a backup of the involved configuration files, either with the embedded backup functionality or otherwise.
 
 For first-time users, the recommended workflows is as follows:
 

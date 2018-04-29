@@ -50,6 +50,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* cursor-theme: set cursor theme in \"${CURSOR_THEME_USER_PATH}/index.theme\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting cursor theme: ${cursor_theme_name}..."
     if [ "${cursor_theme_found}" == "true" ]; then

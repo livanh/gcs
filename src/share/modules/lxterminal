@@ -63,6 +63,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* LXTerminal: set text and background colors in \"${LXTERMINAL_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for LXTerminal..."
 
