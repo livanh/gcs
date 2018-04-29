@@ -50,7 +50,7 @@ TAB completion for options, theme names, backup names, and module names is suppp
 ### Warnings
 
 GCS directly manipulates the configuration files of other programs!
-This might have unexpected consequences. While I've been using it for quite some time and it works reliably for me, you should use it with care. Be sure to always have a backup of the involved configuration files, either with the embedded backup functinality or otherwise.
+This might have unexpected consequences. While I've been using it for quite some time and it works reliably for me, you should use it with care. Be sure to always have a backup of the involved configuration files, either with the embedded backup functionality or otherwise.
 
 For first-time users, the recommended workflows is as follows:
 
