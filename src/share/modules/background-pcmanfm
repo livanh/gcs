@@ -16,7 +16,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ "${BACKGROUND_PCMANFM_ENABLE}" == "true" ]; then
-        printf "* Ignoring wallpaper for pcmanfm (disabled from configuration).\n"
+        printf "* Ignoring wallpaper for PCManFM (disabled from configuration).\n"
         return 1
 
     else
@@ -39,26 +39,26 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Backup/restore not supported with pcmanfm wallpaper.\n"
+    printf "* Backup/restore not supported with PCManFM wallpaper.\n"
 }
 
 
 
 function restore_backup() {
-    printf "* Backup/restore not supported with pcmanfm wallpaper.\n"
+    printf "* Backup/restore not supported with PCManFM wallpaper.\n"
 }
 
 
 
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
-        printf "* Not setting wallpaper with pcmanfm (image file not found: \"${wallpaper_image}\").\n"
+        printf "* Not setting wallpaper with PCManFM (image file not found: \"${wallpaper_image}\").\n"
 
     elif ! pgrep -f "pcmanfm --desktop" >/dev/null; then
-        printf "* Not setting wallpaper with pcmanfm (desktop manager is not active).\n"
+        printf "* Not setting wallpaper with PCManFM (desktop manager is not active).\n"
 
     else
-        printf "* Setting wallpaper with pcmanfm..."
+        printf "* Setting wallpaper with PCManFM..."
 
         case "${wallpaper_mode}" in
             centered)  pcmanfm --wallpaper-mode=center  --set-wallpaper "${wallpaper_file}";;
