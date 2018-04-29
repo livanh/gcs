@@ -62,6 +62,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* qt5ct: set icon theme in \"${QT5CT_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting icon theme for qt5..."
 

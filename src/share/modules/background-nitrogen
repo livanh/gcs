@@ -47,6 +47,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* nitrogen: set desktop wallpaper on the X11 root window.\n"
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"

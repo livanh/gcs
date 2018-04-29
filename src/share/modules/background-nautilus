@@ -93,6 +93,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Nautilus: set desktop wallpaper.\n"
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with Nautilus (image file not found: \"${wallpaper_image}\").\n"

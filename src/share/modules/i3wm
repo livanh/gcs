@@ -111,6 +111,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* i3wm: set window decoration colors in \"${I3_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     if ! i3 --get-socketpath &>/dev/null; then
         printf "* Not setting colors for i3 window manager (not currently active).\n"

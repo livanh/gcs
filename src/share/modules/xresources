@@ -85,6 +85,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Xresources: set colors in \"${XRESOURCES_CONFIG_FILE}\" and export them with xrdb.\n"
+}
+
+
+
 function apply_theme() {
     [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"
 

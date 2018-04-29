@@ -73,6 +73,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* dunst: set notification colors in \"${DUNST_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for dunst..."
 

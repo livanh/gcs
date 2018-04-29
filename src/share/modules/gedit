@@ -109,6 +109,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* gedit: create a new syntax highlighting scheme and set it as default via GSettings.\n"
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${GEDIT_SYNTAX_FALLBACK}" == "true" ]; then

@@ -68,6 +68,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* cherrytree: set text, background, and link colors in \"${CHERRYTREE_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for cherrytree..."
 

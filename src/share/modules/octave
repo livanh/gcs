@@ -102,6 +102,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Octave: set terminal and syntax highlighting colors in \"${OCTAVE_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
 

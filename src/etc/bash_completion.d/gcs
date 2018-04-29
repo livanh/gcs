@@ -20,6 +20,7 @@ function _gcs_list_backups {
 # list gcs options
 function _gcs_list_options {
     echo "-m"
+    echo "-n"
     echo "-b"
     echo "-r"
     echo "-h"
@@ -33,6 +34,7 @@ function _gcs_comp {
     case "$current_word" in
       "-") COMPREPLY=($(compgen -W '`_gcs_list_options`' -- $current_word));;
       "-m") COMPREPLY=("-m");;
+      "-n") COMPREPLY=("-n");;
       "-b") COMPREPLY=("-b");;
       "-r") COMPREPLY=("-r");;
       *)

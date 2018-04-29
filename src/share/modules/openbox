@@ -90,6 +90,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* openbox: create new theme in \"${OPENBOX_THEME_FILE}\" and set it in \"${OPENBOX_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     if ! pgrep openbox &>/dev/null; then
         printf "* Not setting colors for openbox (not active).\n"

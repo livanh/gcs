@@ -83,6 +83,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* rofi: set colors in \"${ROFI_CONFIG_FILE}\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for rofi..."
 

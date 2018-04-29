@@ -109,6 +109,26 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* conky: set text, background, and possibly other colors in the following files:\n"
+
+    for i in ${CONKY_CONFIG_FILES}; do
+        
+        file="$i"
+        if [ ${file:0:1} == \" ]; then
+            file=${file:1}
+        fi
+        if [ ${file: -1} == \" ]; then
+            file=${file:0:-1}
+        fi
+
+        printf "  ${file}\n"
+
+    done
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for conky...\n"
 

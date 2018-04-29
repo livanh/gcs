@@ -247,6 +247,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* Telegram: create a new theme in \"${TELEGRAM_CONFIG_DIR}/gcs.tdesktop-theme\".\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for Telegram..."
     

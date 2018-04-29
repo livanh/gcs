@@ -136,6 +136,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* GTK+: create a new theme with oomox and apply it via GSettings or XSettingsd. Optionally set icon theme.\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors and icon theme for GTK+...\n"
 

@@ -88,6 +88,12 @@ function restore_backup() {
 
 
 
+function dry_run() {
+    printf "* GNOME Terminal: change text, background, and palette colors, and apply them via GSettings.\n"
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for GNOME Terminal..."
 
