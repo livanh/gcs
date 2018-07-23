@@ -12,8 +12,8 @@ gtk_header_button_bg_color=#FF7800
 gtk_header_button_fg_color=#FFFFFF
 gtk_selected_tab_color=#FF7800
 
-# icon theme (download from https://www.gnome-look.org/content/show.php/YlmfOs+2.0+-n+GTK+3.10?content=165037)
-icon_theme_name=YlmfOS
+# icon theme (download from https://github.com/B00merang-Project/WinXP-Icons)
+icon_theme_name=WinXP-Icons
 
 # cursor theme (download from https://www.gnome-look.org/content/show.php/Cursor+XP?content=77833)
 cursor_theme_name=xp
