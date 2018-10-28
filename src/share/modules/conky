@@ -61,7 +61,7 @@ function create_backup() {
     mkdir -p "${CONKY_BACKUP_DIR}"
 
     for i in ${CONKY_CONFIG_FILES}; do
-         
+
         file="$i"
         if [ ${file:0:1} == \" ]; then
             file=${file:1}
@@ -86,7 +86,7 @@ function restore_backup() {
     CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
 
     for i in ${CONKY_CONFIG_FILES}; do
-         
+
         file="$i"
         if [ ${file:0:1} == \" ]; then
             file=${file:1}
@@ -113,7 +113,7 @@ function dry_run() {
     printf "* conky: set text, background, and possibly other colors in the following files:\n"
 
     for i in ${CONKY_CONFIG_FILES}; do
-        
+
         file="$i"
         if [ ${file:0:1} == \" ]; then
             file=${file:1}
@@ -151,20 +151,20 @@ function apply_theme() {
 
             cp "${file}" "${CONKY_TMP_FILE}"
 
-            set_value "default_color"       " "  "${conky_default_color:1}"     "${CONKY_TMP_FILE}"
-            set_value "default_shade_color" " "  "${conky_shade_color:1}"       "${CONKY_TMP_FILE}"
-            set_value "own_window_colour"   " "  "${conky_own_window_colour:1}" "${CONKY_TMP_FILE}"
-            
-            [ -z "${conky_color0}" ] || set_value "color0" " " "${conky_color0:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color1}" ] || set_value "color1" " " "${conky_color1:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color2}" ] || set_value "color2" " " "${conky_color2:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color3}" ] || set_value "color3" " " "${conky_color3:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color4}" ] || set_value "color4" " " "${conky_color4:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color5}" ] || set_value "color5" " " "${conky_color5:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color6}" ] || set_value "color6" " " "${conky_color6:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color7}" ] || set_value "color7" " " "${conky_color7:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color8}" ] || set_value "color8" " " "${conky_color8:1}" "${CONKY_TMP_FILE}"
-            [ -z "${conky_color9}" ] || set_value "color9" " " "${conky_color9:1}" "${CONKY_TMP_FILE}"
+            set_value "default_color"       " = "  "\"${conky_default_color}\","     "${CONKY_TMP_FILE}"
+            set_value "default_shade_color" " = "  "\"${conky_shade_color}\","       "${CONKY_TMP_FILE}"
+            set_value "own_window_colour"   " = "  "\"${conky_own_window_colour}\"," "${CONKY_TMP_FILE}"
+
+            [ -z "${conky_color0}" ] || set_value "color0" " = " "\"${conky_color0}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color1}" ] || set_value "color1" " = " "\"${conky_color1}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color2}" ] || set_value "color2" " = " "\"${conky_color2}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color3}" ] || set_value "color3" " = " "\"${conky_color3}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color4}" ] || set_value "color4" " = " "\"${conky_color4}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color5}" ] || set_value "color5" " = " "\"${conky_color5}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color6}" ] || set_value "color6" " = " "\"${conky_color6}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color7}" ] || set_value "color7" " = " "\"${conky_color7}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color8}" ] || set_value "color8" " = " "\"${conky_color8}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color9}" ] || set_value "color9" " = " "\"${conky_color9}\"," "${CONKY_TMP_FILE}"
 
             mv "${CONKY_TMP_FILE}" "${file}"
 
