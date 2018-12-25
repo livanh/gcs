@@ -1,7 +1,9 @@
 ## GCS - Global Color Scheme
 
-GCS is a tool to change the color scheme of your Linux desktop. It can take care of general purpose toolkits (like GTK) as well as specific applications which have their own color settings. The purpose of GCS is to configure every configurable color in your desktop in a consistent
-manner and with a single command.
+GCS is a tool to change the color scheme of your Linux desktop. It can take care of general purpose toolkits (like GTK) as well as specific applications which have their own color settings. The purpose of GCS is to configure every configurable color in your desktop in a consistent manner and with a single command.
+
+
+![Preview](preview.gif?raw=true "Preview")
 
 GCS is easily extensible, so if some program you use is not supported, you can easily create a module for it (detailed documentation will be made at some point in the future, for now use exising modules as a template).
 
