@@ -19,7 +19,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${MCOMIX_CONFIG_FILE}" ]; then
-        printf "* Ignoring MComix (configuration file ${MCOMIX_CONFIG_FILE} not found).\n"
+        printf "* Ignoring MComix (configuration file \"${MCOMIX_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

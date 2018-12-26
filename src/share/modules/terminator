@@ -19,7 +19,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${TERMINATOR_CONFIG_FILE}" ]; then
-        printf "* Ignoring Terminator (configuration file ${TERMINATOR_CONFIG_FILE} not found).\n"
+        printf "* Ignoring Terminator (configuration file \"${TERMINATOR_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

@@ -56,7 +56,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${GPICVIEW_CONFIG_FILE}" ]; then
-        printf "* Ignoring gpicview (configuration file ${GPICVIEW_CONFIG_FILE} not found).\n"
+        printf "* Ignoring gpicview (configuration file \"${GPICVIEW_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

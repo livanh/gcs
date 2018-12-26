@@ -21,7 +21,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${ROFI_CONFIG_FILE}" ]; then
-        printf "* Ignoring rofi (configuration file ${ROFI_CONFIG_FILE} not found).\n"
+        printf "* Ignoring rofi (configuration file \"${ROFI_CONFIG_FILE}\" not found).\n"
         return 1
 
     else
