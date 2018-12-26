@@ -1,3 +1,9 @@
+gcs (0.5-3) testing; urgency=medium
+
+  * Change path of bash-completion file
+
+ -- Livanh <livanh@protonmail.com>  Wed, 26 Dec 2018 20:38:55 +0100
+
 gcs (0.5-2) testing; urgency=medium
 
   * Changed email address
