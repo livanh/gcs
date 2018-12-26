@@ -27,8 +27,8 @@ install:
 			install -m 644 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
 		fi; \
 	done;
-	mkdir -p $(DESTDIR)/etc/bash_completion.d
-	install -D src/etc/bash_completion.d/gcs $(DESTDIR)/etc/bash_completion.d/gcs
+	mkdir -p $(DESTDIR)/share/bash-completion/completions
+	install -D src/share/bash-completion/completions/gcs $(DESTDIR)/share/bash-completion/completions/gcs
 
 uninstall:
 	rm $(DESTDIR)$(prefix)/bin/gcs
