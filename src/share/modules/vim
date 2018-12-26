@@ -25,7 +25,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${VIM_CONFIG_FILE}" ]; then
-        printf "* Ignoring Vim (configuration file ${VIM_CONFIG_FILE} not found).\n"
+        printf "* Ignoring Vim (configuration file \"${VIM_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

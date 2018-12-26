@@ -18,7 +18,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${CHERRYTREE_CONFIG_FILE}" ]; then
-        printf "* Ignoring cherrytree (configuration file ${CHERRYTREE_CONFIG_FILE} not found).\n"
+        printf "* Ignoring cherrytree (configuration file \"${CHERRYTREE_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

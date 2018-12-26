@@ -19,7 +19,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${QT5CT_CONFIG_FILE}" ]; then
-        printf "* Ignoring qt5ct (configuration file ${QT5CT_CONFIG_FILE} not found).\n"
+        printf "* Ignoring qt5ct (configuration file \"${QT5CT_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

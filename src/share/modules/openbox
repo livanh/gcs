@@ -28,7 +28,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${OPENBOX_CONFIG_FILE}" ]; then
-        printf "* Ignoring openbox (configuration file ${OPENBOX_CONFIG_FILE} not found).\n"
+        printf "* Ignoring openbox (configuration file \"${OPENBOX_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

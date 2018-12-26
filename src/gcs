@@ -546,7 +546,7 @@ function execute_modules() {
         # Execute module
         init_module
         check_dependencies
-        [ $? == 1 ] && continue
+        [ $? == 0 ] || continue
 
         case "${GCS_ACTION}" in
             "create-backup")  create_backup;;

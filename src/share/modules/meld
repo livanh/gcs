@@ -30,7 +30,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${MELD_DEFAULT_STYLE_FILE}" ]; then
-        printf "* Ignoring Meld (default style not found: ${MELD_DEFAULT_STYLE_FILE}).\n"
+        printf "* Ignoring Meld (default style not found: \"${MELD_DEFAULT_STYLE_FILE}\").\n"
         return 1
 
     else

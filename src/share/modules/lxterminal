@@ -19,7 +19,7 @@ function check_dependencies() {
         return 1
 
     elif ! [ -f "${LXTERMINAL_CONFIG_FILE}" ]; then
-        printf "* Ignoring LXTerminal (configuration file ${LXTERMINAL_CONFIG_FILE} not found).\n"
+        printf "* Ignoring LXTerminal (configuration file \"${LXTERMINAL_CONFIG_FILE}\" not found).\n"
         return 1
 
     else

@@ -1,0 +1,52 @@
+
+# list gcs colorschemes
+function _gcs_list_colorschemes {
+    find "${HOME}/.config/gcs/colorthemes" "/usr/local/share/gcs/colorthemes" "/usr/share/gcs/colorthemes" \
+        -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort | uniq
+}
+
+# list gcs modules
+function _gcs_list_modules {
+    find "${HOME}/.local/share/gcs/modules" "/usr/local/share/gcs/modules" "/usr/share/gcs/modules" \
+        -mindepth 1 -maxdepth 1 -type f -executable -printf "%f\n" 2>/dev/null | sort | uniq
+}
+
+# list gcs backups
+function _gcs_list_backups {
+    find "$HOME/.local/share/gcs/backups" \
+        -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort | uniq
+}
+
+# list gcs options
+function _gcs_list_options {
+    echo "-m"
+    echo "-n"
+    echo "-b"
+    echo "-r"
+    echo "-h"
+}
+
+# completion command
+function _gcs_comp {
+    COMPREPLY=()
+    local current_word=${COMP_WORDS[COMP_CWORD]}
+    local previous_word=${COMP_WORDS[COMP_CWORD-1]}
+    case "$current_word" in
+      "-") COMPREPLY=($(compgen -W '`_gcs_list_options`' -- $current_word));;
+      "-m") COMPREPLY=("-m");;
+      "-n") COMPREPLY=("-n");;
+      "-b") COMPREPLY=("-b");;
+      "-r") COMPREPLY=("-r");;
+      *)
+        case "$previous_word" in
+          gcs) COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- $current_word));;
+          -m)  COMPREPLY=($(compgen -W '`_gcs_list_modules`'      -- $current_word));;
+          -b)  COMPREPLY=();;
+          -r)  COMPREPLY=($(compgen -W '`_gcs_list_backups`'      -- $current_word));;
+          *)   COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- $current_word));;
+        esac;;
+    esac
+    return 0
+}
+
+complete -F _gcs_comp gcs
