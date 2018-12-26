@@ -28,7 +28,7 @@ install:
 		fi; \
 	done;
 	mkdir -p $(DESTDIR)/share/bash-completion/completions
-	install -D src/share/bash-completion/completions/gcs $(DESTDIR)/share/bash-completion/completions/gcs
+	install -D src/share/bash-completion/completions/gcs $(DESTDIR)$(prefix)/share/bash-completion/completions/gcs
 
 uninstall:
 	rm $(DESTDIR)$(prefix)/bin/gcs
