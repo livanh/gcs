@@ -84,6 +84,7 @@ function derive_colors() {
     : ${codeblocks_editor_linenumbers_bg:=${editor_frame_bg}}
     : ${codeblocks_editor_linenumbers_fg:=${editor_frame_fg}}
     : ${codeblocks_editor_gutter:=${editor_long_line_marker}}
+    : ${codeblocks_editor_caret:=${editor_fg}}
 }
 
 
@@ -202,6 +203,7 @@ function apply_theme() {
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${codeblocks_editor_linenumbers_bg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${codeblocks_editor_linenumbers_fg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${codeblocks_editor_gutter}"                  "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_CARET"                   "${codeblocks_editor_caret}"                   "${CODEBLOCKS_TMP_CONFIG_FILE}"
 
         mv "${CODEBLOCKS_TMP_CONFIG_FILE}" "${CODEBLOCKS_CONFIG_FILE}"
 
