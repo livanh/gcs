@@ -119,7 +119,7 @@ function apply_theme() {
             mkdir "${GEANY_TMP_DIR}"
             cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-            if [[ "$(crudini --get $HOME/.config/geany/geany.conf geany color_scheme)" == "gcs"* ]]; then
+            if [[ "$(crudini --get "${GEANY_CONFIG_FILE}" geany color_scheme)" == "gcs"* ]]; then
                 set_value "color_scheme" "=" ""                    "${GEANY_TMP_CONFIG_FILE}"
             fi
             set_value "colour_fore"     "=" "${terminal_fg_color}" "${GEANY_TMP_CONFIG_FILE}"
@@ -137,9 +137,10 @@ function apply_theme() {
         geany_template_file="${BASH_SOURCE%/*}/geany-template.conf"
 
         if [ -f "${geany_template_file}" ]; then
-            [ -d "$HOME/.config/geany/colorschemes" ] || mkdir "$HOME/.config/geany/colorschemes"
-            mkdir -p "$HOME/.config/geany/colorschemes"
-            destfile="$HOME/.config/geany/colorschemes/${FULL_COLOR_THEME_NAME}.conf"
+            geany_colorschemes_path="$HOME/.config/geany/colorschemes"
+            [ -d "${geany_colorschemes_path}" ] || mkdir "${geany_colorschemes_path}"
+            mkdir -p "${geany_colorschemes_path}"
+            destfile="${geany_colorschemes_path}/${FULL_COLOR_THEME_NAME}.conf"
             cp "${geany_template_file}" "${destfile}"
 
             set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
