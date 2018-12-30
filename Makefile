@@ -2,6 +2,7 @@ prefix=/usr/local
 
 COLORTHEMES := $(subst src/config/colorthemes/, , $(wildcard src/config/colorthemes/*))
 MODULES := $(subst src/share/modules/, , $(wildcard src/share/modules/*))
+TEMPLATES := $(subst src/share/modules/templates/, , $(wildcard src/share/modules/templates/*))
 
 all:
 
@@ -21,11 +22,11 @@ install:
 	done;
 	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules
 	for module in $(MODULES); do \
-		if [ "$${module}" = "$${module%%.*}" ] ; then \
-			install -m 755 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
-		else \
-			install -m 644 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
-		fi; \
+		install -m 755 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
+	done;
+	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules/templates
+	for template in $(TEMPLATES); do \
+		install -m 644 src/share/modules/templates/$${template} -t $(DESTDIR)$(prefix)/share/gcs/modules/templates; \
 	done;
 	mkdir -p $(DESTDIR)/share/bash-completion/completions
 	install -D src/share/bash-completion/completions/gcs $(DESTDIR)$(prefix)/share/bash-completion/completions/gcs
@@ -37,6 +38,9 @@ uninstall:
 	done;
 	for module in $(MODULES); do \
 		rm $(DESTDIR)$(prefix)/share/gcs/modules/$${module}; \
+	done;
+	for template in $(TEMPLATES); do \
+		rm $(DESTDIR)$(prefix)/share/gcs/modules/templates/$${template}; \
 	done;
 	rm $(DESTDIR)/etc/bash_completion.d/gcs
 

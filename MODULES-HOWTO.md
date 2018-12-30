@@ -95,6 +95,8 @@ There aren't many general rules here, as the required actions depend on the spec
 
 When modify a configuration file, it is recommended to make a copy of it in a temporary directory (e.g. create one under ${GCS_TMP_DIR}), modify it, and copy it back over the original. This reduces the possibility of leaving the configuration file in an inconsistent state if GCS is interrupted by e.g. a ctrl+C keypress.
 
+Some modules require a template, i.e. an example theme file for the application that is edited with the desired color values and then copied to the right place. These files can be placed in the "templates" subdirectory within the "modules" directory, and their full path can be retrieved withthe helper function  ```find_module_template```, e.g. ```geany_template_file="$(find_module_template "geany-template.conf")"```.
+
 As an example, the ```apply_theme``` function for the ```gpicview``` module follows:
 
 ```

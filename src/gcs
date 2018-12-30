@@ -525,6 +525,22 @@ function select_modules() {
     done
 }
 
+# find a template file for a module
+function find_module_template() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: find_module_template() requires 1 argument!"
+        exit 2
+    fi
+    filename="$1"
+
+    for i in "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}"; do
+        if [ -f "${i}/templates/${filename}" ]; then
+            echo -n "${i}/templates/${filename}"
+            break
+        fi
+    done
+}
+
 function execute_modules() {
     for module_file in ${MODULES[@]}; do
 

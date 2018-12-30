@@ -134,7 +134,7 @@ function apply_theme() {
 
     else
         printf "* Setting colors for Geany..."
-        geany_template_file="${BASH_SOURCE%/*}/geany-template.conf"
+        geany_template_file="$(find_module_template "geany-template.conf")"
 
         if [ -f "${geany_template_file}" ]; then
             geany_colorschemes_path="$HOME/.config/geany/colorschemes"

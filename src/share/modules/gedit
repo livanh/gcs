@@ -125,8 +125,8 @@ function apply_theme() {
 
     else
         printf "* Setting colors for gedit..."
-        gedit_template_file="${BASH_SOURCE%/*}/gedit-template.xml"
-        
+        gedit_template_file="$(find_module_template "gedit-template.xml")"
+
         if [ -f "${gedit_template_file}" ]; then
             mkdir -p "$HOME/.local/share/gtksourceview-3.0/styles"
             destfile="$HOME/.local/share/gtksourceview-3.0/styles/${FULL_COLOR_THEME_NAME}.xml"
