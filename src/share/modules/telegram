@@ -260,7 +260,7 @@ function apply_theme() {
     mkdir "${TELEGRAM_TMP_DIR}"
     TELEGRAM_PALETTE_FILE="${TELEGRAM_TMP_DIR}/colors.tdesktop-theme"
     touch "${TELEGRAM_PALETTE_FILE}"
-    TELEGRAM_THEME_FILE="${TELEGRAM_CONFIG_DIR}/gcs.tdesktop-theme"
+    TELEGRAM_THEME_FILE="${TELEGRAM_CONFIG_DIR}/${FULL_COLOR_THEME_NAME}.tdesktop-theme"
 
     set_value "windowActiveTextFg"     ": " "${telegram_windowActiveTextFg};"     "${TELEGRAM_PALETTE_FILE}"
     set_value "windowBg"               ": " "${telegram_windowBg};"               "${TELEGRAM_PALETTE_FILE}"
@@ -469,6 +469,11 @@ function apply_theme() {
     else
         mv "${TELEGRAM_PALETTE_FILE}" "${TELEGRAM_THEME_FILE}"
     fi
+
+    telegram_theme_symlink="${TELEGRAM_CONFIG_DIR}/gcs-theme.tdesktop-theme"
+    [ -e "${telegram_theme_symlink}" ] && rm "${telegram_theme_symlink}"
+    ln -s "${TELEGRAM_THEME_FILE}" "${telegram_theme_symlink}"
+
 
     eval ${TELEGRAM_RESTART_COMMAND} &>/dev/null
 

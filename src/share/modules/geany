@@ -143,6 +143,8 @@ function apply_theme() {
             destfile="${geany_colorschemes_path}/${FULL_COLOR_THEME_NAME}.conf"
             cp "${geany_template_file}" "${destfile}"
 
+            set_value "name"                  "=" "GCS ${COLOR_THEME_NAME} theme"                                 "${destfile}"
+
             set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
             set_value "foreground"            "=" "${geany_fg}"                                                   "${destfile}"
             set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${destfile}"
@@ -173,21 +175,24 @@ function apply_theme() {
             set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${destfile}"
             set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${destfile}"
             set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${destfile}"
-            
+
             set_value "line_added"            "=" "${geany_diff_added}"                                           "${destfile}"
             set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
             set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
 
+            geany_theme_symlink="${geany_colorschemes_path}/gcs-theme.conf"
+            [ -e "${geany_theme_symlink}" ] && rm "${geany_theme_symlink}"
+            ln -s "${destfile}" "${geany_theme_symlink}"
 
             GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
             GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
             mkdir "${GEANY_TMP_DIR}"
             cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
-            set_value "color_scheme"    "=" "${FULL_COLOR_THEME_NAME}.conf" "${GEANY_TMP_CONFIG_FILE}"
-            set_value "colour_fore"     "=" "${terminal_fg_color}"          "${GEANY_TMP_CONFIG_FILE}"
-            set_value "colour_back"     "=" "${terminal_bg_color}"          "${GEANY_TMP_CONFIG_FILE}"
-            set_value "long_line_color" "=" "${editor_long_line_marker}"    "${GEANY_TMP_CONFIG_FILE}"
+            set_value "color_scheme"    "=" "gcs-theme.conf"             "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_fore"     "=" "${terminal_fg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+            set_value "colour_back"     "=" "${terminal_bg_color}"       "${GEANY_TMP_CONFIG_FILE}"
+            set_value "long_line_color" "=" "${editor_long_line_marker}" "${GEANY_TMP_CONFIG_FILE}"
 
             mv "${GEANY_TMP_CONFIG_FILE}" "${GEANY_CONFIG_FILE}"
 

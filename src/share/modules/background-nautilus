@@ -124,6 +124,11 @@ function apply_theme() {
             zoom-fill) gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
                        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "zoom";;
         esac
+
+        desktop_background_symlink="$HOME/.config/desktop-background"
+        [ -e "${desktop_background_symlink}" ] && rm "${desktop_background_symlink}"
+        ln -s "${wallpaper_file}" "${desktop_background_symlink}"
+
         printf " done.\n"
 
     fi

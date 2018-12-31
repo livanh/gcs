@@ -293,6 +293,9 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
     cat "${gtk3_20_tooltip_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
 
 
+    gtk_theme_dir_symlink="${HOME}/.themes/gcs-theme"
+    [ -e "${gtk_theme_dir_symlink}" ] && rm "${gtk_theme_dir_symlink}"
+    ln -s "${GTK_OUTPUT_THEME_DIR}" "${gtk_theme_dir_symlink}"
 
     icon_theme_found="false"
     if ! [ -z "${gtk_icon_theme_name}" ]; then
@@ -309,7 +312,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
 
         printf "  colors..."
-        set_value "Net\/ThemeName" " " "\"${FULL_COLOR_THEME_NAME}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+        set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
         printf " done.\n"
 
         if ! [ -z "${gtk_icon_theme_name}" ]; then
@@ -329,7 +332,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
         printf "  colors..."
         gsettings set "${GTK_GSETTINGS_PATH}" gtk-theme ""
-        gsettings set "${GTK_GSETTINGS_PATH}" gtk-theme "${FULL_COLOR_THEME_NAME}"
+        gsettings set "${GTK_GSETTINGS_PATH}" gtk-theme "gcs-theme"
         gsettings set "${GTK_GSETTINGS_PATH}" gtk-color-scheme ""
         printf " done.\n"
 

@@ -79,6 +79,10 @@ function apply_theme() {
         pcmanfm --desktop-text-color ${wallpaper_text_color}
         pcmanfm --desktop-shadow-color ${wallpaper_shadow_color}
 
+        desktop_background_symlink="$HOME/.config/desktop-background"
+        [ -e "${desktop_background_symlink}" ] && rm "${desktop_background_symlink}"
+        ln -s "${wallpaper_file}" "${desktop_background_symlink}"
+
         printf " done.\n"
 
     fi

@@ -140,7 +140,11 @@ function apply_theme() {
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
-        sed -i".gcs-bak" "s/colorscheme.*/colorscheme ${FULL_COLOR_THEME_NAME}/" "${VIM_CONFIG_FILE}"
+        vim_theme_symlink="${HOME}/.vim/colors/gcs-theme.vim"
+        [ -e "${vim_theme_symlink}" ] && rm "${vim_theme_symlink}"
+        ln -s "${VIM_COLORSCHEME_FILE}" "${vim_theme_symlink}"
+
+        sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs-theme/" "${VIM_CONFIG_FILE}"
         rm "${VIM_CONFIG_FILE}.gcs-bak"
 
         for server in $(vim --serverlist); do

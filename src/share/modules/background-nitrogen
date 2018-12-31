@@ -66,6 +66,11 @@ function apply_theme() {
             zoom-fit)  nitrogen --save --set-zoom "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
             zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
         esac
+
+        desktop_background_symlink="$HOME/.config/desktop-background"
+        [ -e "${desktop_background_symlink}" ] && rm "${desktop_background_symlink}"
+        ln -s "${wallpaper_file}" "${desktop_background_symlink}"
+
         printf " done.\n"
 
     fi
