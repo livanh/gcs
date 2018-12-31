@@ -506,7 +506,7 @@ function select_modules() {
     MODULES=()
 
     for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
-        if [ -x "$i" ]; then
+        if [[ -f "$i" && -x "$i" ]]; then
             MODULE_NAME="${i##/*/}"
 
             if ! [ -z "${FORCED_MODULE}" ]; then
