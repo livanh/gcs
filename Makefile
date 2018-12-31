@@ -42,7 +42,7 @@ uninstall:
 	for template in $(TEMPLATES); do \
 		rm $(DESTDIR)$(prefix)/share/gcs/modules/templates/$${template}; \
 	done;
-	rm $(DESTDIR)/etc/bash_completion.d/gcs
+	rm $(DESTDIR)$(prefix)/share/bash-completion/completions/gcs
 
 .PHONY: install uninstall all
 
