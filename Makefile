@@ -1,6 +1,6 @@
 prefix=/usr/local
 
-COLORTHEMES := $(subst src/config/colorthemes/, , $(wildcard src/config/colorthemes/*))
+COLORTHEMES := $(subst src/share/colorthemes/, , $(wildcard src/share/colorthemes/*))
 MODULES := $(subst src/share/modules/, , $(wildcard src/share/modules/*))
 TEMPLATES := $(subst src/share/modules/templates/, , $(wildcard src/share/modules/templates/*))
 
@@ -13,9 +13,9 @@ install:
 	install -d $(DESTDIR)$(prefix)/share/gcs/modules
 	mkdir -p $(DESTDIR)$(prefix)/share/gcs/colorthemes
 	for colortheme in $(COLORTHEMES); do \
-		if [ -d src/config/colorthemes/$${colortheme} ]; then \
+		if [ -d src/share/colorthemes/$${colortheme} ]; then \
 			mkdir -p $(DESTDIR)$(prefix)/share/gcs/colorthemes/$${colortheme}; \
-			for file in src/config/colorthemes/$${colortheme}/*; do \
+			for file in src/share/colorthemes/$${colortheme}/*; do \
 				install $${file} -t $(DESTDIR)$(prefix)/share/gcs/colorthemes/$${colortheme}; \
 			done; \
 		fi; \
