@@ -56,31 +56,15 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of Xresources file..."
-
-    local XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
-    mkdir -p "${XRESOURCES_BACKUP_DIR}"
-    cp "${XRESOURCES_CONFIG_FILE}" "${XRESOURCES_BACKUP_DIR}/Xresources"
-
-    printf " done.\n"
+    gcs_backup_file "Xresources" "xresources" "${XRESOURCES_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Xresources file..."
-
-    local XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
-    if [ -f "${XRESOURCES_BACKUP_DIR}/Xresources" ]; then
-        cp "${XRESOURCES_BACKUP_DIR}/Xresources" "${XRESOURCES_CONFIG_FILE}" || echo "not found"
-
-        ${XRESOURCES_RESTART_COMMAND} "${XRESOURCES_CONFIG_FILE}" &>/dev/null
-        ${XRESOURCES_ADDITIONAL_COMMANDS} &>/dev/null
-
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Xresources" "xresources" "${XRESOURCES_CONFIG_FILE}"
+    ${XRESOURCES_RESTART_COMMAND} "${XRESOURCES_CONFIG_FILE}" &>/dev/null
+    ${XRESOURCES_ADDITIONAL_COMMANDS} &>/dev/null
 }
 
 

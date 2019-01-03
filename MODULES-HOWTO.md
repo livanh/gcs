@@ -122,36 +122,38 @@ This function is used to make a backup of configuration files and/or other infor
 
 ```create_backup``` should create a module-specific directory under "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/", and save everything that is needed there.
 
-As an example, the ```create_backup``` function for the ```gpicview``` module follows:
+For the simple case where there is only one configuration file to backup, there is an helper function ```gcs_backup_file()``` which copies the target configuration file to an appropriate directory, as described above. It accepts three parameters:
+
+1) The full name of the application, to be displayed in console messages and read by the user. It may include multiple words, capitalization and symbols.
+
+2) The simplefied name of the application, to be used in the backup path. It should preferably by a single word, all lowercase, and without symbols.
+
+3) The full path to the configuration file to backup.
+
+As an example, the ```create_backup``` function for the ```codeblocks``` module follows:
 
 ```
 function create_backup() {
-    printf "* Making backup of gpicview configuration file..."
-
-    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
-    mkdir -p "${GPICVIEW_BACKUP_DIR}"
-    cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_BACKUP_DIR}/gpicview.conf"
-
-    printf " done.\n"
+    gcs_backup_file "Code::Blocks" "codeblocks" "${CODEBLOCKS_CONFIG_FILE}"
 }
 ```
 
 ### restore_backup
 This function takes  the files and information saved by ```create_backup``` and puts them back at the original place. It is only run when the ```-r``` switch is used. The files to use can be found in the same place where ```create_backup``` left them, i.e. in the same module-specific directory under "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/". However, as a good measure, they should be checked for existence before using.
 
-As an example, the ```restore_backup``` function for the ```gpicview``` module follows:
+For the simple case where there is only one configuration file to backup, there is an helper function ```gcs_restore_file()``` which copies the target configuration file from the backup to its original location, as described above. It accepts three parameters:
+
+1) The full name of the application, to be displayed in console messages and read by the user. It may include multiple words, capitalization and symbols.
+
+2) The simplefied name of the application, to be used in the backup path. It should preferably by a single word, all lowercase, and without symbols.
+
+3) The full path where the configuration file originally was.
+
+As an example, the ```restore_backup``` function for the ```codeblocks``` module follows:
 
 ```
 function restore_backup() {
-    printf "* Restoring backup of gpicview configuration file..."
-
-    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
-    if [ -f "${GPICVIEW_BACKUP_DIR}/gpicview.conf" ]; then
-        cp "${GPICVIEW_BACKUP_DIR}/gpicview.conf" "${GPICVIEW_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Code::Blocks" "codeblocks" "${CODEBLOCKS_CONFIG_FILE}"
 }
 ```
 

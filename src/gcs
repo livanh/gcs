@@ -541,6 +541,50 @@ function find_module_template() {
     done
 }
 
+# make a backup copy of a single file
+function gcs_backup_file() {
+    if [ "$#" -ne 3 ]; then
+        echo "Error: gcs_backup_file() requires 3 arguments!"
+        exit 2
+    fi
+
+    local module_name_external="$1"
+    local module_name_internal="$2"
+    local target_file_full_path="$3"
+    local target_file_name="${target_file_full_path##/*/}"
+    local module_backup_dir="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/${module_name_internal}"
+
+    printf "* Making backup of ${module_name_external} configuration file..."
+    mkdir -p "${module_backup_dir}"
+    cp "${target_file_full_path}" "${module_backup_dir}/${target_file_name}"
+
+    printf " done.\n"
+}
+
+# restore a single file from a backup
+function gcs_restore_file() {
+    if [ "$#" -ne 3 ]; then
+        echo "Error: gcs_restore_file() requires 3 arguments!"
+        exit 2
+    fi
+
+    local module_name_external="$1"
+    local module_name_internal="$2"
+    local target_file_full_path="$3"
+    local target_file_name="${target_file_full_path##/*/}"
+    local module_backup_dir="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/${module_name_internal}"
+
+    printf "* Restoring backup of ${module_name_external} configuration file..."
+
+    if [ -f "${module_backup_dir}/${target_file_name}" ]; then
+        cp "${module_backup_dir}/${target_file_name}" "${target_file_full_path}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
+}
+
+
 function execute_modules() {
     for module_file in ${MODULES[@]}; do
 

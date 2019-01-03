@@ -77,27 +77,13 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of Octave configuration file..."
-
-    local OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
-    mkdir -p "${OCTAVE_BACKUP_DIR}"
-    cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_BACKUP_DIR}/qt-settings"
-
-    printf " done.\n"
+    gcs_backup_file "Octave" "octave" "${OCTAVE_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Octave configuration file..."
-
-    local OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
-    if [ -f "${OCTAVE_BACKUP_DIR}/qt-settings" ]; then
-        cp "${OCTAVE_BACKUP_DIR}/qt-settings" "${OCTAVE_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Octave" "octave" "${OCTAVE_CONFIG_FILE}"
 }
 
 

@@ -59,32 +59,16 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of Vim configuration file..."
-
-    local VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
-    mkdir -p "${VIM_BACKUP_DIR}"
-    cp "${VIM_CONFIG_FILE}" "${VIM_BACKUP_DIR}/vimrc"
-
-    printf " done.\n"
+    gcs_backup_file "Vim" "vim" "${VIM_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Vim configuration file..."
-
-    local VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
-    if [ -f "${VIM_BACKUP_DIR}/vimrc" ]; then
-        cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
-
-        for server in $(vim --serverlist); do
-            vim --servername ${server} --remote-send "<ESC>:source ${VIM_CONFIG_FILE}<CR>"
-        done
-
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Vim" "vim" "${VIM_CONFIG_FILE}"
+    for server in $(vim --serverlist); do
+        vim --servername ${server} --remote-send "<ESC>:source ${VIM_CONFIG_FILE}<CR>"
+    done
 }
 
 

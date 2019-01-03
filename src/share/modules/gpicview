@@ -38,27 +38,13 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of gpicview configuration file..."
-
-    local GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
-    mkdir -p "${GPICVIEW_BACKUP_DIR}"
-    cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_BACKUP_DIR}/gpicview.conf"
-
-    printf " done.\n"
+    gcs_backup_file "gpicview" "gpicview" "${GPICVIEW_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of gpicview configuration file..."
-
-    local GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
-    if [ -f "${GPICVIEW_BACKUP_DIR}/gpicview.conf" ]; then
-        cp "${GPICVIEW_BACKUP_DIR}/gpicview.conf" "${GPICVIEW_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "gpicview" "gpicview" "${GPICVIEW_CONFIG_FILE}"
 }
 
 

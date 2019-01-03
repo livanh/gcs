@@ -38,27 +38,13 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of LXTerminal configuration file..."
-
-    local LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
-    mkdir -p "${LXTERMINAL_BACKUP_DIR}"
-    cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf"
-
-    printf " done.\n"
+    gcs_backup_file "LXTerminal" "lxterminal" "${LXTERMINAL_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of LXTerminal configuration file..."
-
-    local LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
-    if [ -f "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" ]; then
-        cp "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" "${LXTERMINAL_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "LXTerminal" "lxterminal" "${LXTERMINAL_CONFIG_FILE}"
 }
 
 

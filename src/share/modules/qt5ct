@@ -37,27 +37,13 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of qt5ct configuration file..."
-
-    local QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
-    mkdir -p "${QT5CT_BACKUP_DIR}"
-    cp "${QT5CT_CONFIG_FILE}" "${QT5CT_BACKUP_DIR}/qt5ct.conf"
-
-    printf " done.\n"
+    gcs_backup_file "qt5ct" "qt5ct" "${QT5CT_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of qt5ct configuration file..."
-
-    local QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
-    if [ -f "${QT5CT_BACKUP_DIR}/qt5ct.conf" ]; then
-        cp "${QT5CT_BACKUP_DIR}/qt5ct.conf" "${QT5CT_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "qt5ct" "qt5ct" "${QT5CT_CONFIG_FILE}"
 }
 
 
