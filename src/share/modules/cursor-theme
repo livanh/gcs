@@ -1,6 +1,5 @@
 #!/bin/bash
 #TODO is ~/.icons/default/cursors always a symlink?
-#TODO allow cursor themes in ${HOME}/.icons and/or ${HOME}/.local/share/icons too
 
 function init_module() {
     CURSOR_THEME_ENABLE_DEFAULT="true"
@@ -29,9 +28,10 @@ function check_dependencies() {
 
 function derive_colors() {
     CURSOR_THEME_FOUND="false"
-    for cursor_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons"; do
+    for cursor_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons" ; do
         if [ -d "${cursor_themes_directory}/${cursor_theme_name}" ]; then
             CURSOR_THEME_FOUND="true"
+            CURSOR_THEME_PATH="${cursor_themes_directory}"
         fi
     done
 }
@@ -70,7 +70,7 @@ function apply_theme() {
 
         set_value "Inherits" "=" "${cursor_theme_name}" "${CURSOR_THEME_INDEX_FILE}"
         [ -L "${CURSOR_THEME_USER_PATH}/cursors" ] && rm "${CURSOR_THEME_USER_PATH}/cursors"
-        ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "${CURSOR_THEME_USER_PATH}/cursors"
+        ln -s "${CURSOR_THEME_PATH}/${cursor_theme_name}/cursors" "${CURSOR_THEME_USER_PATH}/cursors"
         printf " done.\n"
     else
         printf " not found!\n"
