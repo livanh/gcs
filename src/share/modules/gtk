@@ -65,7 +65,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of colors and icon theme for GTK+..."
 
-    GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
+    local GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
     mkdir -p "${GTK_BACKUP_DIR}"
 
     if ps -e | grep xsettingsd >/dev/null; then
@@ -90,12 +90,12 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of colors and icon theme for GTK+...\n"
 
-    GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
+    local GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
 
     if ps -e | grep xsettingsd >/dev/null; then
 
-        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
-        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
+        local GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+        local GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "${HOME}/.xsettingsd")
 
         printf "  colors..."
         if [ -f "${GTK_BACKUP_DIR}/ThemeName" ]; then
@@ -145,34 +145,34 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors and icon theme for GTK+...\n"
 
-    GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
+    local GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
     mkdir "${GTK_TMP_DIR}"
 
-    GTK_OOMOX_THEME="${GTK_TMP_DIR}/oomox-theme"
-    GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
+    local GTK_OOMOX_THEME="${GTK_TMP_DIR}/oomox-theme"
+    local GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
 
-    echo "NAME=${FULL_COLOR_THEME_NAME}" > "${GTK_OOMOX_THEME}"
-    echo "BG=${gtk_bg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "FG=${gtk_fg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "MENU_BG=${gtk_menu_bg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "MENU_FG=${gtk_menu_fg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "SEL_BG=${gtk_selected_bg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "SEL_FG=${gtk_selected_fg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "TXT_BG=${gtk_base_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "TXT_FG=${gtk_text_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "BTN_BG=${gtk_button_bg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "BTN_FG=${gtk_button_fg_color:1}" >> "${GTK_OOMOX_THEME}"
+    echo "NAME=${FULL_COLOR_THEME_NAME}"               > "${GTK_OOMOX_THEME}"
+    echo "BG=${gtk_bg_color:1}"                       >> "${GTK_OOMOX_THEME}"
+    echo "FG=${gtk_fg_color:1}"                       >> "${GTK_OOMOX_THEME}"
+    echo "MENU_BG=${gtk_menu_bg_color:1}"             >> "${GTK_OOMOX_THEME}"
+    echo "MENU_FG=${gtk_menu_fg_color:1}"             >> "${GTK_OOMOX_THEME}"
+    echo "SEL_BG=${gtk_selected_bg_color:1}"          >> "${GTK_OOMOX_THEME}"
+    echo "SEL_FG=${gtk_selected_fg_color:1}"          >> "${GTK_OOMOX_THEME}"
+    echo "TXT_BG=${gtk_base_color:1}"                 >> "${GTK_OOMOX_THEME}"
+    echo "TXT_FG=${gtk_text_color:1}"                 >> "${GTK_OOMOX_THEME}"
+    echo "BTN_BG=${gtk_button_bg_color:1}"            >> "${GTK_OOMOX_THEME}"
+    echo "BTN_FG=${gtk_button_fg_color:1}"            >> "${GTK_OOMOX_THEME}"
     echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${GTK_OOMOX_THEME}"
     echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "GTK3_GENERATE_DARK=False" >> "${GTK_OOMOX_THEME}"
-    echo "ROUNDNESS=${gtk_roundness}" >> "${GTK_OOMOX_THEME}"
-    echo "SPACING=${gtk_spacing}" >> "${GTK_OOMOX_THEME}"
-    echo "GRADIENT=${gtk_gradient}" >> "${GTK_OOMOX_THEME}"
+    echo "GTK3_GENERATE_DARK=False"                   >> "${GTK_OOMOX_THEME}"
+    echo "ROUNDNESS=${gtk_roundness}"                 >> "${GTK_OOMOX_THEME}"
+    echo "SPACING=${gtk_spacing}"                     >> "${GTK_OOMOX_THEME}"
+    echo "GRADIENT=${gtk_gradient}"                   >> "${GTK_OOMOX_THEME}"
 
     oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
 
 
-    unity_decoration_temp="${GTK_TMP_DIR}/unity_decoration_temp.css"
+    local GTK_UNITY_DECORATION_SNIPPET="${GTK_TMP_DIR}/gtk_unity_decoration_snippet.css"
     echo "
 UnityDecoration.top {
   background-image: none;
@@ -194,9 +194,9 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
   background-image: none;
   background-color: ${unity_titlebar_unfocused_bg_color};
 }
-" > "${unity_decoration_temp}"
-    cat "${unity_decoration_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
-    cat "${unity_decoration_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
+" > "${GTK_UNITY_DECORATION_SNIPPET}"
+    cat "${GTK_UNITY_DECORATION_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
+    cat "${GTK_UNITY_DECORATION_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
 
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${GTK_OUTPUT_THEME_DIR}/unity/close_focused_prelight.svg"
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${GTK_OUTPUT_THEME_DIR}/unity/close_dash_prelight.svg"
@@ -231,7 +231,7 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 
     sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
 
-    gtk3_tabs_temp="${GTK_TMP_DIR}/gtk3-tabs-temp"
+    local GTK3_TABS_SNIPPET="${GTK_TMP_DIR}/gtk3-tabs-snippet"
     echo "
 .notebook tab.top:active {
   border-top-color: ${gtk_selected_tab_color};
@@ -245,10 +245,10 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 .notebook tab.left:active {
   border-left-color: ${gtk_selected_tab_color};
 }
-" > "${gtk3_tabs_temp}"
-    cat "${gtk3_tabs_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
+" > "${GTK3_TABS_SNIPPET}"
+    cat "${GTK3_TABS_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
 
-    gtk3_20_tabs_temp="${GTK_TMP_DIR}/gtk3.20-tabs-temp"
+    local GTK3_20_TABS_SNIPPET="${GTK_TMP_DIR}/gtk3.20-tabs-snippet"
     echo "
 notebook > header.top > tabs > tab:checked {
   border-top-color: ${gtk_selected_tab_color};
@@ -265,51 +265,52 @@ notebook > header.left > tabs > tab:checked {
 notebook > header > tabs > tab button.flat:active, notebook > header > tabs > tab button.flat:active:hover {
   color: ${gtk_selected_tab_color};
 }
-" > "${gtk3_20_tabs_temp}"
-    cat "${gtk3_20_tabs_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
+" > "${GTK3_20_TABS_SNIPPET}"
+    cat "${GTK3_20_TABS_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
 
 
 
     sed -i "s/tooltip_fg_color\:[^n]*n/tooltip_fg_color:${gtk_tooltip_fg_color}\\\n/g" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
     sed -i "s/tooltip_bg_color\:[^n]*n/tooltip_bg_color:${gtk_tooltip_bg_color}\\\n/g" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
 
-    gtk3_tooltip_temp="${GTK_TMP_DIR}/gtk3-tooltip-temp"
+    local GTK3_TOOLTIP_SNIPPET="${GTK_TMP_DIR}/gtk3-tooltip-snippet"
     echo "
 .tooltip.background {
   background-color: ${gtk_tooltip_bg_color};
   background-image: none;
   color: ${gtk_tooltip_fg_color}; }
-" > "${gtk3_tooltip_temp}"
-    cat "${gtk3_tooltip_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
+" > "${GTK3_TOOLTIP_SNIPPET}"
+    cat "${GTK3_TOOLTIP_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
 
-    gtk3_20_tooltip_temp="${GTK_TMP_DIR}/gtk3.20-tooltip-temp"
+    local GTK3_20_TOOLTIP_SNIPPET="${GTK_TMP_DIR}/gtk3.20-tooltip-temp"
     echo "
 .tooltip.background, .tooltip.background.csd, tooltip.background, tooltip.background.csd {
   background-color: ${gtk_tooltip_bg_color};
   border: 1px solid $ ${gtk_tooltip_border_color};
   color: ${gtk_tooltip_fg_color};
 }
-" > "${gtk3_20_tooltip_temp}"
-    cat "${gtk3_20_tooltip_temp}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
+" > "${GTK3_20_TOOLTIP_SNIPPET}"
+    cat "${GTK3_20_TOOLTIP_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
 
 
-    gtk_theme_dir_symlink="${HOME}/.themes/gcs-theme"
-    [ -e "${gtk_theme_dir_symlink}" ] && rm "${gtk_theme_dir_symlink}"
-    ln -s "${GTK_OUTPUT_THEME_DIR}" "${gtk_theme_dir_symlink}"
+    local GTK_THEME_DIR_SYMLINK="${HOME}/.themes/gcs-theme"
+    [ -e "${GTK_THEME_DIR_SYMLINK}" ] && rm "${GTK_THEME_DIR_SYMLINK}"
+    ln -s "${GTK_OUTPUT_THEME_DIR}" "${GTK_THEME_DIR_SYMLINK}"
 
-    icon_theme_found="false"
+    local GTK_ICON_THEME_FOUND="false"
     if ! [ -z "${gtk_icon_theme_name}" ]; then
-        for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons" "$HOME/.local/share/icons"; do
-            if [ -d "$i/${gtk_icon_theme_name}" ]; then
-                icon_theme_found="true"
+        for icon_themes_directory in "/usr/share/icons" "usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
+            if [ -d "${icon_themes_directory}/${gtk_icon_theme_name}" ]; then
+                GTK_ICON_THEME_FOUND="true"
+                break
             fi
         done
     fi
 
     if ps -e | grep xsettingsd >/dev/null; then
 
-        GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
-        GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "$HOME/.xsettingsd")
+        local GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
+        local GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "${HOME}/.xsettingsd")
 
         printf "  colors..."
         set_value "Net\/ThemeName" " " "\"gcs-theme\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
@@ -317,7 +318,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
         if ! [ -z "${gtk_icon_theme_name}" ]; then
             printf "  icon theme: ${gtk_icon_theme_name}..."
-            if [ "${icon_theme_found}" == "true" ]; then
+            if [ "${GTK_ICON_THEME_FOUND}" == "true" ]; then
                 set_value "Net\/IconThemeName" " " "\"${gtk_icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
                 printf " done.\n"
             else
@@ -325,7 +326,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
             fi
         fi
 
-        $GTK_XSETTINGSD_RESTART_COMMAND &>/dev/null
+        ${GTK_XSETTINGSD_RESTART_COMMAND} &>/dev/null
 
 
     elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
@@ -338,7 +339,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
         if ! [ -z "${gtk_icon_theme_name}" ]; then
             printf "  icon theme: ${gtk_icon_theme_name}..."
-            if [ "${gtk_icon_theme_name}" == "true" ]; then
+            if [ "${GTK_ICON_THEME_FOUND}" == "true" ]; then
                 gsettings set "${GTK_GSETTINGS_PATH}" icon-theme "${gtk_icon_theme_name}"
                 printf " done.\n"
             else
@@ -363,20 +364,20 @@ function mix_hex_colors(){
         exit 2
     fi
 
-    color1="${1}"
-    color2="${2}"
-    balance="${3}"
+    local color1="${1}"
+    local color2="${2}"
+    local balance="${3}"
 
-    r1="$(printf "%d" 0x${color1:1:2})"
-    g1="$(printf "%d" 0x${color1:3:2})"
-    b1="$(printf "%d" 0x${color1:5:2})"
-    r2="$(printf "%d" 0x${color2:1:2})"
-    g2="$(printf "%d" 0x${color2:3:2})"
-    b2="$(printf "%d" 0x${color2:5:2})"
+    local r1="$(printf "%d" 0x${color1:1:2})"
+    local g1="$(printf "%d" 0x${color1:3:2})"
+    local b1="$(printf "%d" 0x${color1:5:2})"
+    local r2="$(printf "%d" 0x${color2:1:2})"
+    local g2="$(printf "%d" 0x${color2:3:2})"
+    local b2="$(printf "%d" 0x${color2:5:2})"
 
-    r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
-    g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
-    b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
+    local r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
+    local g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
+    local b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
     LC_ALL=C r="$(printf "%.0f" "${r}")"
     LC_ALL=C g="$(printf "%.0f" "${g}")"
     LC_ALL=C b="$(printf "%.0f" "${b}")"

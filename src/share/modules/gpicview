@@ -2,7 +2,7 @@
 
 function init_module() {
     GPICVIEW_ENABLE_DEFAULT="true"
-    GPICVIEW_CONFIG_FILE_DEFAULT="$HOME/.config/gpicview/gpicview.conf"
+    GPICVIEW_CONFIG_FILE_DEFAULT="${HOME}/.config/gpicview/gpicview.conf"
 
     GPICVIEW_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} gpicview enable      2>/dev/null || echo "${GPICVIEW_ENABLE_DEFAULT}")"
     GPICVIEW_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} gpicview config_file 2>/dev/null || echo "${GPICVIEW_CONFIG_FILE_DEFAULT}")"
@@ -40,7 +40,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of gpicview configuration file..."
 
-    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
+    local GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
     mkdir -p "${GPICVIEW_BACKUP_DIR}"
     cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_BACKUP_DIR}/gpicview.conf"
 
@@ -52,7 +52,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of gpicview configuration file..."
 
-    GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
+    local GPICVIEW_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gpicview"
     if [ -f "${GPICVIEW_BACKUP_DIR}/gpicview.conf" ]; then
         cp "${GPICVIEW_BACKUP_DIR}/gpicview.conf" "${GPICVIEW_CONFIG_FILE}"
         printf " done.\n"
@@ -72,8 +72,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for gpicview..."
 
-    GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"
-    GPICVIEW_TMP_CONFIG_FILE="${GPICVIEW_TMP_DIR}/gpicview.conf"
+    local GPICVIEW_TMP_DIR="${GCS_TMP_DIR}/gpicview"
+    local GPICVIEW_TMP_CONFIG_FILE="${GPICVIEW_TMP_DIR}/gpicview.conf"
     mkdir "${GPICVIEW_TMP_DIR}"
     cp "${GPICVIEW_CONFIG_FILE}" "${GPICVIEW_TMP_CONFIG_FILE}"
 

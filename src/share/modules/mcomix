@@ -2,7 +2,7 @@
 
 function init_module() {
     MCOMIX_ENABLE_DEFAULT="true"
-    MCOMIX_CONFIG_FILE_DEFAULT="$HOME/.config/mcomix/preferences.conf"
+    MCOMIX_CONFIG_FILE_DEFAULT="${HOME}/.config/mcomix/preferences.conf"
 
     MCOMIX_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} mcomix enable      2>/dev/null || echo "${MCOMIX_ENABLE_DEFAULT}")"
     MCOMIX_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} mcomix config_file 2>/dev/null || echo "${MCOMIX_CONFIG_FILE_DEFAULT}")"
@@ -40,7 +40,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of MComix configuration file..."
 
-    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
+    local MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
     mkdir -p "${MCOMIX_BACKUP_DIR}"
     cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_BACKUP_DIR}/preferences.conf"
 
@@ -52,7 +52,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of MComix configuration file..."
 
-    MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
+    local MCOMIX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/mcomix"
     if [ -f "${MCOMIX_BACKUP_DIR}/preferences.conf" ]; then
         cp "${MCOMIX_BACKUP_DIR}/preferences.conf" "${MCOMIX_CONFIG_FILE}"
         printf " done.\n"
@@ -72,8 +72,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for MComix..."
 
-    MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
-    MCOMIX_TMP_CONFIG_FILE="${MCOMIX_TMP_DIR}/preferences.conf"
+    local MCOMIX_TMP_DIR="${GCS_TMP_DIR}/mcomix"
+    local MCOMIX_TMP_CONFIG_FILE="${MCOMIX_TMP_DIR}/preferences.conf"
     mkdir "${MCOMIX_TMP_DIR}"
     cp "${MCOMIX_CONFIG_FILE}" "${MCOMIX_TMP_CONFIG_FILE}"
 
@@ -88,16 +88,16 @@ function apply_theme() {
 
 
 set_color_mcomix() {
-    
+
     if [ "$#" -ne 3 ]; then
         echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
         exit 2
     fi
-    
+
     local key="$1"
     local value="$2"
     local file="$3"
-    
+
     local red="$(   expr 257 \* $(printf "%d" 0x${value:1:2}))"
     local green="$( expr 257 \* $(printf "%d" 0x${value:3:2}))"
     local blue="$(  expr 257 \* $(printf "%d" 0x${value:5:2}))"

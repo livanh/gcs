@@ -2,7 +2,7 @@
 
 function init_module() {
     XRESOURCES_ENABLE_DEFAULT="true"
-    XRESOURCES_CONFIG_FILE_DEFAULT="$HOME/.Xresources"
+    XRESOURCES_CONFIG_FILE_DEFAULT="${HOME}/.Xresources"
     XRESOURCES_RESTART_COMMAND_DEFAULT="xrdb -merge"
     XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT=""
 
@@ -58,7 +58,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Xresources file..."
 
-    XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
+    local XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
     mkdir -p "${XRESOURCES_BACKUP_DIR}"
     cp "${XRESOURCES_CONFIG_FILE}" "${XRESOURCES_BACKUP_DIR}/Xresources"
 
@@ -70,12 +70,12 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Xresources file..."
 
-    XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
+    local XRESOURCES_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/xresources"
     if [ -f "${XRESOURCES_BACKUP_DIR}/Xresources" ]; then
         cp "${XRESOURCES_BACKUP_DIR}/Xresources" "${XRESOURCES_CONFIG_FILE}" || echo "not found"
 
-        $XRESOURCES_RESTART_COMMAND "${XRESOURCES_CONFIG_FILE}" &>/dev/null
-        $XRESOURCES_ADDITIONAL_COMMANDS &>/dev/null
+        ${XRESOURCES_RESTART_COMMAND} "${XRESOURCES_CONFIG_FILE}" &>/dev/null
+        ${XRESOURCES_ADDITIONAL_COMMANDS} &>/dev/null
 
         printf " done.\n"
     else
@@ -96,8 +96,8 @@ function apply_theme() {
 
     printf "* Setting Xresources colors..."
 
-    XRESOURCES_TMP_DIR="${GCS_TMP_DIR}/xresources"
-    XRESOURCES_TMP_CONFIG_FILE="${XRESOURCES_TMP_DIR}/Xresources"
+    local XRESOURCES_TMP_DIR="${GCS_TMP_DIR}/xresources"
+    local XRESOURCES_TMP_CONFIG_FILE="${XRESOURCES_TMP_DIR}/Xresources"
     mkdir "${XRESOURCES_TMP_DIR}"
     cp "${XRESOURCES_CONFIG_FILE}" "${XRESOURCES_TMP_CONFIG_FILE}"
 
@@ -124,8 +124,8 @@ function apply_theme() {
 
     mv "${XRESOURCES_TMP_CONFIG_FILE}" "${XRESOURCES_CONFIG_FILE}"
 
-    $XRESOURCES_RESTART_COMMAND "${XRESOURCES_CONFIG_FILE}" &>/dev/null
-    $XRESOURCES_ADDITIONAL_COMMANDS &>/dev/null
+    ${XRESOURCES_RESTART_COMMAND} "${XRESOURCES_CONFIG_FILE}" &>/dev/null
+    ${XRESOURCES_ADDITIONAL_COMMANDS} &>/dev/null
 
     printf " done.\n"
 }

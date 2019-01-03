@@ -3,7 +3,7 @@
 function init_module() {
     CHERRYTREE_ENABLE_DEFAULT="true"
     CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
-    CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
+    CHERRYTREE_CONFIG_FILE_DEFAULT="${HOME}/.config/cherrytree/config.cfg"
     CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
 }
 
@@ -45,7 +45,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of cherrytree configuration file..."
 
-    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
+    local CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
     mkdir -p "${CHERRYTREE_BACKUP_DIR}"
     cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_BACKUP_DIR}/config.cfg"
 
@@ -57,7 +57,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of cherrytree configuration file..."
 
-    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
+    local CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
     if [ -f "${CHERRYTREE_BACKUP_DIR}/config.cfg" ]; then 
         cp "${CHERRYTREE_BACKUP_DIR}/config.cfg" "${CHERRYTREE_CONFIG_FILE}"
         printf " done.\n"
@@ -77,8 +77,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for cherrytree..."
 
-    CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
-    CHERRYTREE_TMP_CONFIG_FILE="${CHERRYTREE_TMP_DIR}/config.cfg"
+    local CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
+    local CHERRYTREE_TMP_CONFIG_FILE="${CHERRYTREE_TMP_DIR}/config.cfg"
     mkdir "${CHERRYTREE_TMP_DIR}"
     cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_TMP_CONFIG_FILE}"
 

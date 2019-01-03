@@ -2,7 +2,7 @@
 
 function init_module() {
     LXTERMINAL_ENABLE_DEFAULT="true"
-    LXTERMINAL_CONFIG_FILE_DEFAULT="$HOME/.config/lxterminal/lxterminal.conf"
+    LXTERMINAL_CONFIG_FILE_DEFAULT="${HOME}/.config/lxterminal/lxterminal.conf"
 
     LXTERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} lxterminal enable      2>/dev/null || echo "${LXTERMINAL_ENABLE_DEFAULT}")"
     LXTERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} lxterminal config_file 2>/dev/null || echo "${LXTERMINAL_CONFIG_FILE_DEFAULT}")"
@@ -40,7 +40,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of LXTerminal configuration file..."
 
-    LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
+    local LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
     mkdir -p "${LXTERMINAL_BACKUP_DIR}"
     cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf"
 
@@ -52,7 +52,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of LXTerminal configuration file..."
 
-    LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
+    local LXTERMINAL_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/lxterminal"
     if [ -f "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" ]; then
         cp "${LXTERMINAL_BACKUP_DIR}/lxterminal.conf" "${LXTERMINAL_CONFIG_FILE}"
         printf " done.\n"
@@ -72,8 +72,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for LXTerminal..."
 
-    LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
-    LXTERMINAL_TMP_CONFIG_FILE="${LXTERMINAL_TMP_DIR}/lxterminal.conf"
+    local LXTERMINAL_TMP_DIR="${GCS_TMP_DIR}/lxterminal"
+    local LXTERMINAL_TMP_CONFIG_FILE="${LXTERMINAL_TMP_DIR}/lxterminal.conf"
     mkdir "${LXTERMINAL_TMP_DIR}"
     cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_TMP_CONFIG_FILE}"
 

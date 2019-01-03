@@ -8,7 +8,7 @@ function init_module() {
     CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 
     CODEBLOCKS_ENABLE_DEFAULT="true"
-    CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
+    CODEBLOCKS_CONFIG_FILE_DEFAULT="${HOME}/.config/codeblocks/default.conf"
 
     CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
     CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
@@ -92,7 +92,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Code::Blocks configuration file..."
 
-    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
+    local CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
     mkdir -p "${CODEBLOCKS_BACKUP_DIR}"
     cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_BACKUP_DIR}/default.conf"
 
@@ -104,7 +104,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Code::Blocks configuration file..."
 
-    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
+    local CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
     if [ -f "${CODEBLOCKS_BACKUP_DIR}/default.conf" ]; then
         cp "${CODEBLOCKS_BACKUP_DIR}/default.conf" "${CODEBLOCKS_CONFIG_FILE}"
         printf " done.\n"
@@ -133,8 +133,8 @@ function apply_theme() {
     else
         printf "* Setting colors for Code::Blocks..."
 
-        CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
-        CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
+        local CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
+        local CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
         mkdir "${CODEBLOCKS_TMP_DIR}"
         cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
 
@@ -258,7 +258,7 @@ function codeblocks_add_style() {
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
     fi
 
-    CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
+    CB_STYLE_CTR="$(expr ${CB_STYLE_CTR} + 1)"
 }
 
 

@@ -2,7 +2,7 @@
 
 function init_module() {
     GEANY_ENABLE_DEFAULT="true"
-    GEANY_CONFIG_FILE_DEFAULT="$HOME/.config/geany/geany.conf"
+    GEANY_CONFIG_FILE_DEFAULT="${HOME}/.config/geany/geany.conf"
 
     GEANY_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} geany enable      2>/dev/null || echo "${GEANY_ENABLE_DEFAULT}")"
     GEANY_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} geany config_file 2>/dev/null || echo "${GEANY_CONFIG_FILE_DEFAULT}")"
@@ -81,7 +81,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Geany configuration file..."
 
-    GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
+    local GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
     mkdir -p "${GEANY_BACKUP_DIR}"
     cp "${GEANY_CONFIG_FILE}" "${GEANY_BACKUP_DIR}/geany.conf"
 
@@ -93,7 +93,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Geany configuration file..."
 
-    GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
+    local GEANY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/geany"
     if [ -f "${GEANY_BACKUP_DIR}/geany.conf" ]; then
         cp "${GEANY_BACKUP_DIR}/geany.conf" "${GEANY_CONFIG_FILE}"
         printf " done.\n"
@@ -114,8 +114,8 @@ function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${GEANY_SYNTAX_FALLBACK}" == "true" ]; then
             printf "* Setting default colors for Geany..."
-            GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
-            GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+            local GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+            local GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
             mkdir "${GEANY_TMP_DIR}"
             cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
@@ -134,58 +134,58 @@ function apply_theme() {
 
     else
         printf "* Setting colors for Geany..."
-        geany_template_file="$(find_module_template "geany-template.conf")"
+        local GEANY_TEMPLATE_FILE="$(find_module_template "geany-template.conf")"
 
-        if [ -f "${geany_template_file}" ]; then
-            geany_colorschemes_path="$HOME/.config/geany/colorschemes"
-            [ -d "${geany_colorschemes_path}" ] || mkdir "${geany_colorschemes_path}"
-            mkdir -p "${geany_colorschemes_path}"
-            destfile="${geany_colorschemes_path}/${FULL_COLOR_THEME_NAME}.conf"
-            cp "${geany_template_file}" "${destfile}"
+        if [ -f "${GEANY_TEMPLATE_FILE}" ]; then
+            GEANY_COLORSCHEMES_PATH="${HOME}/.config/geany/colorschemes"
+            [ -d "${GEANY_COLORSCHEMES_PATH}" ] || mkdir "${GEANY_COLORSCHEMES_PATH}"
+            mkdir -p "${GEANY_COLORSCHEMES_PATH}"
+            GEANY_THEME_FILE="${GEANY_COLORSCHEMES_PATH}/${FULL_COLOR_THEME_NAME}.conf"
+            cp "${GEANY_TEMPLATE_FILE}" "${GEANY_THEME_FILE}"
 
-            set_value "name"                  "=" "GCS ${COLOR_THEME_NAME} theme"                                 "${destfile}"
+            set_value "name"                  "=" "GCS ${COLOR_THEME_NAME} theme"                                 "${GEANY_THEME_FILE}"
 
-            set_value "background"            "=" "${geany_bg}"                                                   "${destfile}"
-            set_value "foreground"            "=" "${geany_fg}"                                                   "${destfile}"
-            set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${destfile}"
-            set_value "selected_fg"           "=" "${geany_selected_fg}"                                          "${destfile}"
-            set_value "frame_bg"              "=" "${geany_frame_bg}"                                             "${destfile}"
-            set_value "frame_fg"              "=" "${geany_frame_fg}"                                             "${destfile}"
+            set_value "background"            "=" "${geany_bg}"                                                   "${GEANY_THEME_FILE}"
+            set_value "foreground"            "=" "${geany_fg}"                                                   "${GEANY_THEME_FILE}"
+            set_value "selected_bg"           "=" "${geany_selected_bg}"                                          "${GEANY_THEME_FILE}"
+            set_value "selected_fg"           "=" "${geany_selected_fg}"                                          "${GEANY_THEME_FILE}"
+            set_value "frame_bg"              "=" "${geany_frame_bg}"                                             "${GEANY_THEME_FILE}"
+            set_value "frame_fg"              "=" "${geany_frame_fg}"                                             "${GEANY_THEME_FILE}"
 
-            set_value "current_line"          "=" ";${geany_current_line_bg};true"                                "${destfile}"
-            set_value "indent_guide"          "=" "${geany_indent_guide}"                                         "${destfile}"
+            set_value "current_line"          "=" ";${geany_current_line_bg};true"                                "${GEANY_THEME_FILE}"
+            set_value "indent_guide"          "=" "${geany_indent_guide}"                                         "${GEANY_THEME_FILE}"
 
-            set_value "number"                "=" "${geany_number};;true"                                         "${destfile}"
-            set_value "class"                 "=" "${geany_class};;true"                                          "${destfile}"
-            set_value "string"                "=" "${geany_string}"                                               "${destfile}"
-            set_value "operator"              "=" "${geany_operator};;true"                                       "${destfile}"
-            set_value "comment"               "=" "${geany_comment}"                                              "${destfile}"
-            set_value "error"                 "=" "${geany_error}"                                                "${destfile}"
-            set_value "keyword"               "=" "${geany_keyword};;true"                                        "${destfile}"
-            set_value "character"             "=" "${geany_character}"                                            "${destfile}"
-            set_value "preprocessor"          "=" "${geany_preprocessor}"                                         "${destfile}"
-            set_value "brace_good"            "=" "${geany_brace_good};;true"                                     "${destfile}"
-            set_value "white_space"           "=" "${geany_white_space};;true"                                    "${destfile}"
+            set_value "number"                "=" "${geany_number};;true"                                         "${GEANY_THEME_FILE}"
+            set_value "class"                 "=" "${geany_class};;true"                                          "${GEANY_THEME_FILE}"
+            set_value "string"                "=" "${geany_string}"                                               "${GEANY_THEME_FILE}"
+            set_value "operator"              "=" "${geany_operator};;true"                                       "${GEANY_THEME_FILE}"
+            set_value "comment"               "=" "${geany_comment}"                                              "${GEANY_THEME_FILE}"
+            set_value "error"                 "=" "${geany_error}"                                                "${GEANY_THEME_FILE}"
+            set_value "keyword"               "=" "${geany_keyword};;true"                                        "${GEANY_THEME_FILE}"
+            set_value "character"             "=" "${geany_character}"                                            "${GEANY_THEME_FILE}"
+            set_value "preprocessor"          "=" "${geany_preprocessor}"                                         "${GEANY_THEME_FILE}"
+            set_value "brace_good"            "=" "${geany_brace_good};;true"                                     "${GEANY_THEME_FILE}"
+            set_value "white_space"           "=" "${geany_white_space};;true"                                    "${GEANY_THEME_FILE}"
 
-            set_value "margin_folding"        "=" "${geany_margin_folding_fg};${geany_margin_folding_bg}"         "${destfile}"
-            set_value "fold_symbol_highlight" "=" "${geany_fold_symbol_highlight}"                                "${destfile}"
-            set_value "marker_search"         "=" "${geany_marker_search_fg};${geany_marker_search_bg};true;true" "${destfile}"
-            set_value "marker_mark"           "=" "${geany_marker_mark_fg};${geany_marker_mark_fg};false;false"   "${destfile}"
-            set_value "type"                  "=" "${geany_type};;true"                                           "${destfile}"
-            set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${destfile}"
-            set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${destfile}"
-            set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${destfile}"
+            set_value "margin_folding"        "=" "${geany_margin_folding_fg};${geany_margin_folding_bg}"         "${GEANY_THEME_FILE}"
+            set_value "fold_symbol_highlight" "=" "${geany_fold_symbol_highlight}"                                "${GEANY_THEME_FILE}"
+            set_value "marker_search"         "=" "${geany_marker_search_fg};${geany_marker_search_bg};true;true" "${GEANY_THEME_FILE}"
+            set_value "marker_mark"           "=" "${geany_marker_mark_fg};${geany_marker_mark_fg};false;false"   "${GEANY_THEME_FILE}"
+            set_value "type"                  "=" "${geany_type};;true"                                           "${GEANY_THEME_FILE}"
+            set_value "function"              "=" "${geany_function_fg};${geany_function_bg}"                     "${GEANY_THEME_FILE}"
+            set_value "parameter"             "=" "${geany_parameter_fg};${geany_parameter_bg}"                   "${GEANY_THEME_FILE}"
+            set_value "here_doc"              "=" "${geany_here_doc_fg};${geany_here_doc_bg}"                     "${GEANY_THEME_FILE}"
 
-            set_value "line_added"            "=" "${geany_diff_added}"                                           "${destfile}"
-            set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${destfile}"
-            set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${destfile}"
+            set_value "line_added"            "=" "${geany_diff_added}"                                           "${GEANY_THEME_FILE}"
+            set_value "line_removed"          "=" "${geany_diff_removed}"                                         "${GEANY_THEME_FILE}"
+            set_value "line_changed"          "=" "${geany_diff_changed}"                                         "${GEANY_THEME_FILE}"
 
-            geany_theme_symlink="${geany_colorschemes_path}/gcs-theme.conf"
-            [ -e "${geany_theme_symlink}" ] && rm "${geany_theme_symlink}"
-            ln -s "${destfile}" "${geany_theme_symlink}"
+            local GEANY_THEME_SYMLINK="${GEANY_COLORSCHEMES_PATH}/gcs-theme.conf"
+            [ -e "${GEANY_THEME_SYMLINK}" ] && rm "${GEANY_THEME_SYMLINK}"
+            ln -s "${GEANY_THEME_FILE}" "${GEANY_THEME_SYMLINK}"
 
-            GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
-            GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
+            local GEANY_TMP_DIR="${GCS_TMP_DIR}/geany"
+            local GEANY_TMP_CONFIG_FILE="${GEANY_TMP_DIR}/geany.conf"
             mkdir "${GEANY_TMP_DIR}"
             cp "${GEANY_CONFIG_FILE}" "${GEANY_TMP_CONFIG_FILE}"
 
@@ -198,7 +198,7 @@ function apply_theme() {
 
             printf " done.\n" 
         else
-            printf " error: template file \"${geany_template_file}\" not found!\n"
+            printf " error: template file \"${GEANY_TEMPLATE_FILE}\" not found!\n"
         fi
 
     fi

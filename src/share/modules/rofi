@@ -2,7 +2,7 @@
 
 function init_module() {
     ROFI_ENABLE_DEFAULT="true"
-    ROFI_CONFIG_FILE_DEFAULT="$HOME/.config/rofi/config"
+    ROFI_CONFIG_FILE_DEFAULT="${HOME}/.config/rofi/config"
     ROFI_RESTART_COMMAND_DEFAULT=""
 
     ROFI_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} rofi enable          2>/dev/null || echo "${ROFI_ENABLE_DEFAULT}")"
@@ -57,7 +57,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of rofi configuration file..."
 
-    ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
+    local ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
     mkdir -p "${ROFI_BACKUP_DIR}"
     cp "${ROFI_CONFIG_FILE}" "${ROFI_BACKUP_DIR}/config"
 
@@ -69,11 +69,11 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of rofi configuration file..."
 
-    ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
+    local ROFI_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/rofi"
     if [ -f "${ROFI_BACKUP_DIR}/config" ]; then
         cp "${ROFI_BACKUP_DIR}/config" "${ROFI_CONFIG_FILE}"
 
-        $ROFI_RESTART_COMMAND &>/dev/null
+        ${ROFI_RESTART_COMMAND} &>/dev/null
 
         printf " done.\n"
     else
@@ -92,8 +92,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for rofi..."
 
-    ROFI_TMP_DIR="${GCS_TMP_DIR}/rofi"
-    ROFI_TMP_CONFIG_FILE="${ROFI_TMP_DIR}/config"
+    local ROFI_TMP_DIR="${GCS_TMP_DIR}/rofi"
+    local ROFI_TMP_CONFIG_FILE="${ROFI_TMP_DIR}/config"
     mkdir "${ROFI_TMP_DIR}"
     cp "${ROFI_CONFIG_FILE}" "${ROFI_TMP_CONFIG_FILE}"
 
@@ -104,7 +104,7 @@ function apply_theme() {
 
     mv "${ROFI_TMP_CONFIG_FILE}" "${ROFI_CONFIG_FILE}"
 
-    $ROFI_RESTART_COMMAND &>/dev/null
+    ${ROFI_RESTART_COMMAND} &>/dev/null
 
     printf " done.\n"
 }

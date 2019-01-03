@@ -1,18 +1,18 @@
 #!/bin/bash
 #TODO is ~/.icons/default/cursors always a symlink?
-#TODO allow cursor themes in $HOME/.icons and/or $HOME/.local/share/icons too
+#TODO allow cursor themes in ${HOME}/.icons and/or ${HOME}/.local/share/icons too
 
 function init_module() {
     CURSOR_THEME_ENABLE_DEFAULT="true"
     CURSOR_THEME_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cursor-theme enable      2>/dev/null || echo "${CURSOR_THEME_ENABLE_DEFAULT}")"
 
-    CURSOR_THEME_USER_PATH="$HOME/.icons/default"
+    CURSOR_THEME_USER_PATH="${HOME}/.icons/default"
 }
 
 
 
 function check_dependencies() {
-    if ! [[ $cursor_theme_name ]]; then
+    if ! [[ ${cursor_theme_name} ]]; then
         return 1
 
     elif ! [ "${CURSOR_THEME_ENABLE}" == "true" ]; then
@@ -28,10 +28,10 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    cursor_theme_found="false"
-    for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons"; do
-        if [ -d "$i/$cursor_theme_name" ]; then
-            cursor_theme_found="true"
+    CURSOR_THEME_FOUND="false"
+    for cursor_themes_directory in "/usr/share/icons" "usr/local/share/icons" "${HOME}/.icons"; do
+        if [ -d "${cursor_themes_directory}/${cursor_theme_name}" ]; then
+            CURSOR_THEME_FOUND="true"
         fi
     done
 }
@@ -58,17 +58,17 @@ function dry_run() {
 
 function apply_theme() {
     printf "* Setting cursor theme: ${cursor_theme_name}..."
-    if [ "${cursor_theme_found}" == "true" ]; then
-        cursor_theme_index="${CURSOR_THEME_USER_PATH}/index.theme"
-        if ! [ -f "${cursor_theme_index}" ]; then
+    if [ "${CURSOR_THEME_FOUND}" == "true" ]; then
+        local CURSOR_THEME_INDEX_FILE="${CURSOR_THEME_USER_PATH}/index.theme"
+        if ! [ -f "${CURSOR_THEME_INDEX_FILE}" ]; then
             mkdir -p "${CURSOR_THEME_USER_PATH}"
-            echo "[Icon Theme]" >  "${cursor_theme_index}"
-            echo "Name=Default" >> "${cursor_theme_index}"
-            echo "Comment=Default Cursor Theme" >> "${cursor_theme_index}"
-            echo "Inherits=" >> "${cursor_theme_index}"
+            echo "[Icon Theme]" >  "${CURSOR_THEME_INDEX_FILE}"
+            echo "Name=Default" >> "${CURSOR_THEME_INDEX_FILE}"
+            echo "Comment=Default Cursor Theme" >> "${CURSOR_THEME_INDEX_FILE}"
+            echo "Inherits=" >> "${CURSOR_THEME_INDEX_FILE}"
         fi
 
-        set_value "Inherits" "=" "${cursor_theme_name}" "${cursor_theme_index}"
+        set_value "Inherits" "=" "${cursor_theme_name}" "${CURSOR_THEME_INDEX_FILE}"
         [ -L "${CURSOR_THEME_USER_PATH}/cursors" ] && rm "${CURSOR_THEME_USER_PATH}/cursors"
         ln -s "/usr/share/icons/${cursor_theme_name}/cursors" "${CURSOR_THEME_USER_PATH}/cursors"
         printf " done.\n"

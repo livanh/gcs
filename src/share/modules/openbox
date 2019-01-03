@@ -2,7 +2,7 @@
 
 function init_module() {
     OPENBOX_ENABLE_DEFAULT="true"
-    OPENBOX_CONFIG_FILE_DEFAULT="$HOME/.config/openbox/rc.xml"
+    OPENBOX_CONFIG_FILE_DEFAULT="${HOME}/.config/openbox/rc.xml"
     OPENBOX_RESTART_COMMAND_DEFAULT="openbox --reconfigure"
 
     OPENBOX_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} openbox enable          2>/dev/null || echo "${OPENBOX_ENABLE_DEFAULT}")"
@@ -64,7 +64,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of openbox configuration file..."
 
-    OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
+    local OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
     mkdir -p "${OPENBOX_BACKUP_DIR}"
     cp "${OPENBOX_CONFIG_FILE}" "${OPENBOX_BACKUP_DIR}/rc.xml"
 
@@ -76,11 +76,11 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of openbox configuration file..."
 
-    OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
+    local OPENBOX_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/openbox"
     if [ -f "${OPENBOX_BACKUP_DIR}/rc.xml" ]; then
         cp "${OPENBOX_BACKUP_DIR}/rc.xml" "${OPENBOX_CONFIG_FILE}"
 
-        $OPENBOX_RESTART_COMMAND &>/dev/null
+        ${OPENBOX_RESTART_COMMAND} &>/dev/null
 
         printf " done.\n"
     else
@@ -103,33 +103,33 @@ function apply_theme() {
     else
         printf "* Setting colors for openbox..."
 
-        set_value "window.active.title.bg.color:" " " "${openbox_window_active_title_bg_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.label.text.color:" " " "${openbox_window_active_label_text_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.inactive.title.bg.color:" " " "${openbox_window_inactive_title_bg_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.inactive.label.text.color:" " " "${openbox_window_inactive_label_text_color}" "${OPENBOX_THEME_FILE}"
+        set_value "window.active.title.bg.color:"               " " "${openbox_window_active_title_bg_color}"               "${OPENBOX_THEME_FILE}"
+        set_value "window.active.label.text.color:"             " " "${openbox_window_active_label_text_color}"             "${OPENBOX_THEME_FILE}"
+        set_value "window.inactive.title.bg.color:"             " " "${openbox_window_inactive_title_bg_color}"             "${OPENBOX_THEME_FILE}"
+        set_value "window.inactive.label.text.color:"           " " "${openbox_window_inactive_label_text_color}"           "${OPENBOX_THEME_FILE}"
 
         set_value "window.active.button.unpressed.image.color:" " " "${openbox_window_active_button_unpressed_image_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.button.pressed.image.color:" " " "${openbox_window_active_button_pressed_image_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.button.pressed.bg.color:" " " "${openbox_window_active_button_pressed_bg_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.button.toggled.bg:" " " "flat solid" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.button.toggled.bg.color:" " " "${openbox_window_active_button_toggled_bg_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.active.button.toggled.image.color:" " " "${openbox_window_active_button_toggled_image_color}" "${OPENBOX_THEME_FILE}"
+        set_value "window.active.button.pressed.image.color:"   " " "${openbox_window_active_button_pressed_image_color}"   "${OPENBOX_THEME_FILE}"
+        set_value "window.active.button.pressed.bg.color:"      " " "${openbox_window_active_button_pressed_bg_color}"      "${OPENBOX_THEME_FILE}"
+        set_value "window.active.button.toggled.bg:"            " " "flat solid" "${OPENBOX_THEME_FILE}"
+        set_value "window.active.button.toggled.bg.color:"      " " "${openbox_window_active_button_toggled_bg_color}"      "${OPENBOX_THEME_FILE}"
+        set_value "window.active.button.toggled.image.color:"   " " "${openbox_window_active_button_toggled_image_color}"   "${OPENBOX_THEME_FILE}"
 
-        set_value "window.inactive.button.unpressed.bg.color:" " " "${openbox_window_inactive_button_unpressed_bg_color}" "${OPENBOX_THEME_FILE}"
-        set_value "window.inactive.button.pressed.bg.color:" " " "${openbox_window_inactive_button_pressed_bg_color}" "${OPENBOX_THEME_FILE}"
+        set_value "window.inactive.button.unpressed.bg.color:"  " " "${openbox_window_inactive_button_unpressed_bg_color}"  "${OPENBOX_THEME_FILE}"
+        set_value "window.inactive.button.pressed.bg.color:"    " " "${openbox_window_inactive_button_pressed_bg_color}"    "${OPENBOX_THEME_FILE}"
         set_value "window.inactive.button.pressed.image.color:" " " "${openbox_window_inactive_button_pressed_image_color}" "${OPENBOX_THEME_FILE}"
 
-        set_value "menu.separator.color:" " " "${openbox_menu_separator_color}" "${OPENBOX_THEME_FILE}"
-        set_value "menu.items.active.text.color:" " " "${openbox_menu_items_active_text_color}" "${OPENBOX_THEME_FILE}"
+        set_value "menu.separator.color:"                       " " "${openbox_menu_separator_color}"                       "${OPENBOX_THEME_FILE}"
+        set_value "menu.items.active.text.color:"               " " "${openbox_menu_items_active_text_color}"               "${OPENBOX_THEME_FILE}"
 
-        openbox_theme_dir_symlink="${HOME}/.themes/gcs-theme"
-        [ -e "${openbox_theme_dir_symlink}" ] && rm "${openbox_theme_dir_symlink}"
-        ln -s "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" "${openbox_theme_dir_symlink}"
+        local OPENBOX_THEME_DIR_SYMLINK="${HOME}/.themes/gcs-theme"
+        [ -e "${OPENBOX_THEME_DIR_SYMLINK}" ] && rm "${OPENBOX_THEME_DIR_SYMLINK}"
+        ln -s "${HOME}/.themes/${FULL_COLOR_THEME_NAME}" "${OPENBOX_THEME_DIR_SYMLINK}"
 
 
         xmlstarlet ed --inplace -N o="${OPENBOX_NAMESPACE}" --update "${OPENBOX_THEME_NAME_PATH}" --value "${FULL_COLOR_THEME_NAME}" "${OPENBOX_CONFIG_FILE}"
 
-        $OPENBOX_RESTART_COMMAND &>/dev/null
+        ${OPENBOX_RESTART_COMMAND} &>/dev/null
 
         printf " done.\n"
     fi

@@ -2,7 +2,7 @@
 
 function init_module() {
     GALCULATOR_ENABLE_DEFAULT="true"
-    GALCULATOR_CONFIG_FILE_DEFAULT="$HOME/.config/galculator/galculator.conf"
+    GALCULATOR_CONFIG_FILE_DEFAULT="${HOME}/.config/galculator/galculator.conf"
 
     GALCULATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} galculator enable      2>/dev/null || echo "${GALCULATOR_ENABLE_DEFAULT}")"
     GALCULATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} galculator config_file 2>/dev/null || echo "${GALCULATOR_CONFIG_FILE_DEFAULT}")"
@@ -43,7 +43,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Galculator configuration file..."
 
-    GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
+    local GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
     mkdir -p "${GALCULATOR_BACKUP_DIR}"
     cp "${GALCULATOR_CONFIG_FILE}" "${GALCULATOR_BACKUP_DIR}/galculator.conf"
 
@@ -55,7 +55,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Galculator configuration file..."
 
-    GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
+    local GALCULATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/galculator"
     if [ -f "${GALCULATOR_BACKUP_DIR}/galculator.conf" ]; then
         cp "${GALCULATOR_BACKUP_DIR}/galculator.conf" "${GALCULATOR_CONFIG_FILE}"
         printf " done.\n"
@@ -75,8 +75,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for Galculator..."
 
-    GALCULATOR_TMP_DIR="${GCS_TMP_DIR}/galculator"
-    GALCULATOR_TMP_CONFIG_FILE="${GALCULATOR_TMP_DIR}/galculator.conf"
+    local GALCULATOR_TMP_DIR="${GCS_TMP_DIR}/galculator"
+    local GALCULATOR_TMP_CONFIG_FILE="${GALCULATOR_TMP_DIR}/galculator.conf"
     mkdir "${GALCULATOR_TMP_DIR}"
     cp "${GALCULATOR_CONFIG_FILE}" "${GALCULATOR_TMP_CONFIG_FILE}"
 

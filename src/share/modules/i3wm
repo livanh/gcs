@@ -3,7 +3,7 @@
 
 function init_module() {
     I3_ENABLE_DEFAULT="true"
-    I3_CONFIG_FILE_DEFAULT="$HOME/.config/i3/config"
+    I3_CONFIG_FILE_DEFAULT="${HOME}/.config/i3/config"
     I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
 
     I3_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
@@ -85,7 +85,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of i3 window manager configuration file..."
 
-    I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
+    local I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
     mkdir -p "${I3_BACKUP_DIR}"
     cp "${I3_CONFIG_FILE}" "${I3_BACKUP_DIR}/config"
 
@@ -97,7 +97,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of i3 window manager configuration file..."
 
-    I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
+    local I3_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/i3wm"
     if [ -f "${I3_BACKUP_DIR}/config" ]; then
         cp "${I3_BACKUP_DIR}/config" "${I3_CONFIG_FILE}"
 
@@ -125,8 +125,8 @@ function apply_theme() {
 
         printf "* Setting colors for i3 window manager..."
 
-        I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
-        I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
+        local I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
+        local I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
         mkdir "${I3_TMP_DIR}"
         cp "${I3_CONFIG_FILE}" "${I3_TMP_CONFIG_FILE}"
 

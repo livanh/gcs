@@ -2,7 +2,7 @@
 
 function init_module() {
     DUNST_ENABLE_DEFAULT="true"
-    DUNST_CONFIG_FILE_DEFAULT="$HOME/.config/dunst/dunstrc"
+    DUNST_CONFIG_FILE_DEFAULT="${HOME}/.config/dunst/dunstrc"
     DUNST_RESTART_COMMAND_DEFAULT=""
 
     DUNST_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} dunst enable          2>/dev/null || echo "${DUNST_ENABLE_DEFAULT}")"
@@ -47,7 +47,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of dunst configuration file..."
 
-    DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
+    local DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
     mkdir -p "${DUNST_BACKUP_DIR}"
     cp "${DUNST_CONFIG_FILE}" "${DUNST_BACKUP_DIR}/dunstrc"
 
@@ -59,11 +59,11 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of dunst configuration file..."
 
-    DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
+    local DUNST_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/dunst"
     if [ -f "${DUNST_BACKUP_DIR}/dunstrc" ]; then
         cp "${DUNST_BACKUP_DIR}/dunstrc" "${DUNST_CONFIG_FILE}"
         
-        $DUNST_RESTART_COMMAND &>/dev/null
+        ${DUNST_RESTART_COMMAND} &>/dev/null
         
         printf " done.\n"
     else
@@ -82,8 +82,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for dunst..."
 
-    DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
-    DUNST_TMP_CONFIG_FILE="${DUNST_TMP_DIR}/dunstrc"
+    local DUNST_TMP_DIR="${GCS_TMP_DIR}/dunst"
+    local DUNST_TMP_CONFIG_FILE="${DUNST_TMP_DIR}/dunstrc"
     mkdir "${DUNST_TMP_DIR}"
     cp "${DUNST_CONFIG_FILE}" "${DUNST_TMP_CONFIG_FILE}"
 
@@ -97,7 +97,7 @@ function apply_theme() {
 
     mv "${DUNST_TMP_CONFIG_FILE}" "${DUNST_CONFIG_FILE}"
 
-    $DUNST_RESTART_COMMAND &>/dev/null
+    ${DUNST_RESTART_COMMAND} &>/dev/null
 
     printf " done.\n"
 }

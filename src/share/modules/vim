@@ -2,8 +2,8 @@
 
 function init_module() {
     VIM_ENABLE_DEFAULT="true"
-    VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
-    VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
+    VIM_CONFIG_FILE_DEFAULT="${HOME}/.vimrc"
+    VIM_COLORSCHEME_FILE_DEFAULT="${HOME}/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
 
     VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
     VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
@@ -61,7 +61,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Vim configuration file..."
 
-    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
+    local VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
     mkdir -p "${VIM_BACKUP_DIR}"
     cp "${VIM_CONFIG_FILE}" "${VIM_BACKUP_DIR}/vimrc"
 
@@ -73,7 +73,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Vim configuration file..."
 
-    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
+    local VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
     if [ -f "${VIM_BACKUP_DIR}/vimrc" ]; then
         cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
 
@@ -113,7 +113,7 @@ function apply_theme() {
     else
         printf "* Setting colors for Vim GUI..."
 
-        [ -d "$HOME/.vim/colors" ] || mkdir -p "$HOME/.vim/colors"
+        [ -d "${HOME}/.vim/colors" ] || mkdir -p "${HOME}/.vim/colors"
 
         echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
         echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
@@ -140,9 +140,9 @@ function apply_theme() {
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
 
-        vim_theme_symlink="${HOME}/.vim/colors/gcs-theme.vim"
-        [ -e "${vim_theme_symlink}" ] && rm "${vim_theme_symlink}"
-        ln -s "${VIM_COLORSCHEME_FILE}" "${vim_theme_symlink}"
+        local VIM_THEME_SYMLINK="${HOME}/.vim/colors/gcs-theme.vim"
+        [ -e "${VIM_THEME_SYMLINK}" ] && rm "${VIM_THEME_SYMLINK}"
+        ln -s "${VIM_COLORSCHEME_FILE}" "${VIM_THEME_SYMLINK}"
 
         sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs-theme/" "${VIM_CONFIG_FILE}"
         rm "${VIM_CONFIG_FILE}.gcs-bak"

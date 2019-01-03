@@ -2,7 +2,7 @@
 
 function init_module() {
     TERMINATOR_ENABLE_DEFAULT="true"
-    TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
+    TERMINATOR_CONFIG_FILE_DEFAULT="${HOME}/.config/terminator/config"
 
     TERMINATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} terminator enable      2>/dev/null || echo "${TERMINATOR_ENABLE_DEFAULT}")"
     TERMINATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
@@ -43,7 +43,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of terminator configuration file..."
 
-    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
+    local TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
     mkdir -p "${TERMINATOR_BACKUP_DIR}"
     cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_BACKUP_DIR}/config"
 
@@ -55,7 +55,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of terminator configuration file..."
 
-    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
+    local TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
     if [ -f "${TERMINATOR_BACKUP_DIR}/config" ]; then
         cp "${TERMINATOR_BACKUP_DIR}/config" "${TERMINATOR_CONFIG_FILE}"
         printf " done.\n"
@@ -75,8 +75,8 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for terminator..."
 
-    TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
-    TERMINATOR_TMP_CONFIG_FILE="${TERMINATOR_TMP_DIR}/config"
+    local TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
+    local TERMINATOR_TMP_CONFIG_FILE="${TERMINATOR_TMP_DIR}/config"
     mkdir "${TERMINATOR_TMP_DIR}"
     cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_TMP_CONFIG_FILE}"
 

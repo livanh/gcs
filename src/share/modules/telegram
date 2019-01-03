@@ -2,7 +2,7 @@
 
 function init_module() {
     TELEGRAM_ENABLE_DEFAULT="true"
-    TELEGRAM_CONFIG_DIR_DEFAULT="$HOME/.TelegramDesktop"
+    TELEGRAM_CONFIG_DIR_DEFAULT="${HOME}/.TelegramDesktop"
     TELEGRAM_BINARY_DEFAULT="/opt/telegram/telegram"
     TELEGRAM_RESTART_COMMAND_DEFAULT=""
 
@@ -248,7 +248,7 @@ function restore_backup() {
 
 
 function dry_run() {
-    printf "* Telegram: create a new theme in \"${TELEGRAM_CONFIG_DIR}/gcs.tdesktop-theme\".\n"
+    printf "* Telegram: create a new theme and make a symlink to \"${TELEGRAM_CONFIG_DIR}/gcs-theme.tdesktop-theme\".\n"
 }
 
 
@@ -256,11 +256,11 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for Telegram..."
     
-    TELEGRAM_TMP_DIR="${GCS_TMP_DIR}/telegram"
+    local TELEGRAM_TMP_DIR="${GCS_TMP_DIR}/telegram"
     mkdir "${TELEGRAM_TMP_DIR}"
-    TELEGRAM_PALETTE_FILE="${TELEGRAM_TMP_DIR}/colors.tdesktop-theme"
+    local TELEGRAM_PALETTE_FILE="${TELEGRAM_TMP_DIR}/colors.tdesktop-theme"
     touch "${TELEGRAM_PALETTE_FILE}"
-    TELEGRAM_THEME_FILE="${TELEGRAM_CONFIG_DIR}/${FULL_COLOR_THEME_NAME}.tdesktop-theme"
+    local TELEGRAM_THEME_FILE="${TELEGRAM_CONFIG_DIR}/${FULL_COLOR_THEME_NAME}.tdesktop-theme"
 
     set_value "windowActiveTextFg"     ": " "${telegram_windowActiveTextFg};"     "${TELEGRAM_PALETTE_FILE}"
     set_value "windowBg"               ": " "${telegram_windowBg};"               "${TELEGRAM_PALETTE_FILE}"
@@ -451,17 +451,17 @@ function apply_theme() {
 
 
 
-    for i in ${COLOR_THEME_DIRS[@]}; do
-        if [ -f "$i/${wallpaper_image}" ]; then
-            wallpaper_file="$i/${wallpaper_image}"
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
         fi
     done
 
     if [ -f "${wallpaper_file}" ]; then
         if [ "${wallpaper_mode}" == "tiled" ]; then
-            TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/tiled.${wallpaper_file##*.}"
+            local TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/tiled.${wallpaper_file##*.}"
         else
-            TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/background.${wallpaper_file##*.}"
+            local TELEGRAM_WALLPAPER_FILE="${TELEGRAM_TMP_DIR}/background.${wallpaper_file##*.}"
         fi
         cp "${wallpaper_file}" "${TELEGRAM_WALLPAPER_FILE}"
         [ -f "${TELEGRAM_THEME_FILE}" ] && rm "${TELEGRAM_THEME_FILE}"
@@ -470,9 +470,9 @@ function apply_theme() {
         mv "${TELEGRAM_PALETTE_FILE}" "${TELEGRAM_THEME_FILE}"
     fi
 
-    telegram_theme_symlink="${TELEGRAM_CONFIG_DIR}/gcs-theme.tdesktop-theme"
-    [ -e "${telegram_theme_symlink}" ] && rm "${telegram_theme_symlink}"
-    ln -s "${TELEGRAM_THEME_FILE}" "${telegram_theme_symlink}"
+    local TELEGRAM_THEME_SYMLINK="${TELEGRAM_CONFIG_DIR}/gcs-theme.tdesktop-theme"
+    [ -e "${TELEGRAM_THEME_SYMLINK}" ] && rm "${TELEGRAM_THEME_SYMLINK}"
+    ln -s "${TELEGRAM_THEME_FILE}" "${TELEGRAM_THEME_SYMLINK}"
 
 
     eval ${TELEGRAM_RESTART_COMMAND} &>/dev/null

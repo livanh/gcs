@@ -4,7 +4,7 @@
 
 function init_module() {
     OCTAVE_ENABLE_DEFAULT="true"
-    OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
+    OCTAVE_CONFIG_FILE_DEFAULT="${HOME}/.config/octave/qt-settings"
 
     OCTAVE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
     OCTAVE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
@@ -79,7 +79,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of Octave configuration file..."
 
-    OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
+    local OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
     mkdir -p "${OCTAVE_BACKUP_DIR}"
     cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_BACKUP_DIR}/qt-settings"
 
@@ -91,7 +91,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of Octave configuration file..."
 
-    OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
+    local OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
     if [ -f "${OCTAVE_BACKUP_DIR}/qt-settings" ]; then
         cp "${OCTAVE_BACKUP_DIR}/qt-settings" "${OCTAVE_CONFIG_FILE}"
         printf " done.\n"
@@ -115,8 +115,8 @@ function apply_theme() {
             if [ "${OCTAVE_SYNTAX_FALLBACK}" == "true" ]; then
                 printf "* Setting default colors for Octave..."
 
-                OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
-                OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
+                local OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
+                local OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
                 mkdir "${OCTAVE_TMP_DIR}"
                 cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_TMP_CONFIG_FILE}"
 
@@ -167,8 +167,8 @@ function apply_theme() {
     else
         printf "* Setting colors for Octave..."
 
-        OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
-        OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
+        local OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
+        local OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
         mkdir "${OCTAVE_TMP_DIR}"
         cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_TMP_CONFIG_FILE}"
 

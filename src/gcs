@@ -20,15 +20,15 @@
 function initialize_environment() {
     GCS_MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
     GCS_MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
-    GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
+    GCS_MODULES_DIR_USER="${HOME}/.local/share/gcs/modules"
     GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
     GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
-    GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+    GCS_THEMES_DIR_USER="${HOME}/.config/gcs/colorthemes"
     GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
-    GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
-    GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
+    GCS_BASE16_SCHEMES_DIR_USER="${HOME}/.config/gcs/base16"
+    GCS_BACKUPS_DIR="${HOME}/.local/share/gcs/backups"
 
-    GCS_CONFIG_DIR="$HOME/.config/gcs"
+    GCS_CONFIG_DIR="${HOME}/.config/gcs"
     GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
     GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
     GCS_LOCK_FILE="/tmp/.gcs_lock"
@@ -72,9 +72,9 @@ function update_base16_schemes() {
         return
     fi
     echo "Downloading base16 schemes..."
-    for i in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
-        echo "  $i..."
-        git clone "$i" "${GCS_BASE16_TEMP}" &> /dev/null
+    for base16_theme_name in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
+        echo "  ${base16_theme_name}..."
+        git clone "${base16_theme_name}" "${GCS_BASE16_TEMP}" &> /dev/null
         cp "${GCS_BASE16_TEMP}/"*.yaml "${GCS_BASE16_SCHEMES_DIR_USER}" &> /dev/null
         rm -rf "${GCS_BASE16_TEMP}" &> /dev/null
     done
@@ -83,19 +83,19 @@ function update_base16_schemes() {
 
 function parse_options() {
     while getopts ":m:b:r:nhu" opt; do
-        case $opt in
+        case ${opt} in
           m)
-            FORCED_MODULE="$OPTARG"
+            FORCED_MODULE="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           b)
             GCS_ACTION="create-backup"
-            GCS_BACKUP_NAME="$OPTARG"
+            GCS_BACKUP_NAME="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           r)
             GCS_ACTION="restore-backup"
-            GCS_BACKUP_NAME="$OPTARG"
+            GCS_BACKUP_NAME="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           n)
@@ -110,11 +110,11 @@ function parse_options() {
             exit 1
             ;;
           \?)
-            echo "Invalid option: -$OPTARG" >&2
+            echo "Invalid option: -${OPTARG}" >&2
             exit 1
             ;;
           :)
-            echo "Option -$OPTARG requires an argument." >&2
+            echo "Option -${OPTARG} requires an argument." >&2
             exit 1
             ;;
         esac
@@ -179,18 +179,18 @@ function compare_brightness() {
         exit 2
     fi
 
-    color1="${1}"
-    color2="${2}"
+    local color1="${1}"
+    local color2="${2}"
 
-    r1="$(printf "%d" 0x${color1:1:2})"
-    g1="$(printf "%d" 0x${color1:3:2})"
-    b1="$(printf "%d" 0x${color1:5:2})"
-    r2="$(printf "%d" 0x${color2:1:2})"
-    g2="$(printf "%d" 0x${color2:3:2})"
-    b2="$(printf "%d" 0x${color2:5:2})"
+    local r1="$(printf "%d" 0x${color1:1:2})"
+    local g1="$(printf "%d" 0x${color1:3:2})"
+    local b1="$(printf "%d" 0x${color1:5:2})"
+    local r2="$(printf "%d" 0x${color2:1:2})"
+    local g2="$(printf "%d" 0x${color2:3:2})"
+    local b2="$(printf "%d" 0x${color2:5:2})"
 
-    l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
-    l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
+    local l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
+    local l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
 
     printf "$(bc <<< "${l1} > ${l2}")"
 }
@@ -229,7 +229,7 @@ function load_color_theme() {
 
     # clear environment
     unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH' | /usr/bin/cut -d= -f1 );
-    pid=$(ps -o ppid= -p $$)
+    local pid=$(ps -o ppid= -p $$)
     eval export $(cat /proc/${pid## }/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
 
     # read color theme file
@@ -438,10 +438,10 @@ function set_value_section() {
     local FILE=$5
     local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}" | tr -d \\0)"
     local tmp_file="${GCS_TMP_DIR}/set_value_temp"
-    echo "$old_section" >"$tmp_file"
-    set_value "$KEY" "$SEPARATOR" "$VALUE" "$tmp_file"
-    perl -i -p0e "s/\Q${old_section}\E/$(cat $tmp_file)/" ${FILE}
-    rm $tmp_file
+    echo "${old_section}" >"${tmp_file}"
+    set_value "${KEY}" "${SEPARATOR}" "${VALUE}" "${tmp_file}"
+    perl -i -p0e "s/\Q${old_section}\E/$(cat ${tmp_file})/" ${FILE}
+    rm ${tmp_file}
 }
 
 function cleanup() {
@@ -505,22 +505,22 @@ function select_action() {
 function select_modules() {
     MODULES=()
 
-    for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
-        if [[ -f "$i" && -x "$i" ]]; then
-            MODULE_NAME="${i##/*/}"
+    for module_file in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
+        if [[ -f "${module_file}" && -x "${module_file}" ]]; then
+            MODULE_NAME="${module_file##/*/}"
 
             if ! [ -z "${FORCED_MODULE}" ]; then
-                if ! [ "$MODULE_NAME" == "${FORCED_MODULE}" ]; then
+                if ! [ "${MODULE_NAME}" == "${FORCED_MODULE}" ]; then
                     continue
                 fi
             fi
 
-            for j in ${!MODULES[@]}; do
-                if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
-                    MODULES[$j]=''
+            for module_index in ${!MODULES[@]}; do
+                if [ "${MODULE_NAME}" == "${MODULES[${module_index}]##/*/}" ]; then
+                    MODULES[${module_index}]=''
                 fi
             done
-            MODULES+=("$i")
+            MODULES+=("${module_file}")
         fi
     done
 }
@@ -531,7 +531,7 @@ function find_module_template() {
         echo "Error: find_module_template() requires 1 argument!"
         exit 2
     fi
-    filename="$1"
+    local filename="$1"
 
     for i in "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}"; do
         if [ -f "${i}/templates/${filename}" ]; then

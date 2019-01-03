@@ -26,9 +26,9 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    for i in ${COLOR_THEME_DIRS[@]}; do
-        if [ -f "$i/${wallpaper_image}" ]; then
-            wallpaper_file="$i/${wallpaper_image}"
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
         fi
     done
 }
@@ -67,9 +67,9 @@ function apply_theme() {
             zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
         esac
 
-        desktop_background_symlink="$HOME/.config/desktop-background"
-        [ -e "${desktop_background_symlink}" ] && rm "${desktop_background_symlink}"
-        ln -s "${wallpaper_file}" "${desktop_background_symlink}"
+        local DESKTOP_BACKGROUND_SYMLINK="${HOME}/.config/desktop-background"
+        [ -e "${DESKTOP_BACKGROUND_SYMLINK}" ] && rm "${DESKTOP_BACKGROUND_SYMLINK}"
+        ln -s "${wallpaper_file}" "${DESKTOP_BACKGROUND_SYMLINK}"
 
         printf " done.\n"
 

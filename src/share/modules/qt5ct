@@ -2,7 +2,7 @@
 
 function init_module() {
     QT5CT_ENABLE_DEFAULT="true"
-    QT5CT_CONFIG_FILE_DEFAULT="$HOME/.config/qt5ct/qt5ct.conf"
+    QT5CT_CONFIG_FILE_DEFAULT="${HOME}/.config/qt5ct/qt5ct.conf"
 
     QT5CT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} qt5ct enable      2>/dev/null || echo "${QT5CT_ENABLE_DEFAULT}")"
     QT5CT_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} qt5ct config_file 2>/dev/null || echo "${QT5CT_CONFIG_FILE_DEFAULT}")"
@@ -39,7 +39,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of qt5ct configuration file..."
 
-    QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
+    local QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
     mkdir -p "${QT5CT_BACKUP_DIR}"
     cp "${QT5CT_CONFIG_FILE}" "${QT5CT_BACKUP_DIR}/qt5ct.conf"
 
@@ -51,7 +51,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of qt5ct configuration file..."
 
-    QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
+    local QT5CT_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/qt5ct"
     if [ -f "${QT5CT_BACKUP_DIR}/qt5ct.conf" ]; then
         cp "${QT5CT_BACKUP_DIR}/qt5ct.conf" "${QT5CT_CONFIG_FILE}"
         printf " done.\n"
@@ -72,18 +72,19 @@ function apply_theme() {
     printf "* Setting icon theme for qt5..."
 
 
-    icon_theme_found="false"
+    local QT5_ICON_THEME_FOUND="false"
     if ! [ -z "${qt5ct_icon_theme_name}" ]; then
-        for i in "/usr/share/icons" "usr/local/share/icons" "$HOME/.icons" "$HOME/.local/share/icons"; do
-            if [ -d "$i/${qt5ct_icon_theme_name}" ]; then
-                icon_theme_found="true"
+        for icon_themes_directory in "/usr/share/icons" "usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
+            if [ -d "${icon_themes_directory}/${qt5ct_icon_theme_name}" ]; then
+                QT5_ICON_THEME_FOUND="true"
+                break
             fi
         done
     fi
 
 
-    QT5CT_TMP_DIR="${GCS_TMP_DIR}/qt5ct"
-    QT5CT_TMP_CONFIG_FILE="${QT5CT_TMP_DIR}/qt5ct.conf"
+    local QT5CT_TMP_DIR="${GCS_TMP_DIR}/qt5ct"
+    local QT5CT_TMP_CONFIG_FILE="${QT5CT_TMP_DIR}/qt5ct.conf"
     mkdir "${QT5CT_TMP_DIR}"
     cp "${QT5CT_CONFIG_FILE}" "${QT5CT_TMP_CONFIG_FILE}"
 
