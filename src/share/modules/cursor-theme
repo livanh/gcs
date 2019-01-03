@@ -29,7 +29,7 @@ function check_dependencies() {
 
 function derive_colors() {
     CURSOR_THEME_FOUND="false"
-    for cursor_themes_directory in "/usr/share/icons" "usr/local/share/icons" "${HOME}/.icons"; do
+    for cursor_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons"; do
         if [ -d "${cursor_themes_directory}/${cursor_theme_name}" ]; then
             CURSOR_THEME_FOUND="true"
         fi

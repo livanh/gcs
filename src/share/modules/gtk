@@ -299,7 +299,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
     local GTK_ICON_THEME_FOUND="false"
     if ! [ -z "${gtk_icon_theme_name}" ]; then
-        for icon_themes_directory in "/usr/share/icons" "usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
+        for icon_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
             if [ -d "${icon_themes_directory}/${gtk_icon_theme_name}" ]; then
                 GTK_ICON_THEME_FOUND="true"
                 break
