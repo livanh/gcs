@@ -80,6 +80,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for the openbox window manager. This is accomplished by creating a new theme and modifiying the configuration file, and openbox is automatically reconfigured to apply these changes."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! pgrep openbox &>/dev/null; then
         printf "* Not setting colors for openbox (not active).\n"

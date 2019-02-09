@@ -55,6 +55,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the background color for gpicview. This is accomplished by modifiying the configuration file, so it is recommended that gpicview is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for gpicview..."
 

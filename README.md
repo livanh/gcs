@@ -50,6 +50,8 @@ TAB completion for options, theme names, backup names, and module names is suppp
 
 ```gcs -h``` shows an help screen with a summary of this information, and also lists available themes and modules.
 
+```gcs -m <module_name> -h``` shows a module-specific help screen, describing what it does, how it works, and possible caveats.
+
 
 ### Warnings
 

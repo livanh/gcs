@@ -75,6 +75,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets a number of colors in the user's .Xresources file. These colors are named with the \"gcs.\" prefix. External applications can be configured to use these colors."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     [ -f "${XRESOURCES_CONFIG_FILE}" ] || touch "${XRESOURCES_CONFIG_FILE}"
 

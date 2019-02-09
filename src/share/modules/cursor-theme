@@ -56,6 +56,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the X11 cursor theme. This is accomplished by setting the cursor theme name in \"${CURSOR_THEME_USER_PATH}/index.theme\". The desired cursor theme should already be installed."
+    echo
+    echo "Backup and restore are not supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting cursor theme: ${cursor_theme_name}..."
     if [ "${CURSOR_THEME_FOUND}" == "true" ]; then

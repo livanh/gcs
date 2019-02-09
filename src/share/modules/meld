@@ -104,6 +104,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module setscolors for meld. This is accomplished by creating a new GtkSourceView theme and setting it via GSettings, so no restart is required."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [[ "$(gsettings get "${MELD_GSETTINGS_PATH}" style-scheme)" == "'gcs"* ]]; then

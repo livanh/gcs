@@ -73,6 +73,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for rofi. This is accomplished by modifiying the configuration file."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for rofi..."
 

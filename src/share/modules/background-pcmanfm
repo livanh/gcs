@@ -56,6 +56,18 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for PCManFM (when it is used to display desktop icons). This is accomplished by using command-line switches provided by PCManFM itself."
+    echo "A few settings (background color, text color, shadow color) cannot be changed via the command line. This is only possible using the patched version at https://github.com/livanh/pcmanfm."
+    echo
+    echo "Backup and restore are not supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with PCManFM (image file not found: \"${wallpaper_image}\").\n"

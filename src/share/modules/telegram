@@ -253,6 +253,18 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for the Telegram messenger. This is accomplished by creating a new theme file and making a symlink to it at \"${TELEGRAM_CONFIG_DIR}/gcs-theme.tdesktop-theme\"."
+    echo "The first time that this module is used, the user has to apply the theme manually from within Telegram. Subsequently, Telegram will pick up an updated theme after a restart."
+    echo
+    echo "Backup and restore are not supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for Telegram..."
     

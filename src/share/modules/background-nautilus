@@ -99,6 +99,18 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for Nautilus (when it is used to display desktop icons). This is accomplished by writing to the appropriate GSettings keys."
+    echo "Please note that Nautilus stopped providing desktop icons since version 3.28."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with Nautilus (image file not found: \"${wallpaper_image}\").\n"

@@ -79,6 +79,18 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets syntax highlighting and other colors for Vim. This is accomplished by creating a new colorscheme and setting it via the configuration file, then Vim is instructed to reload the configuration to apply the changes."
+    echo "Colors are only set for the GUI. For the terminal, the CSApprox plugin can be installed to use similar colors, according to the terminal's limitations."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
         if [ "${VIM_SYNTAX_FALLBACK}" == "true" ]; then

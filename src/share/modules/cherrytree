@@ -60,6 +60,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the background and text colors for the main and tree windows of Cherrytree. Link colors are set too. This is accomplished by modifiying the configuration file, so it is recommended that cherrytree is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for cherrytree..."
 

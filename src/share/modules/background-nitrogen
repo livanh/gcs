@@ -53,6 +53,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for the X11 root window using Nitrogen."
+    echo
+    echo "Backup and restore are not supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"

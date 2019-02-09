@@ -106,6 +106,31 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for conky. This is accomplished by modifiying the configuration file(s), so it is recommended that conky is restarted after this module is used."
+    echo
+    echo "Multiple configuration files can be specified via the GCS configuration file. For example, to use \"/home/user/.conkyrc1\" and \"/home/user/.conkyrc2\", write the following in \"${GCS_CONFIG_FILE}\":"
+    echo
+    echo "    ..."
+    echo "    [conky]"
+    echo "    config_files=\"/home/user/.conkyrc1\" \"/home/user/.conkyrc2\""
+    echo "    ..."
+    echo
+    echo "Background and text colors are set automatically according to the theme. Instead, the mapping for color0 through color9 should be set by the user in the GCS configuration file. For example, to assign the value of \$selected_bg_color to color0, write the following in \"${GCS_CONFIG_FILE}\":"
+    echo
+    echo "    ..."
+    echo "    [conky]"
+    echo "    color0=\${selected_bg_color}"
+    echo "    ..."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for conky...\n"
 

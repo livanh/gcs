@@ -94,6 +94,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets syntax highlighting and other colors for Octave. This is accomplished by modifiying the configuration file, so it is recommended that Octave is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if [ "${editor_syntax_enable}" == "false" ]; then
 

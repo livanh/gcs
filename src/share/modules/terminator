@@ -58,6 +58,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets background, foreground, and palette colors for the Terminator terminal. This is accomplished by modifiying the configuration file, so it is recommended that Terminator restarted after this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for terminator..."
 

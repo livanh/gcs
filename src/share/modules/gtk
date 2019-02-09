@@ -142,6 +142,21 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for GTK+2 and GTK+3 themes. This is accomplished by generating new numix-based themes with the desired colors using oomox. The themes are applied using GSettings or XSettingsd."
+    echo
+    echo "Additional modifications are made to style titlebars and buttons in the Unity desktop environment."
+    echo
+    echo "This module can also configure the GTK+ icon theme."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors and icon theme for GTK+...\n"
 

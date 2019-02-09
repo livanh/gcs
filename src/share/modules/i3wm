@@ -101,6 +101,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for the i3 window manager. This is accomplished by modifiying the configuration file, and i3 is automatically reloaded to apply the new settings."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! i3 --get-socketpath &>/dev/null; then
         printf "* Not setting colors for i3 window manager (not currently active).\n"

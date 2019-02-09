@@ -46,7 +46,7 @@ function print_help() {
     echo "Available options:"
     echo "  -m <module>    execute only one module"
     echo "  -n             do not apply theme, just print what would happen"
-    echo "  -h             show this help screen"
+    echo "  -h             show this help screen (or module help screen in conjunction with -m)"
     echo "  -u             update base16 schemes"
     echo
     echo "Avilable color themes:"
@@ -56,7 +56,6 @@ function print_help() {
     echo "Avilable modules:"
     find "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}" \
         -mindepth 1 -maxdepth 1 -type f -executable -printf "  %f\n" 2>/dev/null | sort | uniq | column
-    exit 1
 }
 
 function update_base16_schemes() {
@@ -103,7 +102,8 @@ function parse_options() {
             shift $((OPTIND-1))
             ;;
           h)
-            print_help
+            GCS_ACTION="show-help"
+            shift $((OPTIND-1))
             ;;
           u)
             update_base16_schemes
@@ -127,15 +127,15 @@ function parse_options() {
     fi
 
     if [[ "${GCS_ACTION}" == "apply-theme" && "${COLOR_THEME_NAME}" == "" ]]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 
     if [[ "${GCS_ACTION}" == "dry-run" && "${COLOR_THEME_NAME}" == "" ]]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 
     if [ "$#" -ne 0 ]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 }
 
@@ -598,22 +598,36 @@ function execute_modules() {
         function create_backup()      { true; }
         function restore_backup()     { true; }
         function dry_run()            { true; }
+        function print_module_help()  { true; }
         function apply_theme()        { true; }
 
         # Load module
         . "${module_file}"
 
         # Execute module
-        init_module
-        check_dependencies
-        [ $? == 0 ] || continue
+        if [ "${GCS_ACTION}" == "show-help" ]; then
+            if ! [ -z "${FORCED_MODULE}" ]; then
+                print_module_help
 
-        case "${GCS_ACTION}" in
-            "create-backup")  create_backup;;
-            "restore-backup") restore_backup;;
-            "dry-run")        dry_run;;
-            "apply-theme")    derive_colors; apply_theme;;
-        esac
+            else
+                print_help
+                exit 1
+
+            fi
+
+        else
+            init_module
+            check_dependencies
+            [ $? == 0 ] || continue
+
+            case "${GCS_ACTION}" in
+                "create-backup")  create_backup;;
+                "restore-backup") restore_backup;;
+                "dry-run")        dry_run;;
+                "apply-theme")    derive_colors; apply_theme;;
+            esac
+
+        fi
     done
 }
 
