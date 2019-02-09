@@ -1,0 +1,91 @@
+#!/bin/bash
+
+function init_module() {
+    XFCE4TERMINAL_ENABLE_DEFAULT="true"
+    XFCE4TERMINAL_CONFIG_FILE_DEFAULT="${HOME}/.config/xfce4/terminal/terminalrc"
+
+    XFCE4TERMINAL_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} xfce4-terminal enable      2>/dev/null || echo "${XFCE4TERMINAL_ENABLE_DEFAULT}")"
+    XFCE4TERMINAL_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} xfce4-terminal config_file 2>/dev/null || echo "${XFCE4TERMINAL_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which xfce4-terminal >/dev/null; then
+        return 1
+
+    elif ! [ "${XFCE4TERMINAL_ENABLE}" == "true" ]; then
+        printf "* Ignoring XFCE4 Terminal (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${XFCE4TERMINAL_CONFIG_FILE}" ]; then
+        printf "* Ignoring XFCE4 Terminal (configuration file \"${XFCE4TERMINAL_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${xfce4terminal_bg_color:=${terminal_bg_color}}
+    : ${xfce4terminal_fg_color:=${terminal_fg_color}}
+    : ${xfce4terminal_palette:=${terminal_palette_black};${terminal_palette_red};${terminal_palette_green};${terminal_palette_yellow};${terminal_palette_blue};${terminal_palette_purple};${terminal_palette_cyan};${terminal_palette_white};${terminal_palette_light_black};${terminal_palette_light_red};${terminal_palette_light_green};${terminal_palette_light_yellow};${terminal_palette_light_blue};${terminal_palette_light_purple};${terminal_palette_light_cyan};${terminal_palette_light_white}}
+    : ${xfce4terminal_transparency:=${terminal_transparency}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "XFCE4 Terminal" "xfce4terminal" "${XFCE4TERMINAL_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "XFCE4 Terminal" "xfce4terminal" "${XFCE4TERMINAL_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* XFCE4 Terminal: set text, background, and palette colors in \"${XFCE4TERMINAL_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets background, foreground, and palette colors for XFCE4 Terminal. This is accomplished by modifiying the configuration file, so it is recommended that the XFCE4 Terminal is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    printf "* Setting colors for XFCE4 Terminal..."
+
+    local XFCE4TERMINAL_TMP_DIR="${GCS_TMP_DIR}/xfce4terminal"
+    local XFCE4TERMINAL_TMP_CONFIG_FILE="${XFCE4TERMINAL_TMP_DIR}/terminalrc"
+    mkdir "${XFCE4TERMINAL_TMP_DIR}"
+    cp "${XFCE4TERMINAL_CONFIG_FILE}" "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+
+    set_value "ColorBackground"    "=" "${xfce4terminal_bg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "ColorForeground"    "=" "${xfce4terminal_fg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "ColorCursor"        "=" "${xfce4terminal_fg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "ColorBold"          "=" "${xfce4terminal_fg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "BackgroundMode"     "=" "TERMINAL_BACKGROUND_TRANSPARENT" "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "BackgroundDarkness" "=" "${xfce4terminal_transparency}"   "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "ColorPalette"       "=" "${xfce4terminal_palette}"        "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+
+    mv "${XFCE4TERMINAL_TMP_CONFIG_FILE}" "${XFCE4TERMINAL_CONFIG_FILE}"
+
+    printf " done.\n"
+}
+
