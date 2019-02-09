@@ -50,7 +50,7 @@ function restore_backup() {
 
 
 function dry_run() {
-    printf "* LXTerminal: set text and background colors in \"${LXTERMINAL_CONFIG_FILE}\".\n"
+    printf "* LXTerminal: set text, background, and palette colors in \"${LXTERMINAL_CONFIG_FILE}\".\n"
 }
 
 
@@ -58,7 +58,7 @@ function dry_run() {
 function print_module_help() {
     echo "Help for GCS ${BASH_SOURCE##*/} module"
     echo
-    echo "This module sets background and foreground colors for LXTerminal. This is accomplished by modifiying the configuration file, so it is recommended that LXTerminal is not running when this module is used."
+    echo "This module sets background, foreground, and palette colors for LXTerminal. This is accomplished by modifiying the configuration file, so it is recommended that LXTerminal is not running when this module is used."
     echo
     echo "Backup and restore are supported."
     echo
@@ -74,8 +74,24 @@ function apply_theme() {
     mkdir "${LXTERMINAL_TMP_DIR}"
     cp "${LXTERMINAL_CONFIG_FILE}" "${LXTERMINAL_TMP_CONFIG_FILE}"
 
-    set_value "bgcolor" "=" "${lxterminal_bg_color}" "${LXTERMINAL_TMP_CONFIG_FILE}"
-    set_value "fgcolor" "=" "${lxterminal_fg_color}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "bgcolor"          "=" "${lxterminal_bg_color}"           "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "fgcolor"          "=" "${lxterminal_fg_color}"           "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_0"  "=" "${terminal_palette_black}"        "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_1"  "=" "${terminal_palette_red}"          "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_2"  "=" "${terminal_palette_green}"        "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_3"  "=" "${terminal_palette_yellow}"       "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_4"  "=" "${terminal_palette_blue}"         "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_5"  "=" "${terminal_palette_purple}"       "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_6"  "=" "${terminal_palette_cyan}"         "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_7"  "=" "${terminal_palette_white}"        "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_8"  "=" "${terminal_palette_light_black}"  "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_9"  "=" "${terminal_palette_light_red}"    "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_10" "=" "${terminal_palette_light_green}"  "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_11" "=" "${terminal_palette_light_yellow}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_12" "=" "${terminal_palette_light_blue}"   "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_13" "=" "${terminal_palette_light_purple}" "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_14" "=" "${terminal_palette_light_cyan}"   "${LXTERMINAL_TMP_CONFIG_FILE}"
+    set_value "palette_color_15" "=" "${terminal_palette_light_white}"  "${LXTERMINAL_TMP_CONFIG_FILE}"
 
     mv "${LXTERMINAL_TMP_CONFIG_FILE}" "${LXTERMINAL_CONFIG_FILE}"
 
