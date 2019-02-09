@@ -173,9 +173,9 @@ function load_base16_scheme() {
     base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
 }
 
-function compare_brightness() {
-    if [ "$#" -ne 1 ]; then
-        echo "Error: compare_brightness() requires 2 arguments!"
+function is_brighter() {
+    if [ "$#" -ne 2 ]; then
+        echo "Error: is_brighter() requires 2 arguments!"
         exit 2
     fi
 
@@ -297,33 +297,33 @@ function load_color_theme() {
 
     # terminal
     if ! [[ -z "${base00}" || -z "${base07}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base07})" == "1" ]; then
-            : ${terminal_bg_color:=${base00}}
-            : ${terminal_fg_color:=${base07}}
-        else
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
             : ${terminal_bg_color:=${base07}}
             : ${terminal_fg_color:=${base00}}
+        else
+            : ${terminal_bg_color:=${base00}}
+            : ${terminal_fg_color:=${base07}}
         fi
     fi
 
     if ! [[ -z "${fg_color}" || -z "${bg_color}" ]]; then
-        if [ "$(compare_brightness ${bg_color} ${fg_color})" == "1" ]; then
-            : ${terminal_bg_color:=${bg_color}}
-            : ${terminal_fg_color:=${fg_color}}
-        else
+        if [ "$(is_brighter ${bg_color} ${fg_color})" == "1" ]; then
             : ${terminal_bg_color:=${fg_color}}
             : ${terminal_fg_color:=${bg_color}}
+        else
+            : ${terminal_bg_color:=${bg_color}}
+            : ${terminal_fg_color:=${fg_color}}
         fi
     fi
 
 
     if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_white:=${base05}}
-            : ${terminal_palette_black:=${base03}}
-        else
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
             : ${terminal_palette_white:=${base03}}
             : ${terminal_palette_black:=${base05}}
+        else
+            : ${terminal_palette_white:=${base05}}
+            : ${terminal_palette_black:=${base03}}
         fi
     fi
     : ${terminal_palette_red:=${base08}}
@@ -332,13 +332,13 @@ function load_color_theme() {
     : ${terminal_palette_cyan:=${base0C}}
     : ${terminal_palette_blue:=${base0D}}
     : ${terminal_palette_purple:=${base0E}}
-    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_light_white:=${base05}}
-            : ${terminal_palette_light_black:=${base03}}
-        else
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
             : ${terminal_palette_light_white:=${base03}}
             : ${terminal_palette_light_black:=${base05}}
+        else
+            : ${terminal_palette_light_white:=${base05}}
+            : ${terminal_palette_light_black:=${base03}}
         fi
     fi
     : ${terminal_palette_light_red:=${base08}}
@@ -354,7 +354,16 @@ function load_color_theme() {
     : ${notification_fg_color:=${fg_color}}
 
     # text editors with syntax highlighting
-    : ${editor_syntax_enable:=false}
+    if ! [[ \
+        -z "${base00}" || -z "${base01}" || -z "${base02}" || -z "${base03}" || \
+        -z "${base04}" || -z "${base05}" || -z "${base06}" || -z "${base07}" || \
+        -z "${base08}" || -z "${base09}" || -z "${base0A}" || -z "${base0B}" || \
+        -z "${base0C}" || -z "${base0D}" || -z "${base0E}" || -z "${base0F}" \
+    ]]; then
+        : ${editor_syntax_enable:=true}
+    else
+        : ${editor_syntax_enable:=false}
+    fi
     : ${editor_bg:=${base00}}
     : ${editor_bg:=${base_color}}
     : ${editor_fg:=${base05}}
