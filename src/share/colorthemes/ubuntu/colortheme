@@ -65,7 +65,6 @@ terminal_palette_light_blue="#729FCF"
 terminal_palette_light_purple="#AD7FA8"
 terminal_palette_light_cyan="#34E2E2"
 terminal_palette_light_white="#EEEEEC"
-terminal_transparency="1"
 
 # text editors with syntax highlighting
 editor_syntax_enable=true

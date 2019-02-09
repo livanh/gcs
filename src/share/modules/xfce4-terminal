@@ -34,7 +34,7 @@ function derive_colors() {
     : ${xfce4terminal_bg_color:=${terminal_bg_color}}
     : ${xfce4terminal_fg_color:=${terminal_fg_color}}
     : ${xfce4terminal_palette:=${terminal_palette_black};${terminal_palette_red};${terminal_palette_green};${terminal_palette_yellow};${terminal_palette_blue};${terminal_palette_purple};${terminal_palette_cyan};${terminal_palette_white};${terminal_palette_light_black};${terminal_palette_light_red};${terminal_palette_light_green};${terminal_palette_light_yellow};${terminal_palette_light_blue};${terminal_palette_light_purple};${terminal_palette_light_cyan};${terminal_palette_light_white}}
-    : ${xfce4terminal_transparency:=${terminal_transparency}}
+    : ${xfce4terminal_opacity:=${terminal_opacity}}
 }
 
 
@@ -81,7 +81,7 @@ function apply_theme() {
     set_value "ColorCursor"        "=" "${xfce4terminal_fg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
     set_value "ColorBold"          "=" "${xfce4terminal_fg_color}"       "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
     set_value "BackgroundMode"     "=" "TERMINAL_BACKGROUND_TRANSPARENT" "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
-    set_value "BackgroundDarkness" "=" "${xfce4terminal_transparency}"   "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
+    set_value "BackgroundDarkness" "=" "${xfce4terminal_opacity}"        "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
     set_value "ColorPalette"       "=" "${xfce4terminal_palette}"        "${XFCE4TERMINAL_TMP_CONFIG_FILE}"
 
     mv "${XFCE4TERMINAL_TMP_CONFIG_FILE}" "${XFCE4TERMINAL_CONFIG_FILE}"

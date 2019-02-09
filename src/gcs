@@ -348,6 +348,8 @@ function load_color_theme() {
     : ${terminal_palette_light_blue:=${base0D}}
     : ${terminal_palette_light_purple:=${base0E}}
 
+    : ${terminal_opacity:=1}
+
     # notifications
     : ${notification_border_color:=${bg_color}}
     : ${notification_bg_color:=${bg_color}}

@@ -142,7 +142,7 @@ This category contains colors that apply to terminal emulators. For some termina
 
 If a base16 scheme is used, these colors are sett automatically, although the light and non-light variants are identical. Otherwise, the theme must set them manually.
 
-For some terminals it is also possible to make the background color semi-transparent. This is controlled by the `terminal_transparency` variable, which can range from 0 (full transparency) to 1 (full opacity).
+For some terminals it is also possible to make the background color semi-transparent. This is controlled by the `terminal_opacity` variable, which can range from 0 (full transparency) to 1 (full opacity).
 
 ### Other variables
 
