@@ -47,6 +47,12 @@ For the first action (apply a theme), the -n flag performs a "dry run": no actio
 
 TAB completion for options, theme names, backup names, and module names is suppported in bash using the provided completion file.
 
+There is also an option to import themes designed in Oomox (which easier and less error-prone than writing them by hand). The syntax is as follows:
+```
+gcs -i <theme_name>
+```
+More details are given in THEMES-HOWTO.md.
+
 
 ```gcs -h``` shows an help screen with a summary of this information, and also lists available themes and modules.
 

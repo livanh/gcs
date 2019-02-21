@@ -163,28 +163,61 @@ function apply_theme() {
     local GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
     mkdir "${GTK_TMP_DIR}"
 
-    local GTK_OOMOX_THEME="${GTK_TMP_DIR}/oomox-theme"
-    local GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
+    if ! [ -z "${gtk_oomox_theme}" ]; then
+        local GTK_OOMOX_THEME_FILE="${color_theme_dir}/${gtk_oomox_theme}"
 
-    echo "NAME=${FULL_COLOR_THEME_NAME}"               > "${GTK_OOMOX_THEME}"
-    echo "BG=${gtk_bg_color:1}"                       >> "${GTK_OOMOX_THEME}"
-    echo "FG=${gtk_fg_color:1}"                       >> "${GTK_OOMOX_THEME}"
-    echo "MENU_BG=${gtk_menu_bg_color:1}"             >> "${GTK_OOMOX_THEME}"
-    echo "MENU_FG=${gtk_menu_fg_color:1}"             >> "${GTK_OOMOX_THEME}"
-    echo "SEL_BG=${gtk_selected_bg_color:1}"          >> "${GTK_OOMOX_THEME}"
-    echo "SEL_FG=${gtk_selected_fg_color:1}"          >> "${GTK_OOMOX_THEME}"
-    echo "TXT_BG=${gtk_base_color:1}"                 >> "${GTK_OOMOX_THEME}"
-    echo "TXT_FG=${gtk_text_color:1}"                 >> "${GTK_OOMOX_THEME}"
-    echo "BTN_BG=${gtk_button_bg_color:1}"            >> "${GTK_OOMOX_THEME}"
-    echo "BTN_FG=${gtk_button_fg_color:1}"            >> "${GTK_OOMOX_THEME}"
-    echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${GTK_OOMOX_THEME}"
-    echo "GTK3_GENERATE_DARK=False"                   >> "${GTK_OOMOX_THEME}"
-    echo "ROUNDNESS=${gtk_roundness}"                 >> "${GTK_OOMOX_THEME}"
-    echo "SPACING=${gtk_spacing}"                     >> "${GTK_OOMOX_THEME}"
-    echo "GRADIENT=${gtk_gradient}"                   >> "${GTK_OOMOX_THEME}"
+        if [ -f "${GTK_OOMOX_THEME_FILE}" ]; then
+            local GTK_OOMOX_THEME_STYLE="$(grep ^THEME_STYLE= "${GTK_OOMOX_THEME_FILE}" | cut -f2 -d=)"
+            local GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
 
-    oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME}" >/dev/null 2>/dev/null
+            if [ "${GTK_OOMOX_THEME_STYLE}" == "oomox" ]; then
+                /opt/oomox/plugins/theme_oomox/gtk-theme/change_color.sh -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+
+            elif [ "${GTK_OOMOX_THEME_STYLE}" == "materia" ]; then
+                /opt/oomox/plugins/theme_materia/materia-theme/change_color.sh -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+
+            elif [ "${GTK_OOMOX_THEME_STYLE}" == "arc" ]; then
+                /opt/oomox/plugins/theme_arc/arc-theme/change_color.sh -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+
+            else
+                echo "Error: Oomox theme style \"${GTK_OOMOX_THEME_STYLE}\" is not supported yet!"
+                exit 2
+
+            fi
+
+
+        else
+            echo "Error: oomox theme \"${gtk_oomox_theme}\" not found!"
+            exit 2
+
+        fi
+
+    else
+        local GTK_OOMOX_THEME_FILE="${GTK_TMP_DIR}/oomox-theme"
+        local GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
+
+        echo "NAME=${FULL_COLOR_THEME_NAME}"               > "${GTK_OOMOX_THEME_FILE}"
+        echo "BG=${gtk_bg_color:1}"                       >> "${GTK_OOMOX_THEME_FILE}"
+        echo "FG=${gtk_fg_color:1}"                       >> "${GTK_OOMOX_THEME_FILE}"
+        echo "MENU_BG=${gtk_menu_bg_color:1}"             >> "${GTK_OOMOX_THEME_FILE}"
+        echo "MENU_FG=${gtk_menu_fg_color:1}"             >> "${GTK_OOMOX_THEME_FILE}"
+        echo "SEL_BG=${gtk_selected_bg_color:1}"          >> "${GTK_OOMOX_THEME_FILE}"
+        echo "SEL_FG=${gtk_selected_fg_color:1}"          >> "${GTK_OOMOX_THEME_FILE}"
+        echo "TXT_BG=${gtk_base_color:1}"                 >> "${GTK_OOMOX_THEME_FILE}"
+        echo "TXT_FG=${gtk_text_color:1}"                 >> "${GTK_OOMOX_THEME_FILE}"
+        echo "BTN_BG=${gtk_button_bg_color:1}"            >> "${GTK_OOMOX_THEME_FILE}"
+        echo "BTN_FG=${gtk_button_fg_color:1}"            >> "${GTK_OOMOX_THEME_FILE}"
+        echo "HDR_BTN_BG=${gtk_header_button_bg_color:1}" >> "${GTK_OOMOX_THEME_FILE}"
+        echo "HDR_BTN_FG=${gtk_header_button_fg_color:1}" >> "${GTK_OOMOX_THEME_FILE}"
+        echo "GTK3_GENERATE_DARK=False"                   >> "${GTK_OOMOX_THEME_FILE}"
+        echo "ROUNDNESS=${gtk_roundness}"                 >> "${GTK_OOMOX_THEME_FILE}"
+        echo "SPACING=${gtk_spacing}"                     >> "${GTK_OOMOX_THEME_FILE}"
+        echo "GRADIENT=${gtk_gradient}"                   >> "${GTK_OOMOX_THEME_FILE}"
+
+        oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+
+    fi
+
 
 
     local GTK_UNITY_DECORATION_SNIPPET="${GTK_TMP_DIR}/gtk_unity_decoration_snippet.css"

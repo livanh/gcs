@@ -17,12 +17,19 @@ function _gcs_list_backups {
         -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort | uniq
 }
 
+# list Oomox themes
+function _gcs_list_oomox_themes {
+    find "/opt/oomox/colors" "${HOME}/.config/oomox/colors" \
+        -mindepth 2 -maxdepth 2 -type f -printf "%P\n" 2>/dev/null | sort | uniq
+}
+
 # list gcs options
 function _gcs_list_options {
     echo "-m"
     echo "-n"
     echo "-b"
     echo "-r"
+    echo "-i"
     echo "-h"
 }
 
@@ -37,12 +44,14 @@ function _gcs_comp {
       "-n") COMPREPLY=("-n");;
       "-b") COMPREPLY=("-b");;
       "-r") COMPREPLY=("-r");;
+      "-i") COMPREPLY=("-i");;
       *)
         case "${previous_word}" in
           gcs) COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- ${current_word}));;
           -m)  COMPREPLY=($(compgen -W '`_gcs_list_modules`'      -- ${current_word}));;
           -b)  COMPREPLY=();;
           -r)  COMPREPLY=($(compgen -W '`_gcs_list_backups`'      -- ${current_word}));;
+          -i)  COMPREPLY=($(compgen -W '`_gcs_list_oomox_themes`' -- ${current_word}));;
           *)   COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- ${current_word}));;
         esac;;
     esac
