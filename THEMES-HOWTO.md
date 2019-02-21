@@ -13,7 +13,7 @@ There is a large number of colors that can be specified, and some of them are de
 
 All of these groups and their relationships are described in more detail later. Additionally, each module derives module-specific colors from the theme colors (e.g. `gtk_base_color` is derived from `base_color`). Themes may also define module-specific colors directly, but this should be avoided unless there is no other way to achieve the desired result.
 
-Theme files should consist of variable declaration in the form `variable=value`. The given value can be quoted of unquoted (e.g., both `text_color=#ffffff` and `text_color="#ffffff"` are fine). The values for variables that hold a color can be expressed in one of two ways:
+Theme files are plain text files containing a series of variable declaration in the form `variable=value`. The given value can be quoted of unquoted (e.g., both `text_color=#ffffff` and `text_color="#ffffff"` are fine). The values for variables that hold a color can be expressed in one of two ways:
 
 * an explicit RGB color in hex notation, e.g. `#f63401`
 * the value of an existing variable, in standard shell notation, e.g. `${text_color}`

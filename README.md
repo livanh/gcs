@@ -5,7 +5,7 @@ GCS is a tool to change the color scheme of your Linux desktop. It can take care
 
 ![Preview](preview.gif?raw=true "Preview")
 
-GCS is easily extensible, so if some program you use is not supported, you can easily create a module for it (detailed documentation will be made at some point in the future, for now use exising modules as a template).
+GCS is easily extensible, so if some program you use is not supported, you can easily create a module for it (details are in MODULES-HOWTO.md).
 
 ### Installation
 ``` sudo make install```
@@ -58,7 +58,7 @@ TAB completion for options, theme names, backup names, and module names is suppp
 GCS directly manipulates the configuration files of other programs!
 This might have unexpected consequences. While I've been using it for quite some time and it works reliably for me, you should use it with care. Be sure to always have a backup of the involved configuration files, either with the embedded backup functionality or otherwise.
 
-For first-time users, the recommended workflows is as follows:
+For first-time users, the recommended workflow is as follows:
 
 * Make a full backup: ```gcs -b first_backup```. The files are saved in $HOME/.local/gcs/backups/first_backup, sorted in subdirectories for each module. Take note of which modules are used.
 * Apply a theme, one module at a time e.g. ```gcs -m gtk clearlooks```. See if it works correctly, or if you need to tweak. If you're in trouble, restore the configuration from the backup, e.g. ```gcs -m gtk -r first_backup```. As a last resort, disable the module by creating/editing the configuration file $HOME/.config/gcs/gcs.conf. For the ```gtk``` module, you should add the following text (for other modules, change the heading name):
