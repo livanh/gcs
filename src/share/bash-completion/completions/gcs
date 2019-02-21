@@ -13,7 +13,7 @@ function _gcs_list_modules {
 
 # list gcs backups
 function _gcs_list_backups {
-    find "$HOME/.local/share/gcs/backups" \
+    find "${HOME}/.local/share/gcs/backups" \
         -mindepth 1 -maxdepth 1 -type d -printf "%f\n" 2>/dev/null | sort | uniq
 }
 
@@ -31,19 +31,19 @@ function _gcs_comp {
     COMPREPLY=()
     local current_word=${COMP_WORDS[COMP_CWORD]}
     local previous_word=${COMP_WORDS[COMP_CWORD-1]}
-    case "$current_word" in
-      "-") COMPREPLY=($(compgen -W '`_gcs_list_options`' -- $current_word));;
+    case "${current_word}" in
+      "-") COMPREPLY=($(compgen -W '`_gcs_list_options`' -- ${current_word}));;
       "-m") COMPREPLY=("-m");;
       "-n") COMPREPLY=("-n");;
       "-b") COMPREPLY=("-b");;
       "-r") COMPREPLY=("-r");;
       *)
-        case "$previous_word" in
-          gcs) COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- $current_word));;
-          -m)  COMPREPLY=($(compgen -W '`_gcs_list_modules`'      -- $current_word));;
+        case "${previous_word}" in
+          gcs) COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- ${current_word}));;
+          -m)  COMPREPLY=($(compgen -W '`_gcs_list_modules`'      -- ${current_word}));;
           -b)  COMPREPLY=();;
-          -r)  COMPREPLY=($(compgen -W '`_gcs_list_backups`'      -- $current_word));;
-          *)   COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- $current_word));;
+          -r)  COMPREPLY=($(compgen -W '`_gcs_list_backups`'      -- ${current_word}));;
+          *)   COMPREPLY=($(compgen -W '`_gcs_list_colorschemes`' -- ${current_word}));;
         esac;;
     esac
     return 0
