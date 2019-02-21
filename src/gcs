@@ -195,6 +195,36 @@ function is_brighter() {
     printf "$(bc <<< "${l1} > ${l2}")"
 }
 
+
+function mix_hex_colors(){
+
+    if [ "$#" -ne 3 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit 2
+    fi
+
+    local color1="${1}"
+    local color2="${2}"
+    local balance="${3}"
+
+    local r1="$(printf "%d" 0x${color1:1:2})"
+    local g1="$(printf "%d" 0x${color1:3:2})"
+    local b1="$(printf "%d" 0x${color1:5:2})"
+    local r2="$(printf "%d" 0x${color2:1:2})"
+    local g2="$(printf "%d" 0x${color2:3:2})"
+    local b2="$(printf "%d" 0x${color2:5:2})"
+
+    local r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
+    local g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
+    local b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
+    LC_ALL=C r="$(printf "%.0f" "${r}")"
+    LC_ALL=C g="$(printf "%.0f" "${g}")"
+    LC_ALL=C b="$(printf "%.0f" "${b}")"
+
+    printf "#%x%x%x" "${r}" "${g}" "${b}"
+}
+
+
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
 # alphanumeric characters, hashtags (for hexadecimal colours, i.e. #FF0000), dollar signs and underscores
@@ -267,7 +297,7 @@ function load_color_theme() {
     : ${titlebar_focused_bg_color:=${selected_bg_color}}
     : ${titlebar_focused_fg_color:=${selected_fg_color}}
     : ${titlebar_unfocused_bg_color:=${base_color}}
-    : ${titlebar_unfocused_fg_color:=${text_color}}
+    : ${titlebar_unfocused_fg_color:=$(mix_hex_colors ${fg_color} ${bg_color} 0.5)}
 
     # link colors
     : ${link_color:=${selected_bg_color}}
@@ -334,19 +364,19 @@ function load_color_theme() {
     : ${terminal_palette_purple:=${base0E}}
     if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
         if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
-            : ${terminal_palette_light_white:=${base03}}
-            : ${terminal_palette_light_black:=${base05}}
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
         else
-            : ${terminal_palette_light_white:=${base05}}
-            : ${terminal_palette_light_black:=${base03}}
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
         fi
     fi
-    : ${terminal_palette_light_red:=${base08}}
-    : ${terminal_palette_light_yellow:=${base0A}}
-    : ${terminal_palette_light_green:=${base0B}}
-    : ${terminal_palette_light_cyan:=${base0C}}
-    : ${terminal_palette_light_blue:=${base0D}}
-    : ${terminal_palette_light_purple:=${base0E}}
+    : ${terminal_palette_light_red:=$(mix_hex_colors ${base08} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_yellow:=$(mix_hex_colors ${base0A} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_green:=$(mix_hex_colors ${base0B} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_cyan:=$(mix_hex_colors ${base0C} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_blue:=$(mix_hex_colors ${base0D} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_purple:=$(mix_hex_colors ${base0E} "#FFFFF" 0.5)}
 
     : ${terminal_opacity:=1}
 
