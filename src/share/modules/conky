@@ -4,7 +4,7 @@
 function init_module() {
     CONKY_ENABLE_DEFAULT="true"
     CONKY_CONFIG_FILES_DEFAULT="${HOME}/.conkyrc"
-    CONKY_RESTART_COMMAND_DEFAULT=""
+    CONKY_RESTART_COMMAND_DEFAULT="killall -SIGUSR1 conky"
 
     CONKY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} conky enable          2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
     CONKY_CONFIG_FILES="$(crudini    --get ${GCS_CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
