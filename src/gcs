@@ -819,6 +819,13 @@ function select_modules() {
             MODULES+=("${module_file}")
         fi
     done
+
+    if ! [ -z "${FORCED_MODULE}" ]; then
+        if [ ${#MODULES[@]} -eq 0 ]; then
+            echo "Error: module \"${FORCED_MODULE}\" not found!"
+            exit 2
+        fi
+    fi
 }
 
 # find a template file for a module
