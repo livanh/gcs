@@ -54,6 +54,16 @@ function derive_colors() {
     : ${vim_type:=${editor_class}}
     : ${vim_character:=${editor_character}}
     : ${vim_number:=${editor_number}}
+    : ${vim_folded_fg:=${editor_selected_fg}}
+    : ${vim_folded_bg:=${editor_selected_bg}}
+    : ${vim_completion_fg:=${editor_frame_fg}}
+    : ${vim_completion_bg:=${editor_frame_bg}}
+    : ${vim_completion_selected_fg:=${editor_selected_fg}}
+    : ${vim_completion_selected_bg:=${editor_selected_bg}}
+    : ${vim_completion_scrollbar_fg:=${editor_frame_fg}}
+    : ${vim_completion_scrollbar_bg:=${editor_frame_bg}}
+    : ${vim_completion_thumb_fg:=${editor_selected_fg}}
+    : ${vim_completion_thumb_bg:=${editor_selected_bg}}
 }
 
 
@@ -135,6 +145,16 @@ function apply_theme() {
         echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guifg=${vim_folded_fg}"                                                >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guibg=${vim_folded_bg}"                                                >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guifg=${vim_completion_fg}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guibg=${vim_completion_bg}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guifg=${vim_completion_selected_fg}"                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guibg=${vim_completion_selected_bg}"                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guifg=${vim_completion_scrollbar_fg}"                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guibg=${vim_completion_scrollbar_bg}"                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guifg=${vim_completion_thumb_fg}"                                  >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guibg=${vim_completion_thumb_bg}"                                  >> "${VIM_COLORSCHEME_FILE}"
 
         local VIM_THEME_SYMLINK="${HOME}/.vim/colors/gcs-theme.vim"
         [ -e "${VIM_THEME_SYMLINK}" ] && rm "${VIM_THEME_SYMLINK}"
