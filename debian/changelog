@@ -1,3 +1,19 @@
+gcs (0.6-1) testing; urgency=medium
+
+  * Move module templates in a dedicated directory
+  * Save multiple themes concurrently and create symlinks to the current
+    theme, where possible
+  * Introduce gcs_backup_file() and gcs_restore_file() helper functions
+  * Add themes documentation
+  * Add module-specific help screens
+  * Fixes in automatic dark/light colors detection for terminals
+  * Add palette support for LXTerminal
+  * Add xfce4-terminal module
+  * Added import procedure for Oomox themes
+  * Add support for folds and completion in vim
+
+ -- Livanh <livanh@protonmail.com>  Sun, 03 Mar 2019 18:03:55 +0100
+
 gcs (0.5-3) testing; urgency=medium
 
   * Change path of bash-completion file
