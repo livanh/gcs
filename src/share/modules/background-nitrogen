@@ -26,9 +26,9 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    for i in ${COLOR_THEME_DIRS[@]}; do
-        if [ -f "$i/${wallpaper_image}" ]; then
-            wallpaper_file="$i/${wallpaper_image}"
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
         fi
     done
 }
@@ -53,6 +53,17 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for the X11 root window using Nitrogen."
+    echo
+    echo "Backup and restore are not supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with nitrogen (image file not found: \"${wallpaper_image}\").\n"
@@ -66,6 +77,11 @@ function apply_theme() {
             zoom-fit)  nitrogen --save --set-zoom "${wallpaper_file}" --set-color=${wallpaper_bg_color};;
             zoom-fill) nitrogen --save --set-zoom-fill "${wallpaper_file}";;
         esac
+
+        local DESKTOP_BACKGROUND_SYMLINK="${HOME}/.config/desktop-background"
+        [ -e "${DESKTOP_BACKGROUND_SYMLINK}" ] && rm "${DESKTOP_BACKGROUND_SYMLINK}"
+        ln -s "${wallpaper_file}" "${DESKTOP_BACKGROUND_SYMLINK}"
+
         printf " done.\n"
 
     fi

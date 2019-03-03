@@ -2,7 +2,7 @@
 
 function init_module() {
     TERMINATOR_ENABLE_DEFAULT="true"
-    TERMINATOR_CONFIG_FILE_DEFAULT="$HOME/.config/terminator/config"
+    TERMINATOR_CONFIG_FILE_DEFAULT="${HOME}/.config/terminator/config"
 
     TERMINATOR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} terminator enable      2>/dev/null || echo "${TERMINATOR_ENABLE_DEFAULT}")"
     TERMINATOR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} terminator config_file 2>/dev/null || echo "${TERMINATOR_CONFIG_FILE_DEFAULT}")"
@@ -35,33 +35,19 @@ function derive_colors() {
     : ${terminator_fg_color:=${terminal_fg_color}}
     : ${terminator_cursos_color:=${selected_fg_color}}
     : ${terminator_palette:=${terminal_palette_black}:${terminal_palette_red}:${terminal_palette_green}:${terminal_palette_yellow}:${terminal_palette_blue}:${terminal_palette_purple}:${terminal_palette_cyan}:${terminal_palette_white}:${terminal_palette_light_black}:${terminal_palette_light_red}:${terminal_palette_light_green}:${terminal_palette_light_yellow}:${terminal_palette_light_blue}:${terminal_palette_light_purple}:${terminal_palette_light_cyan}:${terminal_palette_light_white}}
-    : ${terminator_transparency:=${terminal_transparency}}
+    : ${terminator_opacity:=${terminal_opacity}}
 }
 
 
 
 function create_backup() {
-    printf "* Making backup of terminator configuration file..."
-
-    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
-    mkdir -p "${TERMINATOR_BACKUP_DIR}"
-    cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_BACKUP_DIR}/config"
-
-    printf " done.\n"
+    gcs_backup_file "terminator" "terminator" "${TERMINATOR_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of terminator configuration file..."
-
-    TERMINATOR_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/terminator"
-    if [ -f "${TERMINATOR_BACKUP_DIR}/config" ]; then
-        cp "${TERMINATOR_BACKUP_DIR}/config" "${TERMINATOR_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "terminator" "terminator" "${TERMINATOR_CONFIG_FILE}"
 }
 
 
@@ -72,23 +58,34 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets background, foreground, and palette colors for the Terminator terminal. This is accomplished by modifiying the configuration file, so it is recommended that Terminator restarted after this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for terminator..."
 
-    TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
-    TERMINATOR_TMP_CONFIG_FILE="${TERMINATOR_TMP_DIR}/config"
+    local TERMINATOR_TMP_DIR="${GCS_TMP_DIR}/terminator"
+    local TERMINATOR_TMP_CONFIG_FILE="${TERMINATOR_TMP_DIR}/config"
     mkdir "${TERMINATOR_TMP_DIR}"
     cp "${TERMINATOR_CONFIG_FILE}" "${TERMINATOR_TMP_CONFIG_FILE}"
 
-    terminator_set_value_default_profile "background_color" "${terminal_bg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
-    terminator_set_value_default_profile "foreground_color" "${terminal_fg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
-    terminator_set_value_default_profile "cursor_color"     "${terminal_fg_color}"  "${TERMINATOR_TMP_CONFIG_FILE}"
-    terminator_set_value_default_profile "palette"          "${terminator_palette}" "${TERMINATOR_TMP_CONFIG_FILE}"
-    if [ "${terminal_transparency}" != "" ]; then
-        terminator_set_value_default_profile "background_type"     "transparent"              "${TERMINATOR_TMP_CONFIG_FILE}"
-        terminator_set_value_default_profile "background_darkness" "${terminal_transparency}" "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "background_color" "${terminator_bg_color}" "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "foreground_color" "${terminator_fg_color}" "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "cursor_color"     "${terminator_fg_color}" "${TERMINATOR_TMP_CONFIG_FILE}"
+    terminator_set_value_default_profile "palette"          "${terminator_palette}"  "${TERMINATOR_TMP_CONFIG_FILE}"
+    if [ "${terminator_opacity}" != "" ]; then
+        terminator_set_value_default_profile "background_type"     "transparent"           "${TERMINATOR_TMP_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_darkness" "${terminator_opacity}" "${TERMINATOR_TMP_CONFIG_FILE}"
     else
-        terminator_set_value_default_profile "background_type"     "solid"                    "${TERMINATOR_TMP_CONFIG_FILE}"
+        terminator_set_value_default_profile "background_type"     "solid"                 "${TERMINATOR_TMP_CONFIG_FILE}"
     fi
 
     mv "${TERMINATOR_TMP_CONFIG_FILE}" "${TERMINATOR_CONFIG_FILE}"

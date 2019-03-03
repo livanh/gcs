@@ -2,8 +2,8 @@
 
 function init_module() {
     VIM_ENABLE_DEFAULT="true"
-    VIM_CONFIG_FILE_DEFAULT="$HOME/.vimrc"
-    VIM_COLORSCHEME_FILE_DEFAULT="$HOME/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
+    VIM_CONFIG_FILE_DEFAULT="${HOME}/.vimrc"
+    VIM_COLORSCHEME_FILE_DEFAULT="${HOME}/.vim/colors/${FULL_COLOR_THEME_NAME}.vim"
 
     VIM_ENABLE="$(crudini           --get ${GCS_CONFIG_FILE} vim enable           2>/dev/null || echo "${VIM_ENABLE_DEFAULT}")"
     VIM_CONFIG_FILE="$(crudini      --get ${GCS_CONFIG_FILE} vim config_file      2>/dev/null || echo "${VIM_CONFIG_FILE_DEFAULT}")"
@@ -54,43 +54,49 @@ function derive_colors() {
     : ${vim_type:=${editor_class}}
     : ${vim_character:=${editor_character}}
     : ${vim_number:=${editor_number}}
+    : ${vim_folded_fg:=${editor_selected_fg}}
+    : ${vim_folded_bg:=${editor_selected_bg}}
+    : ${vim_completion_fg:=${editor_frame_fg}}
+    : ${vim_completion_bg:=${editor_frame_bg}}
+    : ${vim_completion_selected_fg:=${editor_selected_fg}}
+    : ${vim_completion_selected_bg:=${editor_selected_bg}}
+    : ${vim_completion_scrollbar_fg:=${editor_frame_fg}}
+    : ${vim_completion_scrollbar_bg:=${editor_frame_bg}}
+    : ${vim_completion_thumb_fg:=${editor_selected_fg}}
+    : ${vim_completion_thumb_bg:=${editor_selected_bg}}
 }
 
 
 
 function create_backup() {
-    printf "* Making backup of Vim configuration file..."
-
-    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
-    mkdir -p "${VIM_BACKUP_DIR}"
-    cp "${VIM_CONFIG_FILE}" "${VIM_BACKUP_DIR}/vimrc"
-
-    printf " done.\n"
+    gcs_backup_file "Vim" "vim" "${VIM_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Vim configuration file..."
-
-    VIM_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/vim"
-    if [ -f "${VIM_BACKUP_DIR}/vimrc" ]; then
-        cp "${VIM_BACKUP_DIR}/vimrc" "${VIM_CONFIG_FILE}"
-
-        for server in $(vim --serverlist); do
-            vim --servername ${server} --remote-send "<ESC>:source ${VIM_CONFIG_FILE}<CR>"
-        done
-
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Vim" "vim" "${VIM_CONFIG_FILE}"
+    for server in $(vim --serverlist); do
+        vim --servername ${server} --remote-send "<ESC>:source ${VIM_CONFIG_FILE}<CR>"
+    done
 }
 
 
 
 function dry_run() {
     printf "* Vim: create a new syntax highlighting scheme in \"${VIM_COLORSCHEME_FILE}\" and set it as default in \"${VIM_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets syntax highlighting and other colors for Vim. This is accomplished by creating a new colorscheme and setting it via the configuration file, then Vim is instructed to reload the configuration to apply the changes."
+    echo "Colors are only set for the GUI. For the terminal, the CSApprox plugin can be installed to use similar colors, according to the terminal's limitations."
+    echo
+    echo "Backup and restore are supported."
+    echo
 }
 
 
@@ -113,7 +119,7 @@ function apply_theme() {
     else
         printf "* Setting colors for Vim GUI..."
 
-        [ -d "$HOME/.vim/colors" ] || mkdir -p "$HOME/.vim/colors"
+        [ -d "${HOME}/.vim/colors" ] || mkdir -p "${HOME}/.vim/colors"
 
         echo "hi clear" > "${VIM_COLORSCHEME_FILE}"
         echo "if exists('syntax_on')" >> "${VIM_COLORSCHEME_FILE}"
@@ -139,8 +145,22 @@ function apply_theme() {
         echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guifg=${vim_folded_fg}"                                                >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guibg=${vim_folded_bg}"                                                >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guifg=${vim_completion_fg}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guibg=${vim_completion_bg}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guifg=${vim_completion_selected_fg}"                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guibg=${vim_completion_selected_bg}"                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guifg=${vim_completion_scrollbar_fg}"                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guibg=${vim_completion_scrollbar_bg}"                               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guifg=${vim_completion_thumb_fg}"                                  >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guibg=${vim_completion_thumb_bg}"                                  >> "${VIM_COLORSCHEME_FILE}"
 
-        sed -i".gcs-bak" "s/colorscheme.*/colorscheme ${FULL_COLOR_THEME_NAME}/" "${VIM_CONFIG_FILE}"
+        local VIM_THEME_SYMLINK="${HOME}/.vim/colors/gcs-theme.vim"
+        [ -e "${VIM_THEME_SYMLINK}" ] && rm "${VIM_THEME_SYMLINK}"
+        ln -s "${VIM_COLORSCHEME_FILE}" "${VIM_THEME_SYMLINK}"
+
+        sed -i".gcs-bak" "s/colorscheme.*/colorscheme gcs-theme/" "${VIM_CONFIG_FILE}"
         rm "${VIM_CONFIG_FILE}.gcs-bak"
 
         for server in $(vim --serverlist); do

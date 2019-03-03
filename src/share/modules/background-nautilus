@@ -32,9 +32,9 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    for i in ${COLOR_THEME_DIRS[@]}; do
-        if [ -f "$i/${wallpaper_image}" ]; then
-            wallpaper_file="$i/${wallpaper_image}"
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
         fi
     done
 }
@@ -44,7 +44,7 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of wallpaper for nautilus..."
 
-    BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
+    local BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
     mkdir -p "${BACKGROUND_NAUTILUS_BACKUP_DIR}"
 
     gsettings get "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "color-shading-type" > "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type"
@@ -62,7 +62,7 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of wallpaper for nautilus..."
 
-    BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
+    local BACKGROUND_NAUTILUS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/background-nautilus"
 
     if [ -f "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type" ]; then
         gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "color-shading-type" $(cat "${BACKGROUND_NAUTILUS_BACKUP_DIR}/color-shading-type")
@@ -99,6 +99,18 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for Nautilus (when it is used to display desktop icons). This is accomplished by writing to the appropriate GSettings keys."
+    echo "Please note that Nautilus stopped providing desktop icons since version 3.28."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with Nautilus (image file not found: \"${wallpaper_image}\").\n"
@@ -124,6 +136,11 @@ function apply_theme() {
             zoom-fill) gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-uri"     "file://${wallpaper_file}"
                        gsettings set "${BACKGROUND_NAUTILUS_GSETTINGS_PATH}" "picture-options" "zoom";;
         esac
+
+        local DESKTOP_BACKGROUND_SYMLINK="${HOME}/.config/desktop-background"
+        [ -e "${DESKTOP_BACKGROUND_SYMLINK}" ] && rm "${DESKTOP_BACKGROUND_SYMLINK}"
+        ln -s "${wallpaper_file}" "${DESKTOP_BACKGROUND_SYMLINK}"
+
         printf " done.\n"
 
     fi

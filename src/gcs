@@ -20,33 +20,41 @@
 function initialize_environment() {
     GCS_MODULES_DIR_SYSTEM="/usr/share/gcs/modules"
     GCS_MODULES_DIR_LOCAL="/usr/local/share/gcs/modules"
-    GCS_MODULES_DIR_USER="$HOME/.local/share/gcs/modules"
+    GCS_MODULES_DIR_USER="${HOME}/.local/share/gcs/modules"
     GCS_THEMES_DIR_SYSTEM="/usr/share/gcs/colorthemes"
     GCS_THEMES_DIR_LOCAL="/usr/local/share/gcs/colorthemes"
-    GCS_THEMES_DIR_USER="$HOME/.config/gcs/colorthemes"
+    GCS_THEMES_DIR_USER="${HOME}/.config/gcs/colorthemes"
     GCS_BASE16_SCHEMES_REPOSITORY="https://github.com/chriskempson/base16-schemes-source"
-    GCS_BASE16_SCHEMES_DIR_USER="$HOME/.config/gcs/base16"
-    GCS_BACKUPS_DIR="$HOME/.local/share/gcs/backups"
+    GCS_BASE16_SCHEMES_DIR_USER="${HOME}/.config/gcs/base16"
+    GCS_BACKUPS_DIR="${HOME}/.local/share/gcs/backups"
 
-    GCS_CONFIG_DIR="$HOME/.config/gcs"
+    GCS_CONFIG_DIR="${HOME}/.config/gcs"
     GCS_CONFIG_FILE="${GCS_CONFIG_DIR}/gcs.conf"
     GCS_TMP_DIR="$(mktemp -d -t .gcs-XXXXXX)"
     GCS_LOCK_FILE="/tmp/.gcs_lock"
 
     GCS_ACTION="apply-theme"
     GCS_BACKUP_NAME=""
+
+    GCS_EXIT_SUCCESS="0"
+    GCS_ERROR_INVALID_OPTION="1"
+    GCS_ERROR_MISSING_ARGUMENT="2"
+    GCS_ERROR_MISSING_RESOURCE="3"
+    GCS_ERROR_UNSUPPORTED_FEATURE="4"
+    GCS_ERROR_TARGET_EXISTS="5"
 }
 
 function print_help() {
     echo "Usage:"
-    echo "  to apply a color theme:   $0 [options] <color_theme_name>"
-    echo "  to create a backup:       $0 [options] -b <backup_name>"
-    echo "  to restore a backup:      $0 [options] -r <backup_name>"
+    echo "  to apply a color theme:        $0 [options] <color_theme_name>"
+    echo "  to create a backup:            $0 [options] -b <backup_name>"
+    echo "  to restore a backup:           $0 [options] -r <backup_name>"
+    echo "  to import a theme from Oomox:  $0 -i <theme_name>"
     echo
     echo "Available options:"
     echo "  -m <module>    execute only one module"
     echo "  -n             do not apply theme, just print what would happen"
-    echo "  -h             show this help screen"
+    echo "  -h             show this help screen (or module help screen in conjunction with -m)"
     echo "  -u             update base16 schemes"
     echo
     echo "Avilable color themes:"
@@ -56,7 +64,6 @@ function print_help() {
     echo "Avilable modules:"
     find "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}" \
         -mindepth 1 -maxdepth 1 -type f -executable -printf "  %f\n" 2>/dev/null | sort | uniq | column
-    exit 1
 }
 
 function update_base16_schemes() {
@@ -72,9 +79,9 @@ function update_base16_schemes() {
         return
     fi
     echo "Downloading base16 schemes..."
-    for i in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
-        echo "  $i..."
-        git clone "$i" "${GCS_BASE16_TEMP}" &> /dev/null
+    for base16_theme_name in $(awk '/: /{print $2}'  "${GCS_BASE16_LIST}/list.yaml" ); do
+        echo "  ${base16_theme_name}..."
+        git clone "${base16_theme_name}" "${GCS_BASE16_TEMP}" &> /dev/null
         cp "${GCS_BASE16_TEMP}/"*.yaml "${GCS_BASE16_SCHEMES_DIR_USER}" &> /dev/null
         rm -rf "${GCS_BASE16_TEMP}" &> /dev/null
     done
@@ -82,20 +89,25 @@ function update_base16_schemes() {
 }
 
 function parse_options() {
-    while getopts ":m:b:r:nhu" opt; do
-        case $opt in
+    while getopts ":m:b:r:i:nhu" opt; do
+        case ${opt} in
           m)
-            FORCED_MODULE="$OPTARG"
+            FORCED_MODULE="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           b)
             GCS_ACTION="create-backup"
-            GCS_BACKUP_NAME="$OPTARG"
+            GCS_BACKUP_NAME="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           r)
             GCS_ACTION="restore-backup"
-            GCS_BACKUP_NAME="$OPTARG"
+            GCS_BACKUP_NAME="${OPTARG}"
+            shift $((OPTIND-1))
+            ;;
+          i)
+            GCS_ACTION="import-oomox-theme"
+            GCS_OOMOX_THEME_NAME="${OPTARG}"
             shift $((OPTIND-1))
             ;;
           n)
@@ -103,19 +115,20 @@ function parse_options() {
             shift $((OPTIND-1))
             ;;
           h)
-            print_help
+            GCS_ACTION="show-help"
+            shift $((OPTIND-1))
             ;;
           u)
             update_base16_schemes
-            exit 1
+            exit ${GCS_EXIT_SUCCESS}
             ;;
           \?)
-            echo "Invalid option: -$OPTARG" >&2
-            exit 1
+            echo "Invalid option: -${OPTARG}" >&2
+            exit ${GCS_ERROR_INVALID_OPTION}
             ;;
           :)
-            echo "Option -$OPTARG requires an argument." >&2
-            exit 1
+            echo "Option -${OPTARG} requires an argument." >&2
+            exit ${GCS_ERROR_MISSING_ARGUMENT}
             ;;
         esac
         OPTIND=1
@@ -127,15 +140,15 @@ function parse_options() {
     fi
 
     if [[ "${GCS_ACTION}" == "apply-theme" && "${COLOR_THEME_NAME}" == "" ]]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 
     if [[ "${GCS_ACTION}" == "dry-run" && "${COLOR_THEME_NAME}" == "" ]]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 
     if [ "$#" -ne 0 ]; then
-        print_help
+        GCS_ACTION="show-help"
     fi
 }
 
@@ -143,7 +156,7 @@ function parse_options() {
 function load_base16_scheme() {
     if [ "$#" -ne 1 ]; then
         echo "Error: load_base16_scheme() requires 1 argument!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local base16_scheme_file="${GCS_BASE16_SCHEMES_DIR_USER}/$1.yaml"
@@ -151,7 +164,7 @@ function load_base16_scheme() {
         update_base16_schemes
         if ! [ -f "${base16_scheme_file}" ]; then
             echo "Error: base16 scheme $1 not found!"
-            exit 3
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
     fi
 
@@ -173,27 +186,57 @@ function load_base16_scheme() {
     base0F="$(awk '/base0F:/{print "#"substr($2,2,6)}' "${base16_scheme_file}")"
 }
 
-function compare_brightness() {
-    if [ "$#" -ne 1 ]; then
-        echo "Error: compare_brightness() requires 2 arguments!"
-        exit 2
+function is_brighter() {
+    if [ "$#" -ne 2 ]; then
+        echo "Error: is_brighter() requires 2 arguments!"
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
-    color1="${1}"
-    color2="${2}"
+    local color1="${1}"
+    local color2="${2}"
 
-    r1="$(printf "%d" 0x${color1:1:2})"
-    g1="$(printf "%d" 0x${color1:3:2})"
-    b1="$(printf "%d" 0x${color1:5:2})"
-    r2="$(printf "%d" 0x${color2:1:2})"
-    g2="$(printf "%d" 0x${color2:3:2})"
-    b2="$(printf "%d" 0x${color2:5:2})"
+    local r1="$(printf "%d" 0x${color1:1:2})"
+    local g1="$(printf "%d" 0x${color1:3:2})"
+    local b1="$(printf "%d" 0x${color1:5:2})"
+    local r2="$(printf "%d" 0x${color2:1:2})"
+    local g2="$(printf "%d" 0x${color2:3:2})"
+    local b2="$(printf "%d" 0x${color2:5:2})"
 
-    l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
-    l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
+    local l1="$(bc <<< "${r1}*0.2126 + ${g1}*0.7152 + ${b1}*0.0722" )"
+    local l2="$(bc <<< "${r2}*0.2126 + ${g2}*0.7152 + ${b2}*0.0722" )"
 
     printf "$(bc <<< "${l1} > ${l2}")"
 }
+
+
+function mix_hex_colors(){
+
+    if [ "$#" -ne 3 ]; then
+        echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
+    fi
+
+    local color1="${1}"
+    local color2="${2}"
+    local balance="${3}"
+
+    local r1="$(printf "%d" 0x${color1:1:2})"
+    local g1="$(printf "%d" 0x${color1:3:2})"
+    local b1="$(printf "%d" 0x${color1:5:2})"
+    local r2="$(printf "%d" 0x${color2:1:2})"
+    local g2="$(printf "%d" 0x${color2:3:2})"
+    local b2="$(printf "%d" 0x${color2:5:2})"
+
+    local r="$(bc <<< "${r1}*${balance} + ${r2}*(1-${balance})" )"
+    local g="$(bc <<< "${g1}*${balance} + ${g2}*(1-${balance})" )"
+    local b="$(bc <<< "${b1}*${balance} + ${b2}*(1-${balance})" )"
+    LC_ALL=C r="$(printf "%.0f" "${r}")"
+    LC_ALL=C g="$(printf "%.0f" "${g}")"
+    LC_ALL=C b="$(printf "%.0f" "${b}")"
+
+    printf "#%x%x%x" "${r}" "${g}" "${b}"
+}
+
 
 # Load a color theme file.
 # egrep is used to only select lines which contain declaration for variables containing only
@@ -204,7 +247,7 @@ function load_color_theme() {
 
     if [ "$#" -ne 1 ]; then
         echo "Error: load_color_theme() requires 1 argument!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     FULL_COLOR_THEME_NAME="gcs-${COLOR_THEME_NAME}"
@@ -229,7 +272,7 @@ function load_color_theme() {
 
     # clear environment
     unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH' | /usr/bin/cut -d= -f1 );
-    pid=$(ps -o ppid= -p $$)
+    local pid=$(ps -o ppid= -p $$)
     eval export $(cat /proc/${pid## }/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
 
     # read color theme file
@@ -249,6 +292,7 @@ function load_color_theme() {
     : ${tooltip_fg_color:=${fg_color}}
     : ${tooltip_border_color:=${fg_color}}
     : ${tooltip_bg_color:=${bg_color}}
+    #~ unset gtk_oomox_theme
 
 
     # icon and cursor theme
@@ -266,8 +310,8 @@ function load_color_theme() {
     : ${titlebar_urgent_fg_color:=${selected_fg_color}}
     : ${titlebar_focused_bg_color:=${selected_bg_color}}
     : ${titlebar_focused_fg_color:=${selected_fg_color}}
-    : ${titlebar_unfocused_bg_color:=${base_color}}
-    : ${titlebar_unfocused_fg_color:=${text_color}}
+    : ${titlebar_unfocused_bg_color:=${bg_color}}
+    : ${titlebar_unfocused_fg_color:=$(mix_hex_colors ${fg_color} ${bg_color} 0.5)}
 
     # link colors
     : ${link_color:=${selected_bg_color}}
@@ -276,8 +320,8 @@ function load_color_theme() {
     # tray bar colors
     : ${tray_bg_color:=${bg_color}}
     : ${tray_fg_color:=${fg_color}}
-    : ${tray_focused_bg_color:=${titlebar_focused_bg_color}}
-    : ${tray_focused_fg_color:=${titlebar_focused_fg_color}}
+    : ${tray_focused_bg_color:=${selected_bg_color}}
+    : ${tray_focused_fg_color:=${selected_fg_color}}
     : ${tray_unfocused_bg_color:=${bg_color}}
     : ${tray_unfocused_fg_color:=${fg_color}}
     : ${tray_urgent_bg_color:=${titlebar_urgent_bg_color}}
@@ -297,33 +341,33 @@ function load_color_theme() {
 
     # terminal
     if ! [[ -z "${base00}" || -z "${base07}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base07})" == "1" ]; then
-            : ${terminal_bg_color:=${base00}}
-            : ${terminal_fg_color:=${base07}}
-        else
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
             : ${terminal_bg_color:=${base07}}
             : ${terminal_fg_color:=${base00}}
+        else
+            : ${terminal_bg_color:=${base00}}
+            : ${terminal_fg_color:=${base07}}
         fi
     fi
 
     if ! [[ -z "${fg_color}" || -z "${bg_color}" ]]; then
-        if [ "$(compare_brightness ${bg_color} ${fg_color})" == "1" ]; then
-            : ${terminal_bg_color:=${bg_color}}
-            : ${terminal_fg_color:=${fg_color}}
-        else
+        if [ "$(is_brighter ${bg_color} ${fg_color})" == "1" ]; then
             : ${terminal_bg_color:=${fg_color}}
             : ${terminal_fg_color:=${bg_color}}
+        else
+            : ${terminal_bg_color:=${bg_color}}
+            : ${terminal_fg_color:=${fg_color}}
         fi
     fi
 
 
     if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_white:=${base05}}
-            : ${terminal_palette_black:=${base03}}
-        else
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
             : ${terminal_palette_white:=${base03}}
             : ${terminal_palette_black:=${base05}}
+        else
+            : ${terminal_palette_white:=${base05}}
+            : ${terminal_palette_black:=${base03}}
         fi
     fi
     : ${terminal_palette_red:=${base08}}
@@ -332,21 +376,23 @@ function load_color_theme() {
     : ${terminal_palette_cyan:=${base0C}}
     : ${terminal_palette_blue:=${base0D}}
     : ${terminal_palette_purple:=${base0E}}
-    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" ]]; then
-        if [ "$(compare_brightness ${base00} ${base05})" == "1" ]; then
-            : ${terminal_palette_light_white:=${base05}}
-            : ${terminal_palette_light_black:=${base03}}
+    if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
+        if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
         else
-            : ${terminal_palette_light_white:=${base03}}
-            : ${terminal_palette_light_black:=${base05}}
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
         fi
     fi
-    : ${terminal_palette_light_red:=${base08}}
-    : ${terminal_palette_light_yellow:=${base0A}}
-    : ${terminal_palette_light_green:=${base0B}}
-    : ${terminal_palette_light_cyan:=${base0C}}
-    : ${terminal_palette_light_blue:=${base0D}}
-    : ${terminal_palette_light_purple:=${base0E}}
+    : ${terminal_palette_light_red:=$(mix_hex_colors ${base08} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_yellow:=$(mix_hex_colors ${base0A} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_green:=$(mix_hex_colors ${base0B} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_cyan:=$(mix_hex_colors ${base0C} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_blue:=$(mix_hex_colors ${base0D} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_purple:=$(mix_hex_colors ${base0E} "#FFFFF" 0.5)}
+
+    : ${terminal_opacity:=1}
 
     # notifications
     : ${notification_border_color:=${bg_color}}
@@ -354,7 +400,16 @@ function load_color_theme() {
     : ${notification_fg_color:=${fg_color}}
 
     # text editors with syntax highlighting
-    : ${editor_syntax_enable:=false}
+    if ! [[ \
+        -z "${base00}" || -z "${base01}" || -z "${base02}" || -z "${base03}" || \
+        -z "${base04}" || -z "${base05}" || -z "${base06}" || -z "${base07}" || \
+        -z "${base08}" || -z "${base09}" || -z "${base0A}" || -z "${base0B}" || \
+        -z "${base0C}" || -z "${base0D}" || -z "${base0E}" || -z "${base0F}" \
+    ]]; then
+        : ${editor_syntax_enable:=true}
+    else
+        : ${editor_syntax_enable:=false}
+    fi
     : ${editor_bg:=${base00}}
     : ${editor_bg:=${base_color}}
     : ${editor_fg:=${base05}}
@@ -403,6 +458,251 @@ function load_color_theme() {
 
 }
 
+
+function import_oomox_theme() {
+    local OOMOX_THEME_FILE=""
+    if [ -f "${HOME}/.config/oomox/colors/${GCS_OOMOX_THEME_NAME}" ]; then
+        OOMOX_THEME_FILE="${HOME}/.config/oomox/colors/${GCS_OOMOX_THEME_NAME}"
+    elif [ -f "/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}" ]; then
+        OOMOX_THEME_FILE="/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}"
+    else
+        echo "Error: Oomox theme \"${GCS_OOMOX_THEME_NAME}\" not found!"
+        exit ${GCS_ERROR_MISSING_RESOURCE}
+    fi
+
+    local NEW_GCS_THEME_NAME="Oomox_${GCS_OOMOX_THEME_NAME/\//_}"
+    local NEW_GCS_THEME_DIR="${GCS_THEMES_DIR_USER}/${NEW_GCS_THEME_NAME}"
+    local NEW_GCS_THEME_FILE="${NEW_GCS_THEME_DIR}/colortheme"
+
+    mkdir -p "${NEW_GCS_THEME_DIR}"
+
+    local OOMOX_THEME_STYLE="$(grep ^THEME_STYLE= "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_TERMINAL_THEME_MODE="$(grep ^TERMINAL_THEME_MODE= "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_ICONS_STYLE="$(grep ^ICONS_STYLE= "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+
+    local OOMOX_BG="$(grep      "^BG="       "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_FG="$(grep      "^FG="       "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_TXT_BG="$(grep  "^TXT_BG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_TXT_FG="$(grep  "^TXT_FG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_SEL_BG="$(grep  "^SEL_BG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_SEL_FG="$(grep  "^SEL_FG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_MENU_BG="$(grep "^MENU_BG="  "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_MENU_FG="$(grep "^MENU_FG="  "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_HDR_BG="$(grep  "^HDR_BG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_HDR_FG="$(grep  "^HDR_FG="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+
+    local OOMOX_WM_BORDER_FOCUS="$(grep   "^WM_BORDER_FOCUS="   "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_WM_BORDER_UNFOCUS="$(grep "^WM_BORDER_UNFOCUS=" "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+
+    local OOMOX_MATERIA_VIEW="$(grep           "^MATERIA_VIEW="           "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+    local OOMOX_TERMINAL_BASE_TEMPLATE="$(grep "^TERMINAL_BASE_TEMPLATE=" "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+
+    if [ "${OOMOX_THEME_STYLE}" == "oomox" ]; then
+        echo "  * detected theme style: Oomox (numix-based)"
+        touch                                                                     "${NEW_GCS_THEME_FILE}"
+        set_value "bg_color"                    "=" "#${OOMOX_BG}"                "${NEW_GCS_THEME_FILE}"
+        set_value "fg_color"                    "=" "#${OOMOX_FG}"                "${NEW_GCS_THEME_FILE}"
+        set_value "base_color"                  "=" "#${OOMOX_TXT_BG}"            "${NEW_GCS_THEME_FILE}"
+        set_value "text_color"                  "=" "#${OOMOX_TXT_FG}"            "${NEW_GCS_THEME_FILE}"
+        set_value "selected_bg_color"           "=" "#${OOMOX_SEL_BG}"            "${NEW_GCS_THEME_FILE}"
+        set_value "selected_fg_color"           "=" "#${OOMOX_SEL_FG}"            "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_focused_bg_color"   "=" "#${OOMOX_WM_BORDER_FOCUS}"   "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_unfocused_bg_color" "=" "#${OOMOX_WM_BORDER_UNFOCUS}" "${NEW_GCS_THEME_FILE}"
+
+    elif [ "${OOMOX_THEME_STYLE}" == "materia" ]; then
+        echo "  * detected theme style: Materia"
+        touch                                                                                               "${NEW_GCS_THEME_FILE}"
+        set_value "bg_color"                  "=" "#${OOMOX_BG}"                                            "${NEW_GCS_THEME_FILE}"
+        set_value "fg_color"                  "=" "#${OOMOX_FG}"                                            "${NEW_GCS_THEME_FILE}"
+        set_value "base_color"                "=" "#${OOMOX_MATERIA_VIEW:-${OOMOX_TXT_BG}}"                 "${NEW_GCS_THEME_FILE}"
+        set_value "text_color"                "=" "#${OOMOX_FG}"                                            "${NEW_GCS_THEME_FILE}"
+        set_value "selected_bg_color"         "=" "$(mix_hex_colors "#${OOMOX_SEL_BG}" "#${OOMOX_BG}" 0.5)" "${NEW_GCS_THEME_FILE}"
+        set_value "selected_fg_color"         "=" "#${OOMOX_FG}"                                            "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_focused_bg_color" "=" "#${OOMOX_HDR_BG:-${OOMOX_MENU_BG}}"                      "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_focused_fg_color" "=" "#${OOMOX_HDR_FG:-${OOMOX_MENU_FG}}"                      "${NEW_GCS_THEME_FILE}"
+
+    elif [ "${OOMOX_THEME_STYLE}" == "arc" ]; then
+        echo "  * detected theme style: Arc"
+        touch                                                                          "${NEW_GCS_THEME_FILE}"
+        set_value "bg_color"                  "=" "#${OOMOX_BG}"                       "${NEW_GCS_THEME_FILE}"
+        set_value "fg_color"                  "=" "#${OOMOX_FG}"                       "${NEW_GCS_THEME_FILE}"
+        set_value "base_color"                "=" "#${OOMOX_TXT_BG}"                   "${NEW_GCS_THEME_FILE}"
+        set_value "text_color"                "=" "#${OOMOX_FG}"                       "${NEW_GCS_THEME_FILE}"
+        set_value "selected_bg_color"         "=" "#${OOMOX_SEL_BG}"                   "${NEW_GCS_THEME_FILE}"
+        set_value "selected_fg_color"         "=" "#${OOMOX_SEL_FG}"                   "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_focused_bg_color" "=" "#${OOMOX_HDR_BG:-${OOMOX_MENU_BG}}" "${NEW_GCS_THEME_FILE}"
+        set_value "titlebar_focused_fg_color" "=" "#${OOMOX_HDR_FG:-${OOMOX_MENU_FG}}" "${NEW_GCS_THEME_FILE}"
+
+    else
+        echo "Error: Oomox theme style \"${OOMOX_THEME_STYLE}\" is not supported yet!"
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
+
+    fi
+
+    cp "${OOMOX_THEME_FILE}" "${NEW_GCS_THEME_DIR}/oomox-theme"
+    echo "gtk_oomox_theme=\"oomox-theme\"" >> "${NEW_GCS_THEME_FILE}"
+
+
+
+
+    if [ "${OOMOX_TERMINAL_THEME_MODE}" == "manual" ]; then
+        echo "  * detected terminal theme mode: Manual"
+        local OOMOX_TERMINAL_BACKGROUND="$(grep "^TERMINAL_BACKGROUND=" "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_FOREGROUND="$(grep "^TERMINAL_FOREGROUND=" "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR0="$(grep     "^TERMINAL_COLOR0="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR1="$(grep     "^TERMINAL_COLOR1="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR2="$(grep     "^TERMINAL_COLOR2="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR3="$(grep     "^TERMINAL_COLOR3="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR4="$(grep     "^TERMINAL_COLOR4="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR5="$(grep     "^TERMINAL_COLOR5="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR6="$(grep     "^TERMINAL_COLOR6="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR7="$(grep     "^TERMINAL_COLOR7="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR8="$(grep     "^TERMINAL_COLOR8="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR9="$(grep     "^TERMINAL_COLOR9="     "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR10="$(grep    "^TERMINAL_COLOR10="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR11="$(grep    "^TERMINAL_COLOR11="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR12="$(grep    "^TERMINAL_COLOR12="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR13="$(grep    "^TERMINAL_COLOR13="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR14="$(grep    "^TERMINAL_COLOR14="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR15="$(grep    "^TERMINAL_COLOR15="    "${OOMOX_THEME_FILE}" | cut -f2 -d=)"
+
+    elif [ "${OOMOX_TERMINAL_THEME_MODE}" == "auto" ]; then
+        echo "  * detected terminal theme mode: Automatic (template: ${OOMOX_TERMINAL_BASE_TEMPLATE})"
+        local OOMOX_TERMINAL_TEMPLATE_FILE="/opt/oomox/terminal_templates/${OOMOX_TERMINAL_BASE_TEMPLATE}"
+        local OOMOX_TERMINAL_BACKGROUND="$(grep "^*background:" "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_FOREGROUND="$(grep "^*foreground:" "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR0="$(grep     "^*color0:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR1="$(grep     "^*color1:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR2="$(grep     "^*color2:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR3="$(grep     "^*color3:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR4="$(grep     "^*color4:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR5="$(grep     "^*color5:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR6="$(grep     "^*color6:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR7="$(grep     "^*color7:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR8="$(grep     "^*color8:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR9="$(grep     "^*color9:"     "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR10="$(grep    "^*color10:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR11="$(grep    "^*color11:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR12="$(grep    "^*color12:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR13="$(grep    "^*color13:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR14="$(grep    "^*color14:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR15="$(grep    "^*color15:"    "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+
+    elif [ "${OOMOX_TERMINAL_THEME_MODE}" == "basic" ]; then
+        echo "  * detected terminal theme mode: Basic (template: ${OOMOX_TERMINAL_BASE_TEMPLATE})"
+        local OOMOX_TERMINAL_TEMPLATE_FILE="/opt/oomox/terminal_templates/${OOMOX_TERMINAL_BASE_TEMPLATE}"
+        local OOMOX_TERMINAL_BACKGROUND="$(grep "^TERMINAL_BACKGROUND=" "${OOMOX_THEME_FILE}"             | cut -f2 -d=)"
+        local OOMOX_TERMINAL_FOREGROUND="$(grep "^TERMINAL_FOREGROUND=" "${OOMOX_THEME_FILE}"             | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR0="$(grep     "^*color0:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR1="$(grep     "^*color1:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR2="$(grep     "^*color2:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR3="$(grep     "^*color3:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR4="$(grep     "^*color4:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR5="$(grep     "^*color5:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR6="$(grep     "^*color6:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR7="$(grep     "^*color7:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR8="$(grep     "^*color8:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR9="$(grep     "^*color9:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR10="$(grep    "^*color10:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR11="$(grep    "^*color11:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR12="$(grep    "^*color12:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR13="$(grep    "^*color13:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR14="$(grep    "^*color14:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR15="$(grep    "^*color15:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+
+    elif [ "${OOMOX_TERMINAL_THEME_MODE}" == "smarty" ]; then
+        echo "  * detected terminal theme mode: Experimental (template: ${OOMOX_TERMINAL_BASE_TEMPLATE})"
+        local OOMOX_TERMINAL_TEMPLATE_FILE="/opt/oomox/terminal_templates/${OOMOX_TERMINAL_BASE_TEMPLATE}"
+        local OOMOX_TERMINAL_BACKGROUND="$(grep "^TERMINAL_BACKGROUND=" "${OOMOX_THEME_FILE}"             | cut -f2 -d=)"
+        local OOMOX_TERMINAL_FOREGROUND="$(grep "^TERMINAL_FOREGROUND=" "${OOMOX_THEME_FILE}"             | cut -f2 -d=)"
+        local OOMOX_TERMINAL_COLOR0="$(grep     "^*color0:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR1="$(grep     "^*color1:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR2="$(grep     "^*color2:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR3="$(grep     "^*color3:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR4="$(grep     "^*color4:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR5="$(grep     "^*color5:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR6="$(grep     "^*color6:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR7="$(grep     "^*color7:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR8="$(grep     "^*color8:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR9="$(grep     "^*color9:"             "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR10="$(grep    "^*color10:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR11="$(grep    "^*color11:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR12="$(grep    "^*color12:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR13="$(grep    "^*color13:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR14="$(grep    "^*color14:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+        local OOMOX_TERMINAL_COLOR15="$(grep    "^*color15:"            "${OOMOX_TERMINAL_TEMPLATE_FILE}" | cut -f2 -d\#)"
+
+    else
+        echo "Error: terminal theme mode \"${OOMOX_TERMINAL_THEME_MODE}\" not yet supported!"
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
+
+    fi
+
+    set_value "terminal_bg_color"             "=" "#${OOMOX_TERMINAL_BACKGROUND}" "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_fg_color"             "=" "#${OOMOX_TERMINAL_FOREGROUND}" "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_black"        "=" "#${OOMOX_TERMINAL_COLOR0}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_red"          "=" "#${OOMOX_TERMINAL_COLOR1}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_green"        "=" "#${OOMOX_TERMINAL_COLOR2}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_yellow"       "=" "#${OOMOX_TERMINAL_COLOR3}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_blue"         "=" "#${OOMOX_TERMINAL_COLOR4}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_purple"       "=" "#${OOMOX_TERMINAL_COLOR5}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_cyan"         "=" "#${OOMOX_TERMINAL_COLOR6}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_white"        "=" "#${OOMOX_TERMINAL_COLOR7}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_black"  "=" "#${OOMOX_TERMINAL_COLOR8}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_red"    "=" "#${OOMOX_TERMINAL_COLOR9}"     "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_green"  "=" "#${OOMOX_TERMINAL_COLOR10}"    "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_yellow" "=" "#${OOMOX_TERMINAL_COLOR11}"    "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_blue"   "=" "#${OOMOX_TERMINAL_COLOR12}"    "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_purple" "=" "#${OOMOX_TERMINAL_COLOR13}"    "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_cyan"   "=" "#${OOMOX_TERMINAL_COLOR14}"    "${NEW_GCS_THEME_FILE}"
+    set_value "terminal_palette_light_white"  "=" "#${OOMOX_TERMINAL_COLOR15}"    "${NEW_GCS_THEME_FILE}"
+
+    set_value "editor_syntax_enable"     "=" "true"                      "${NEW_GCS_THEME_FILE}"
+    set_value "editor_variable"          "=" "#${OOMOX_TERMINAL_COLOR1}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_tag"               "=" "#${OOMOX_TERMINAL_COLOR1}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_tag_end"           "=" "#${OOMOX_TERMINAL_COLOR1}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_diff_removed"      "=" "#${OOMOX_TERMINAL_COLOR1}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_number"            "=" "#${OOMOX_TERMINAL_COLOR9}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_value"             "=" "#${OOMOX_TERMINAL_COLOR9}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_class"             "=" "#${OOMOX_TERMINAL_COLOR3}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_string"            "=" "#${OOMOX_TERMINAL_COLOR2}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_diff_added"        "=" "#${OOMOX_TERMINAL_COLOR2}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_entity"            "=" "#${OOMOX_TERMINAL_COLOR6}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_preprocessor"      "=" "#${OOMOX_TERMINAL_COLOR4}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_attribute"         "=" "#${OOMOX_TERMINAL_COLOR4}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_keyword"           "=" "#${OOMOX_TERMINAL_COLOR5}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_diff_changed"      "=" "#${OOMOX_TERMINAL_COLOR5}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_tag_unknown"       "=" "#${OOMOX_TERMINAL_COLOR0}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_attribute_unknown" "=" "#${OOMOX_TERMINAL_COLOR0}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_comment"           "=" "#${OOMOX_TERMINAL_COLOR7}" "${NEW_GCS_THEME_FILE}"
+    set_value "editor_operator"          "=" "#${OOMOX_TERMINAL_COLOR0}" "${NEW_GCS_THEME_FILE}"
+
+
+    if [ "${OOMOX_ICONS_STYLE}" == "gnome_colors" ]; then
+        echo "  * detected icon style: GNOME-Colors"
+        /opt/oomox/plugins/icons_gnomecolors/gnome-colors-icon-theme/change_color.sh -o "${NEW_GCS_THEME_NAME}" "/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}" >/dev/null 2>/dev/null
+
+    elif [ "${OOMOX_ICONS_STYLE}" == "numix_icons" ]; then
+        echo "  * detected icon style: Numix"
+        /opt/oomox/plugins/icons_numix/change_color.sh -o "${NEW_GCS_THEME_NAME}" "/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}" >/dev/null 2>/dev/null
+
+    elif [ "${OOMOX_ICONS_STYLE}" == "archdroid" ]; then
+        echo "  * detected icon style: Archdroid"
+        /opt/oomox/plugins/icons_archdroid/archdroid-icon-theme/change_color.sh -o "${NEW_GCS_THEME_NAME}" "/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}" >/dev/null 2>/dev/null
+
+    elif [ "${OOMOX_ICONS_STYLE}" == "papirus_icons" ]; then
+        echo "  * detected icon style: Papirus"
+        /opt/oomox/plugins/icons_papirus/change_color.sh -o "${NEW_GCS_THEME_NAME}" "/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}" >/dev/null 2>/dev/null
+
+    else
+        echo "Error: Oomox icon style \"${OOMOX_ICONS_STYLE}\" is not supported yet!"
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
+
+    fi
+    set_value "icon_theme_name" "=" "${NEW_GCS_THEME_NAME}" "${NEW_GCS_THEME_FILE}"
+}
+
+
 # set the value of the key named $KEY (in text file $FILE) equal to $VALUE
 # assuming they are separated by $SEPARATOR
 # warning: do not use for config file with different sections, because
@@ -410,7 +710,7 @@ function load_color_theme() {
 function set_value() {
     if [ "$#" -ne 4 ]; then
         echo "Error: set_value() requires 4 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
     local KEY=$1
     local SEPARATOR=$2
@@ -429,7 +729,7 @@ function set_value() {
 function set_value_section() {
     if [ "$#" -ne 5 ]; then
         echo "Error: set_value_section() requires 5 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
     local SECTION=$1
     local KEY=$2
@@ -438,10 +738,10 @@ function set_value_section() {
     local FILE=$5
     local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}" | tr -d \\0)"
     local tmp_file="${GCS_TMP_DIR}/set_value_temp"
-    echo "$old_section" >"$tmp_file"
-    set_value "$KEY" "$SEPARATOR" "$VALUE" "$tmp_file"
-    perl -i -p0e "s/\Q${old_section}\E/$(cat $tmp_file)/" ${FILE}
-    rm $tmp_file
+    echo "${old_section}" >"${tmp_file}"
+    set_value "${KEY}" "${SEPARATOR}" "${VALUE}" "${tmp_file}"
+    perl -i -p0e "s/\Q${old_section}\E/$(cat ${tmp_file})/" ${FILE}
+    rm ${tmp_file}
 }
 
 function cleanup() {
@@ -452,7 +752,7 @@ function cleanup() {
 function lock() {
     if [ -f "${GCS_LOCK_FILE}" ]; then
         echo "Error: lockfile \"${GCS_LOCK_FILE}\" exists, exiting."
-        exit 3
+        exit ${GCS_ERROR_MISSING_RESOURCE}
     fi
     touch "${GCS_LOCK_FILE}"
     trap cleanup EXIT
@@ -465,7 +765,7 @@ function select_action() {
         elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
         else
             echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
-            exit 2
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Applying color theme ${COLOR_THEME_NAME}"
@@ -476,7 +776,7 @@ function select_action() {
         elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
         else
             echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
-            exit 2
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Dry run, no actual action will be performed."
@@ -485,7 +785,7 @@ function select_action() {
     elif [ "${GCS_ACTION}" == "create-backup" ]; then
         if [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
             echo "Error: backup \"${GCS_BACKUP_NAME}\" already exists!"
-            exit 3
+            exit ${GCS_ERROR_TARGET_EXISTS}
         fi
 
         echo "Creating backup in \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
@@ -493,10 +793,13 @@ function select_action() {
     elif [ "${GCS_ACTION}" == "restore-backup" ]; then
         if ! [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
             echo "Error: backup \"${GCS_BACKUP_NAME}\" does not exist!"
-            exit 4
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Restoring backup from \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
+
+    elif [ "${GCS_ACTION}" == "import-oomox-theme" ]; then
+        echo "Importing theme ${GCS_OOMOX_THEME_NAME} from oomox..."
 
     fi
 }
@@ -505,25 +808,92 @@ function select_action() {
 function select_modules() {
     MODULES=()
 
-    for i in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
-        if [ -x "$i" ]; then
-            MODULE_NAME="${i##/*/}"
+    for module_file in "${GCS_MODULES_DIR_SYSTEM}/"* "${GCS_MODULES_DIR_LOCAL}/"* "${GCS_MODULES_DIR_USER}/"*; do
+        if [[ -f "${module_file}" && -x "${module_file}" ]]; then
+            MODULE_NAME="${module_file##/*/}"
 
             if ! [ -z "${FORCED_MODULE}" ]; then
-                if ! [ "$MODULE_NAME" == "${FORCED_MODULE}" ]; then
+                if ! [ "${MODULE_NAME}" == "${FORCED_MODULE}" ]; then
                     continue
                 fi
             fi
 
-            for j in ${!MODULES[@]}; do
-                if [ "${MODULE_NAME}" == "${MODULES[j]##/*/}" ]; then
-                    MODULES[$j]=''
+            for module_index in ${!MODULES[@]}; do
+                if [ "${MODULE_NAME}" == "${MODULES[${module_index}]##/*/}" ]; then
+                    MODULES[${module_index}]=''
                 fi
             done
-            MODULES+=("$i")
+            MODULES+=("${module_file}")
+        fi
+    done
+
+    if ! [ -z "${FORCED_MODULE}" ]; then
+        if [ ${#MODULES[@]} -eq 0 ]; then
+            echo "Error: module \"${FORCED_MODULE}\" not found!"
+            exit ${GCS_ERROR_MISSING_RESOURCE}
+        fi
+    fi
+}
+
+# find a template file for a module
+function find_module_template() {
+    if [ "$#" -ne 1 ]; then
+        echo "Error: find_module_template() requires 1 argument!"
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
+    fi
+    local filename="$1"
+
+    for i in "${GCS_MODULES_DIR_USER}" "${GCS_MODULES_DIR_LOCAL}" "${GCS_MODULES_DIR_SYSTEM}"; do
+        if [ -f "${i}/templates/${filename}" ]; then
+            echo -n "${i}/templates/${filename}"
+            break
         fi
     done
 }
+
+# make a backup copy of a single file
+function gcs_backup_file() {
+    if [ "$#" -ne 3 ]; then
+        echo "Error: gcs_backup_file() requires 3 arguments!"
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
+    fi
+
+    local module_name_external="$1"
+    local module_name_internal="$2"
+    local target_file_full_path="$3"
+    local target_file_name="${target_file_full_path##/*/}"
+    local module_backup_dir="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/${module_name_internal}"
+
+    printf "* Making backup of ${module_name_external} configuration file..."
+    mkdir -p "${module_backup_dir}"
+    cp "${target_file_full_path}" "${module_backup_dir}/${target_file_name}"
+
+    printf " done.\n"
+}
+
+# restore a single file from a backup
+function gcs_restore_file() {
+    if [ "$#" -ne 3 ]; then
+        echo "Error: gcs_restore_file() requires 3 arguments!"
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
+    fi
+
+    local module_name_external="$1"
+    local module_name_internal="$2"
+    local target_file_full_path="$3"
+    local target_file_name="${target_file_full_path##/*/}"
+    local module_backup_dir="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/${module_name_internal}"
+
+    printf "* Restoring backup of ${module_name_external} configuration file..."
+
+    if [ -f "${module_backup_dir}/${target_file_name}" ]; then
+        cp "${module_backup_dir}/${target_file_name}" "${target_file_full_path}"
+        printf " done.\n"
+    else
+        printf " not found!\n"
+    fi
+}
+
 
 function execute_modules() {
     for module_file in ${MODULES[@]}; do
@@ -538,22 +908,36 @@ function execute_modules() {
         function create_backup()      { true; }
         function restore_backup()     { true; }
         function dry_run()            { true; }
+        function print_module_help()  { true; }
         function apply_theme()        { true; }
 
         # Load module
         . "${module_file}"
 
         # Execute module
-        init_module
-        check_dependencies
-        [ $? == 0 ] || continue
+        if [ "${GCS_ACTION}" == "show-help" ]; then
+            if ! [ -z "${FORCED_MODULE}" ]; then
+                print_module_help
 
-        case "${GCS_ACTION}" in
-            "create-backup")  create_backup;;
-            "restore-backup") restore_backup;;
-            "dry-run")        dry_run;;
-            "apply-theme")    derive_colors; apply_theme;;
-        esac
+            else
+                print_help
+                exit ${GCS_EXIT_SUCCESS}
+
+            fi
+
+        else
+            init_module
+            check_dependencies
+            [ $? == 0 ] || continue
+
+            case "${GCS_ACTION}" in
+                "create-backup")  create_backup;;
+                "restore-backup") restore_backup;;
+                "dry-run")        dry_run;;
+                "apply-theme")    derive_colors; apply_theme;;
+            esac
+
+        fi
     done
 }
 
@@ -562,8 +946,12 @@ function main() {
     parse_options $*
     lock
     select_action
-    select_modules
-    execute_modules
+    if [ "${GCS_ACTION}" == "import-oomox-theme" ]; then
+        import_oomox_theme
+    else
+        select_modules
+        execute_modules
+    fi
 }
 
 main $*

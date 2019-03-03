@@ -4,7 +4,7 @@
 
 function init_module() {
     OCTAVE_ENABLE_DEFAULT="true"
-    OCTAVE_CONFIG_FILE_DEFAULT="$HOME/.config/octave/qt-settings"
+    OCTAVE_CONFIG_FILE_DEFAULT="${HOME}/.config/octave/qt-settings"
 
     OCTAVE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} octave enable      2>/dev/null || echo "${OCTAVE_ENABLE_DEFAULT}")"
     OCTAVE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} octave config_file 2>/dev/null || echo "${OCTAVE_CONFIG_FILE_DEFAULT}")"
@@ -77,33 +77,30 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of Octave configuration file..."
-
-    OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
-    mkdir -p "${OCTAVE_BACKUP_DIR}"
-    cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_BACKUP_DIR}/qt-settings"
-
-    printf " done.\n"
+    gcs_backup_file "Octave" "octave" "${OCTAVE_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Octave configuration file..."
-
-    OCTAVE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/octave"
-    if [ -f "${OCTAVE_BACKUP_DIR}/qt-settings" ]; then
-        cp "${OCTAVE_BACKUP_DIR}/qt-settings" "${OCTAVE_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Octave" "octave" "${OCTAVE_CONFIG_FILE}"
 }
 
 
 
 function dry_run() {
     printf "* Octave: set terminal and syntax highlighting colors in \"${OCTAVE_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets syntax highlighting and other colors for Octave. This is accomplished by modifiying the configuration file, so it is recommended that Octave is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
 }
 
 
@@ -115,8 +112,8 @@ function apply_theme() {
             if [ "${OCTAVE_SYNTAX_FALLBACK}" == "true" ]; then
                 printf "* Setting default colors for Octave..."
 
-                OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
-                OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
+                local OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
+                local OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
                 mkdir "${OCTAVE_TMP_DIR}"
                 cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_TMP_CONFIG_FILE}"
 
@@ -167,8 +164,8 @@ function apply_theme() {
     else
         printf "* Setting colors for Octave..."
 
-        OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
-        OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
+        local OCTAVE_TMP_DIR="${GCS_TMP_DIR}/octave"
+        local OCTAVE_TMP_CONFIG_FILE="${OCTAVE_TMP_DIR}/qt-settings"
         mkdir "${OCTAVE_TMP_DIR}"
         cp "${OCTAVE_CONFIG_FILE}" "${OCTAVE_TMP_CONFIG_FILE}"
 

@@ -1,21 +1,19 @@
 #ubuntu
 # gtk color theme
-base_color=#FFFFFF
-text_color=#3C3C3C
-bg_color=#F2F1F0
-fg_color=#4C4C4C
+base_color=#300A24
+text_color=#F2F1F0
+bg_color=#3C3C3C
+fg_color=#FFFFFF
 selected_bg_color=#F07746
 selected_fg_color=#FFFFFF
-link_color=#E25922
+link_color=#FF692E
 
 gtk_menu_bg_color=#3C3C3C
 gtk_menu_fg_color=#FFFFFF
-gtk_header_button_bg_color=#3C3C3C
-gtk_header_button_fg_color=#FFFFFF
 
 # icon and cursor theme
-icon_theme_name=Humanity
-cursor_theme_name=DMZ-White
+icon_theme_name=Humanity-Dark
+cursor_theme_name=DMZ-Black
 
 # error/warning
 error_color=#ec322f
@@ -65,34 +63,26 @@ terminal_palette_light_blue="#729FCF"
 terminal_palette_light_purple="#AD7FA8"
 terminal_palette_light_cyan="#34E2E2"
 terminal_palette_light_white="#EEEEEC"
-terminal_transparency="1"
+
 
 # text editors with syntax highlighting
 editor_syntax_enable=true
-editor_selected_bg="#86ABD9"
-editor_selected_fg="#ffffff"
-editor_current_line_bg="#EDECEB"
-editor_comment="#0000FF"
-editor_number="#FF00FF"
-editor_class="$editor_number"
-editor_string="$editor_number"
-editor_keyword="#A52A2A"
-editor_preprocessor="#A020F0"
-editor_operator="$editor_fg"
+editor_current_line_bg="#45002F"
+editor_comment=#444444
+editor_number=#E3DB28
+editor_class=#007500
+editor_string=#2B71EB
+editor_preprocessor=#259F86
+editor_operator=#E23232
 
-editor_tag="#008A8C"
-editor_tag_unknown="$editor_tag"
-editor_tag_end="$editor_tag"
-editor_attribute="#6A5ACD"
-editor_attribute_unknown="$editor_attribute"
-editor_value="editor_string"
-editor_entity="$editor_fg"
+editor_tag=
+editor_tag_unknown=
+editor_tag_end=
+editor_attribute=
+editor_attribute_unknown=
+editor_value=
+editor_entity=
 
-editor_diff_added="#008B8B"
-editor_diff_removed="$editor_attribute"
-editor_diff_changed="$editor_preprocessor"
-
-conky_default_color="#F2F1F0"
-conky_own_window_colour="#4C4C4C"
-
-
+editor_diff_added="#007500"
+editor_diff_removed="#ec322f"
+editor_diff_changed="#A820A8"

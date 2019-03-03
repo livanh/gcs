@@ -8,7 +8,7 @@ function init_module() {
     CB_COLORSET_PREFIX="${CB_PREFIX}/${CB_COLORSET_NAME}"
 
     CODEBLOCKS_ENABLE_DEFAULT="true"
-    CODEBLOCKS_CONFIG_FILE_DEFAULT="$HOME/.config/codeblocks/default.conf"
+    CODEBLOCKS_CONFIG_FILE_DEFAULT="${HOME}/.config/codeblocks/default.conf"
 
     CODEBLOCKS_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} codeblocks enable      2>/dev/null || echo "${CODEBLOCKS_ENABLE_DEFAULT}")"
     CODEBLOCKS_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} codeblocks config_file 2>/dev/null || echo "${CODEBLOCKS_CONFIG_FILE_DEFAULT}")"
@@ -84,38 +84,37 @@ function derive_colors() {
     : ${codeblocks_editor_linenumbers_bg:=${editor_frame_bg}}
     : ${codeblocks_editor_linenumbers_fg:=${editor_frame_fg}}
     : ${codeblocks_editor_gutter:=${editor_long_line_marker}}
+    : ${codeblocks_editor_caret:=${editor_fg}}
 }
 
 
 
 function create_backup() {
-    printf "* Making backup of Code::Blocks configuration file..."
-
-    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
-    mkdir -p "${CODEBLOCKS_BACKUP_DIR}"
-    cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_BACKUP_DIR}/default.conf"
-
-    printf " done.\n"
+    gcs_backup_file "Code::Blocks" "codeblocks" "${CODEBLOCKS_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of Code::Blocks configuration file..."
-
-    CODEBLOCKS_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/codeblocks"
-    if [ -f "${CODEBLOCKS_BACKUP_DIR}/default.conf" ]; then
-        cp "${CODEBLOCKS_BACKUP_DIR}/default.conf" "${CODEBLOCKS_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "Code::Blocks" "codeblocks" "${CODEBLOCKS_CONFIG_FILE}"
 }
 
 
 
 function dry_run() {
     printf "* Code::Blocks: create new syntax highlighting scheme in \"${CODEBLOCKS_CONFIG_FILE}\" and set it as default.\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets syntax highlighting and other colors for Code::Blocks. This is accomplished by modifiying the configuration file, so it is recommended that Code::Blocks is not running when this module is used."
+    echo "Currently, only general purpose colors and C/C++ specific colors are supported."
+    echo
+    echo "Backup and restore are supported."
+    echo
 }
 
 
@@ -132,8 +131,8 @@ function apply_theme() {
     else
         printf "* Setting colors for Code::Blocks..."
 
-        CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
-        CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
+        local CODEBLOCKS_TMP_DIR="${GCS_TMP_DIR}/codeblocks"
+        local CODEBLOCKS_TMP_CONFIG_FILE="${CODEBLOCKS_TMP_DIR}/default.conf"
         mkdir "${CODEBLOCKS_TMP_DIR}"
         cp "${CODEBLOCKS_CONFIG_FILE}" "${CODEBLOCKS_TMP_CONFIG_FILE}"
 
@@ -202,6 +201,7 @@ function apply_theme() {
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_BG"          "${codeblocks_editor_linenumbers_bg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_LINENUMBERS_FG"          "${codeblocks_editor_linenumbers_fg}"          "${CODEBLOCKS_TMP_CONFIG_FILE}"
         codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_GUTTER"                  "${codeblocks_editor_gutter}"                  "${CODEBLOCKS_TMP_CONFIG_FILE}"
+        codeblocks_set_color "/CodeBlocksConfig/colours/list/EDITOR_CARET"                   "${codeblocks_editor_caret}"                   "${CODEBLOCKS_TMP_CONFIG_FILE}"
 
         mv "${CODEBLOCKS_TMP_CONFIG_FILE}" "${CODEBLOCKS_CONFIG_FILE}"
 
@@ -256,7 +256,7 @@ function codeblocks_add_style() {
         xmlstarlet ed --inplace --subnode "${CB_COLORSET_PREFIX}/${lang}/style${CB_STYLE_CTR}/BACK/colour" --type attr -n "b"      --value "${bg_blue}"  "${file}"
     fi
 
-    CB_STYLE_CTR="$(expr $CB_STYLE_CTR + 1)"
+    CB_STYLE_CTR="$(expr ${CB_STYLE_CTR} + 1)"
 }
 
 

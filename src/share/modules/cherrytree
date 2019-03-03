@@ -3,7 +3,7 @@
 function init_module() {
     CHERRYTREE_ENABLE_DEFAULT="true"
     CHERRYTREE_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} cherrytree enable      2>/dev/null || echo "${CHERRYTREE_ENABLE_DEFAULT}")"
-    CHERRYTREE_CONFIG_FILE_DEFAULT="$HOME/.config/cherrytree/config.cfg"
+    CHERRYTREE_CONFIG_FILE_DEFAULT="${HOME}/.config/cherrytree/config.cfg"
     CHERRYTREE_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} cherrytree config_file 2>/dev/null || echo "${CHERRYTREE_CONFIG_FILE_DEFAULT}")"
 }
 
@@ -43,27 +43,13 @@ function derive_colors() {
 
 
 function create_backup() {
-    printf "* Making backup of cherrytree configuration file..."
-
-    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
-    mkdir -p "${CHERRYTREE_BACKUP_DIR}"
-    cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_BACKUP_DIR}/config.cfg"
-
-    printf " done.\n"
+    gcs_backup_file "cherrytree" "cherrytree" "${CHERRYTREE_CONFIG_FILE}"
 }
 
 
 
 function restore_backup() {
-    printf "* Restoring backup of cherrytree configuration file..."
-
-    CHERRYTREE_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/cherrytree"
-    if [ -f "${CHERRYTREE_BACKUP_DIR}/config.cfg" ]; then 
-        cp "${CHERRYTREE_BACKUP_DIR}/config.cfg" "${CHERRYTREE_CONFIG_FILE}"
-        printf " done.\n"
-    else
-        printf " not found!\n"
-    fi
+    gcs_restore_file "cherrytree" "cherrytree" "${CHERRYTREE_CONFIG_FILE}"
 }
 
 
@@ -74,11 +60,22 @@ function dry_run() {
 
 
 
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the background and text colors for the main and tree windows of Cherrytree. Link colors are set too. This is accomplished by modifiying the configuration file, so it is recommended that cherrytree is not running when this module is used."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
 function apply_theme() {
     printf "* Setting colors for cherrytree..."
 
-    CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
-    CHERRYTREE_TMP_CONFIG_FILE="${CHERRYTREE_TMP_DIR}/config.cfg"
+    local CHERRYTREE_TMP_DIR="${GCS_TMP_DIR}/cherrytree"
+    local CHERRYTREE_TMP_CONFIG_FILE="${CHERRYTREE_TMP_DIR}/config.cfg"
     mkdir "${CHERRYTREE_TMP_DIR}"
     cp "${CHERRYTREE_CONFIG_FILE}" "${CHERRYTREE_TMP_CONFIG_FILE}"
 

@@ -29,9 +29,9 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    for i in ${COLOR_THEME_DIRS[@]}; do
-        if [ -f "$i/${wallpaper_image}" ]; then
-            wallpaper_file="$i/${wallpaper_image}"
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
         fi
     done
 }
@@ -52,6 +52,18 @@ function restore_backup() {
 
 function dry_run() {
     printf "* PCManFM: set desktop wallpaper.\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the desktop wallpaper for PCManFM (when it is used to display desktop icons). This is accomplished by using command-line switches provided by PCManFM itself."
+    echo "A few settings (background color, text color, shadow color) cannot be changed via the command line. This is only possible using the patched version at https://github.com/livanh/pcmanfm."
+    echo
+    echo "Backup and restore are not supported."
+    echo
 }
 
 
@@ -78,6 +90,10 @@ function apply_theme() {
         pcmanfm --wallpaper-bg-color ${wallpaper_bg_color}
         pcmanfm --desktop-text-color ${wallpaper_text_color}
         pcmanfm --desktop-shadow-color ${wallpaper_shadow_color}
+
+        local DESKTOP_BACKGROUND_SYMLINK="${HOME}/.config/desktop-background"
+        [ -e "${DESKTOP_BACKGROUND_SYMLINK}" ] && rm "${DESKTOP_BACKGROUND_SYMLINK}"
+        ln -s "${wallpaper_file}" "${DESKTOP_BACKGROUND_SYMLINK}"
 
         printf " done.\n"
 

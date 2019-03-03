@@ -1,7 +1,8 @@
 prefix=/usr/local
 
-COLORTHEMES := $(subst src/config/colorthemes/, , $(wildcard src/config/colorthemes/*))
+COLORTHEMES := $(subst src/share/colorthemes/, , $(wildcard src/share/colorthemes/*))
 MODULES := $(subst src/share/modules/, , $(wildcard src/share/modules/*))
+TEMPLATES := $(subst src/share/modules/templates/, , $(wildcard src/share/modules/templates/*))
 
 all:
 
@@ -12,20 +13,20 @@ install:
 	install -d $(DESTDIR)$(prefix)/share/gcs/modules
 	mkdir -p $(DESTDIR)$(prefix)/share/gcs/colorthemes
 	for colortheme in $(COLORTHEMES); do \
-		if [ -d src/config/colorthemes/$${colortheme} ]; then \
+		if [ -d src/share/colorthemes/$${colortheme} ]; then \
 			mkdir -p $(DESTDIR)$(prefix)/share/gcs/colorthemes/$${colortheme}; \
-			for file in src/config/colorthemes/$${colortheme}/*; do \
+			for file in src/share/colorthemes/$${colortheme}/*; do \
 				install $${file} -t $(DESTDIR)$(prefix)/share/gcs/colorthemes/$${colortheme}; \
 			done; \
 		fi; \
 	done;
 	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules
 	for module in $(MODULES); do \
-		if [ "$${module}" = "$${module%%.*}" ] ; then \
-			install -m 755 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
-		else \
-			install -m 644 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
-		fi; \
+		install -m 755 src/share/modules/$${module} -t $(DESTDIR)$(prefix)/share/gcs/modules; \
+	done;
+	mkdir -p $(DESTDIR)$(prefix)/share/gcs/modules/templates
+	for template in $(TEMPLATES); do \
+		install -m 644 src/share/modules/templates/$${template} -t $(DESTDIR)$(prefix)/share/gcs/modules/templates; \
 	done;
 	mkdir -p $(DESTDIR)/share/bash-completion/completions
 	install -D src/share/bash-completion/completions/gcs $(DESTDIR)$(prefix)/share/bash-completion/completions/gcs
@@ -38,7 +39,10 @@ uninstall:
 	for module in $(MODULES); do \
 		rm $(DESTDIR)$(prefix)/share/gcs/modules/$${module}; \
 	done;
-	rm $(DESTDIR)/etc/bash_completion.d/gcs
+	for template in $(TEMPLATES); do \
+		rm $(DESTDIR)$(prefix)/share/gcs/modules/templates/$${template}; \
+	done;
+	rm $(DESTDIR)$(prefix)/share/bash-completion/completions/gcs
 
 .PHONY: install uninstall all
 

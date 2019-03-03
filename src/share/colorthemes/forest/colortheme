@@ -1,32 +1,31 @@
 # base color theme
-base_color=#000000
-text_color=#AAAAAA
-bg_color=#333333
-fg_color=#BBBBBB
-selected_bg_color=#205FC6
-selected_fg_color=#FFFFFF
-link_color=#548CE6
+base_color="#853F10"
+text_color="#FFF285"
+bg_color="#542303"
+fg_color="#FFF285"
+selected_bg_color="#4C942D"
+selected_fg_color="#FFFFFF"
+link_color="#48BF15"
 
 # icon and cursor theme
-icon_theme_name=Humanity-Dark-Blue
-cursor_theme_name=crystalblue
+icon_theme_name="Humanity-Dark-Green"
+cursor_theme_name="crystalgreen"
 
 # error/warning
-error_color=#ec322f
-warning_bg_color=#faad3d
+error_color="#cc0000"
+warning_bg_color="#faad3d"
 
 # window manager colors
 titlebar_urgent_bg_color=#BA0000
-titlebar_unfocused_bg_color=#001644
-titlebar_unfocused_fg_color=$text_color
+titlebar_unfocused_bg_color=#2B5618
+titlebar_unfocused_fg_color=#AAAAAA
 
 # background
-wallpaper_image=wallpaper.png
+wallpaper_image=wallpaper.jpg
 wallpaper_mode=zoom-fill
-wallpaper_bg_color=$base_color
 
 # terminal
-terminal_bg_color=$base_color
+terminal_bg_color=$bg_color
 terminal_fg_color=$text_color
 terminal_palette_black="#000000"
 terminal_palette_red="#ff352b"
@@ -44,17 +43,17 @@ terminal_palette_light_blue="#5555ff"
 terminal_palette_light_purple="#ff55ff"
 terminal_palette_light_cyan="#55ffff"
 terminal_palette_light_white="#ffffff"
-terminal_transparency="0.67"
+terminal_opacity="0.67"
 
 # text editors with syntax highlighting
 editor_syntax_enable=true
-editor_current_line_bg="#191919"
-editor_comment=#444444
-editor_number=#E3DB28
-editor_class=#007500
-editor_string=#D26F2A
-editor_preprocessor=#259F86
-editor_operator=#A820A8
+editor_current_line_bg="#6D330B"
+editor_comment="#9C7D55"
+editor_number=#E0A000
+editor_class=#4995F1
+editor_string=#E073F4
+editor_preprocessor=#67CFF4
+editor_operator=#BB53FF
 
 editor_tag=
 editor_tag_unknown=
@@ -64,6 +63,6 @@ editor_attribute_unknown=
 editor_value=
 editor_entity=
 
-editor_diff_added="#007500"
-editor_diff_removed="#ec322f"
-editor_diff_changed="#A820A8"
+editor_diff_added=$selected_bg_color
+editor_diff_removed="#CC0000"
+editor_diff_changed="#BB53FF"

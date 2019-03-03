@@ -3,8 +3,8 @@
 
 function init_module() {
     CONKY_ENABLE_DEFAULT="true"
-    CONKY_CONFIG_FILES_DEFAULT="$HOME/.conkyrc"
-    CONKY_RESTART_COMMAND_DEFAULT=""
+    CONKY_CONFIG_FILES_DEFAULT="${HOME}/.conkyrc"
+    CONKY_RESTART_COMMAND_DEFAULT="killall -SIGUSR1 conky"
 
     CONKY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} conky enable          2>/dev/null || echo "${CONKY_ENABLE_DEFAULT}")"
     CONKY_CONFIG_FILES="$(crudini    --get ${GCS_CONFIG_FILE} conky config_files    2>/dev/null || echo "${CONKY_CONFIG_FILES_DEFAULT}")"
@@ -57,23 +57,16 @@ function derive_colors() {
 function create_backup() {
     printf "* Making backup of conky configuration files...\n"
 
-    CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
+    local CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
     mkdir -p "${CONKY_BACKUP_DIR}"
 
-    for i in ${CONKY_CONFIG_FILES}; do
+    for conky_config_file in ${CONKY_CONFIG_FILES}; do
+        conky_config_file="$(echo "${conky_config_file}" | tr -d '"')"
+        printf "  \"${conky_config_file}\"..."
 
-        file="$i"
-        if [ ${file:0:1} == \" ]; then
-            file=${file:1}
-        fi
-        if [ ${file: -1} == \" ]; then
-            file=${file:0:-1}
-        fi
-
-        printf "  \"${file}\"..."
-        conky_config_file_path="${file%/*}"
+        local conky_config_file_path="${conky_config_file%/*}"
         mkdir -p "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
-        cp "$file" "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
+        cp "${conky_config_file}" "${CONKY_BACKUP_DIR}/${conky_config_file_path}"
         printf " done.\n"
     done
 }
@@ -83,28 +76,21 @@ function create_backup() {
 function restore_backup() {
     printf "* Restoring backup of conky configuration files..."
 
-    CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
+    local CONKY_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/conky"
 
-    for i in ${CONKY_CONFIG_FILES}; do
+    for conky_config_file in ${CONKY_CONFIG_FILES}; do
+        conky_config_file="$(echo "${conky_config_file}" | tr -d '"')"
+        printf "  \"${conky_config_file}\"..."
 
-        file="$i"
-        if [ ${file:0:1} == \" ]; then
-            file=${file:1}
-        fi
-        if [ ${file: -1} == \" ]; then
-            file=${file:0:-1}
-        fi
-
-        printf "  \"${file}\"..."
-        if [ -f "${CONKY_BACKUP_DIR}/${file}" ]; then
-            cp "${CONKY_BACKUP_DIR}/${file}" "$file"
+        if [ -f "${CONKY_BACKUP_DIR}/${conky_config_file}" ]; then
+            cp "${CONKY_BACKUP_DIR}/${conky_config_file}" "${conky_config_file}"
             printf " done.\n"
         else
             printf " not found!\n"
         fi
     done
 
-    $CONKY_RESTART_COMMAND &>/dev/null
+    ${CONKY_RESTART_COMMAND} &>/dev/null
 }
 
 
@@ -112,19 +98,35 @@ function restore_backup() {
 function dry_run() {
     printf "* conky: set text, background, and possibly other colors in the following files:\n"
 
-    for i in ${CONKY_CONFIG_FILES}; do
-
-        file="$i"
-        if [ ${file:0:1} == \" ]; then
-            file=${file:1}
-        fi
-        if [ ${file: -1} == \" ]; then
-            file=${file:0:-1}
-        fi
-
-        printf "  \"${file}\"\n"
-
+    for conky_config_file in ${CONKY_CONFIG_FILES}; do
+        conky_config_file="$(echo "${conky_config_file}" | tr -d '"')"
+        printf "  \"${conky_config_file}\"\n"
     done
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for conky. This is accomplished by modifiying the configuration file(s), so it is recommended that conky is restarted after this module is used."
+    echo
+    echo "Multiple configuration files can be specified via the GCS configuration file. For example, to use \"/home/user/.conkyrc1\" and \"/home/user/.conkyrc2\", write the following in \"${GCS_CONFIG_FILE}\":"
+    echo
+    echo "    ..."
+    echo "    [conky]"
+    echo "    config_files=\"/home/user/.conkyrc1\" \"/home/user/.conkyrc2\""
+    echo "    ..."
+    echo
+    echo "Background and text colors are set automatically according to the theme. Instead, the mapping for color0 through color9 should be set by the user in the GCS configuration file. For example, to assign the value of \$selected_bg_color to color0, write the following in \"${GCS_CONFIG_FILE}\":"
+    echo
+    echo "    ..."
+    echo "    [conky]"
+    echo "    color0=\${selected_bg_color}"
+    echo "    ..."
+    echo
+    echo "Backup and restore are supported."
+    echo
 }
 
 
@@ -132,41 +134,34 @@ function dry_run() {
 function apply_theme() {
     printf "* Setting colors for conky...\n"
 
-    CONKY_TMP_DIR="${GCS_TMP_DIR}/conky"
-    CONKY_TMP_FILE="${CONKY_TMP_DIR}/conkyrc"
+    local CONKY_TMP_DIR="${GCS_TMP_DIR}/conky"
+    local CONKY_TMP_FILE="${CONKY_TMP_DIR}/conkyrc"
     mkdir "${CONKY_TMP_DIR}"
 
-    for i in ${CONKY_CONFIG_FILES}; do
-        
-        file="$i"
-        if [ ${file:0:1} == \" ]; then
-            file=${file:1}
-        fi
-        if [ ${file: -1} == \" ]; then
-            file=${file:0:-1}
-        fi
+    for conky_config_file in ${CONKY_CONFIG_FILES}; do
+        conky_config_file="$(echo "${conky_config_file}" | tr -d '"')"
 
-        printf "  \"${file}\"..."
-        if [ -f "${file}" ]; then
+        printf "  \"${conky_config_file}\"..."
+        if [ -f "${conky_config_file}" ]; then
 
-            cp "${file}" "${CONKY_TMP_FILE}"
+            cp "${conky_config_file}" "${CONKY_TMP_FILE}"
 
-            set_value "default_color"       " = "  "\"${conky_default_color}\","     "${CONKY_TMP_FILE}"
-            set_value "default_shade_color" " = "  "\"${conky_shade_color}\","       "${CONKY_TMP_FILE}"
-            set_value "own_window_colour"   " = "  "\"${conky_own_window_colour}\"," "${CONKY_TMP_FILE}"
+            set_value "default_color"       " = "  "'${conky_default_color}',"     "${CONKY_TMP_FILE}"
+            set_value "default_shade_color" " = "  "'${conky_shade_color}',"       "${CONKY_TMP_FILE}"
+            set_value "own_window_colour"   " = "  "'${conky_own_window_colour}'," "${CONKY_TMP_FILE}"
 
-            [ -z "${conky_color0}" ] || set_value "color0" " = " "\"${conky_color0}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color1}" ] || set_value "color1" " = " "\"${conky_color1}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color2}" ] || set_value "color2" " = " "\"${conky_color2}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color3}" ] || set_value "color3" " = " "\"${conky_color3}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color4}" ] || set_value "color4" " = " "\"${conky_color4}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color5}" ] || set_value "color5" " = " "\"${conky_color5}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color6}" ] || set_value "color6" " = " "\"${conky_color6}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color7}" ] || set_value "color7" " = " "\"${conky_color7}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color8}" ] || set_value "color8" " = " "\"${conky_color8}\"," "${CONKY_TMP_FILE}"
-            [ -z "${conky_color9}" ] || set_value "color9" " = " "\"${conky_color9}\"," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color0}" ] || set_value "color0" " = " "'${conky_color0}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color1}" ] || set_value "color1" " = " "'${conky_color1}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color2}" ] || set_value "color2" " = " "'${conky_color2}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color3}" ] || set_value "color3" " = " "'${conky_color3}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color4}" ] || set_value "color4" " = " "'${conky_color4}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color5}" ] || set_value "color5" " = " "'${conky_color5}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color6}" ] || set_value "color6" " = " "'${conky_color6}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color7}" ] || set_value "color7" " = " "'${conky_color7}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color8}" ] || set_value "color8" " = " "'${conky_color8}'," "${CONKY_TMP_FILE}"
+            [ -z "${conky_color9}" ] || set_value "color9" " = " "'${conky_color9}'," "${CONKY_TMP_FILE}"
 
-            mv "${CONKY_TMP_FILE}" "${file}"
+            mv "${CONKY_TMP_FILE}" "${conky_config_file}"
 
             printf " done.\n"
         else
@@ -174,6 +169,6 @@ function apply_theme() {
         fi
     done
 
-    $CONKY_RESTART_COMMAND &>/dev/null
+    ${CONKY_RESTART_COMMAND} &>/dev/null
 }
 

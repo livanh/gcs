@@ -41,6 +41,3 @@ wallpaper_image=wallpaper.png
 wallpaper_mode=tiled
 wallpaper_bg_color="$base_color"
 
-terminal_transparency="1"
-
-
