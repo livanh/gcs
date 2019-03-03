@@ -35,6 +35,13 @@ function initialize_environment() {
 
     GCS_ACTION="apply-theme"
     GCS_BACKUP_NAME=""
+
+    GCS_EXIT_SUCCESS="0"
+    GCS_ERROR_INVALID_OPTION="1"
+    GCS_ERROR_MISSING_ARGUMENT="2"
+    GCS_ERROR_MISSING_RESOURCE="3"
+    GCS_ERROR_UNSUPPORTED_FEATURE="4"
+    GCS_ERROR_TARGET_EXISTS="5"
 }
 
 function print_help() {
@@ -113,15 +120,15 @@ function parse_options() {
             ;;
           u)
             update_base16_schemes
-            exit 1
+            exit ${GCS_EXIT_SUCCESS}
             ;;
           \?)
             echo "Invalid option: -${OPTARG}" >&2
-            exit 1
+            exit ${GCS_ERROR_INVALID_OPTION}
             ;;
           :)
             echo "Option -${OPTARG} requires an argument." >&2
-            exit 1
+            exit ${GCS_ERROR_MISSING_ARGUMENT}
             ;;
         esac
         OPTIND=1
@@ -149,7 +156,7 @@ function parse_options() {
 function load_base16_scheme() {
     if [ "$#" -ne 1 ]; then
         echo "Error: load_base16_scheme() requires 1 argument!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local base16_scheme_file="${GCS_BASE16_SCHEMES_DIR_USER}/$1.yaml"
@@ -157,7 +164,7 @@ function load_base16_scheme() {
         update_base16_schemes
         if ! [ -f "${base16_scheme_file}" ]; then
             echo "Error: base16 scheme $1 not found!"
-            exit 3
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
     fi
 
@@ -182,7 +189,7 @@ function load_base16_scheme() {
 function is_brighter() {
     if [ "$#" -ne 2 ]; then
         echo "Error: is_brighter() requires 2 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local color1="${1}"
@@ -206,7 +213,7 @@ function mix_hex_colors(){
 
     if [ "$#" -ne 3 ]; then
         echo "Error: ${FUNCNAME[0]}() requires 3 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local color1="${1}"
@@ -240,7 +247,7 @@ function load_color_theme() {
 
     if [ "$#" -ne 1 ]; then
         echo "Error: load_color_theme() requires 1 argument!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     FULL_COLOR_THEME_NAME="gcs-${COLOR_THEME_NAME}"
@@ -460,7 +467,7 @@ function import_oomox_theme() {
         OOMOX_THEME_FILE="/opt/oomox/colors/${GCS_OOMOX_THEME_NAME}"
     else
         echo "Error: Oomox theme \"${GCS_OOMOX_THEME_NAME}\" not found!"
-        exit 1
+        exit ${GCS_ERROR_MISSING_RESOURCE}
     fi
 
     local NEW_GCS_THEME_NAME="Oomox_${GCS_OOMOX_THEME_NAME/\//_}"
@@ -528,7 +535,7 @@ function import_oomox_theme() {
 
     else
         echo "Error: Oomox theme style \"${OOMOX_THEME_STYLE}\" is not supported yet!"
-        exit 2
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
 
     fi
 
@@ -627,7 +634,7 @@ function import_oomox_theme() {
 
     else
         echo "Error: terminal theme mode \"${OOMOX_TERMINAL_THEME_MODE}\" not yet supported!"
-        exit 2
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
 
     fi
 
@@ -689,7 +696,7 @@ function import_oomox_theme() {
 
     else
         echo "Error: Oomox icon style \"${OOMOX_ICONS_STYLE}\" is not supported yet!"
-        exit 2
+        exit ${GCS_ERROR_UNSUPPORTED_FEATURE}
 
     fi
     set_value "icon_theme_name" "=" "${NEW_GCS_THEME_NAME}" "${NEW_GCS_THEME_FILE}"
@@ -703,7 +710,7 @@ function import_oomox_theme() {
 function set_value() {
     if [ "$#" -ne 4 ]; then
         echo "Error: set_value() requires 4 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
     local KEY=$1
     local SEPARATOR=$2
@@ -722,7 +729,7 @@ function set_value() {
 function set_value_section() {
     if [ "$#" -ne 5 ]; then
         echo "Error: set_value_section() requires 5 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
     local SECTION=$1
     local KEY=$2
@@ -745,7 +752,7 @@ function cleanup() {
 function lock() {
     if [ -f "${GCS_LOCK_FILE}" ]; then
         echo "Error: lockfile \"${GCS_LOCK_FILE}\" exists, exiting."
-        exit 3
+        exit ${GCS_ERROR_MISSING_RESOURCE}
     fi
     touch "${GCS_LOCK_FILE}"
     trap cleanup EXIT
@@ -758,7 +765,7 @@ function select_action() {
         elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
         else
             echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
-            exit 2
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Applying color theme ${COLOR_THEME_NAME}"
@@ -769,7 +776,7 @@ function select_action() {
         elif  [ -f "${GCS_THEMES_DIR_SYSTEM}/${COLOR_THEME_NAME}/colortheme" ]; then true
         else
             echo "Error: theme \"${COLOR_THEME_NAME}\" not found!"
-            exit 2
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Dry run, no actual action will be performed."
@@ -778,7 +785,7 @@ function select_action() {
     elif [ "${GCS_ACTION}" == "create-backup" ]; then
         if [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
             echo "Error: backup \"${GCS_BACKUP_NAME}\" already exists!"
-            exit 3
+            exit ${GCS_ERROR_TARGET_EXISTS}
         fi
 
         echo "Creating backup in \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
@@ -786,7 +793,7 @@ function select_action() {
     elif [ "${GCS_ACTION}" == "restore-backup" ]; then
         if ! [ -d "${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}" ]; then
             echo "Error: backup \"${GCS_BACKUP_NAME}\" does not exist!"
-            exit 4
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
 
         echo "Restoring backup from \"${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}\""
@@ -823,7 +830,7 @@ function select_modules() {
     if ! [ -z "${FORCED_MODULE}" ]; then
         if [ ${#MODULES[@]} -eq 0 ]; then
             echo "Error: module \"${FORCED_MODULE}\" not found!"
-            exit 2
+            exit ${GCS_ERROR_MISSING_RESOURCE}
         fi
     fi
 }
@@ -832,7 +839,7 @@ function select_modules() {
 function find_module_template() {
     if [ "$#" -ne 1 ]; then
         echo "Error: find_module_template() requires 1 argument!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
     local filename="$1"
 
@@ -848,7 +855,7 @@ function find_module_template() {
 function gcs_backup_file() {
     if [ "$#" -ne 3 ]; then
         echo "Error: gcs_backup_file() requires 3 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local module_name_external="$1"
@@ -868,7 +875,7 @@ function gcs_backup_file() {
 function gcs_restore_file() {
     if [ "$#" -ne 3 ]; then
         echo "Error: gcs_restore_file() requires 3 arguments!"
-        exit 2
+        exit ${GCS_ERROR_MISSING_ARGUMENT}
     fi
 
     local module_name_external="$1"
@@ -914,7 +921,7 @@ function execute_modules() {
 
             else
                 print_help
-                exit 1
+                exit ${GCS_EXIT_SUCCESS}
 
             fi
 
