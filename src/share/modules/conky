@@ -30,9 +30,9 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    : ${conky_default_color:=${wallpaper_text_color}}
-    : ${conky_shade_color:=${wallpaper_shadow_color}}
-    : ${conky_own_window_colour:=${wallpaper_bg_color}}
+    : ${conky_default_color:=${tray_fg_color}}
+    : ${conky_shade_color:=${tray_bg_color}}
+    : ${conky_own_window_colour:=${tray_bg_color}}
 
     #
     # color0 through color9 can be set in the theme or in the configuration file.
