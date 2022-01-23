@@ -1,3 +1,11 @@
+gcs (0.7-1) testing; urgency=medium
+
+  * Add tray_separator_color
+  * Change conky defaults
+  * Update rofi module
+
+ -- Livanh <livanh@protonmail.com>  Sun, 23 Jan 2022 17:44:32 +0100
+
 gcs (0.6-1) testing; urgency=medium
 
   * Move module templates in a dedicated directory
