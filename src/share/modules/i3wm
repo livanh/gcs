@@ -59,7 +59,7 @@ function derive_colors() {
     : ${i3_client_placeholder_fg:=${fg_color}}
     : ${i3_client_placeholder_indicator:=${bg_color}}
 
-    : ${i3_bar_separator:=${selected_bg_color}}
+    : ${i3_bar_separator:=${tray_separator_color}}
     : ${i3_bar_background:=${tray_bg_color}}
     : ${i3_bar_statusline:=${tray_fg_color}}
 

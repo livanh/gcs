@@ -51,6 +51,7 @@ function derive_colors() {
     : ${xresources_tray_unfocused_fg_color:=${tray_unfocused_fg_color}}
     : ${xresources_tray_urgent_bg_color:=${tray_urgent_bg_color}}
     : ${xresources_tray_urgent_fg_color:=${tray_urgent_fg_color}}
+    : ${xresources_tray_separator_color:=${tray_separator_color}}
 }
 
 
@@ -116,6 +117,7 @@ function apply_theme() {
     set_value "gcs.tray_unfocused_fg_color"     ": " "${xresources_tray_unfocused_fg_color}"     "${XRESOURCES_TMP_CONFIG_FILE}"
     set_value "gcs.tray_urgent_bg_color"        ": " "${xresources_tray_urgent_bg_color}"        "${XRESOURCES_TMP_CONFIG_FILE}"
     set_value "gcs.tray_urgent_fg_color"        ": " "${xresources_tray_urgent_fg_color}"        "${XRESOURCES_TMP_CONFIG_FILE}"
+    set_value "gcs.tray_separator_color"        ": " "${xresources_tray_separator_color}"        "${XRESOURCES_TMP_CONFIG_FILE}"
 
     mv "${XRESOURCES_TMP_CONFIG_FILE}" "${XRESOURCES_CONFIG_FILE}"
 

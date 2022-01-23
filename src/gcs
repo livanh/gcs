@@ -326,6 +326,7 @@ function load_color_theme() {
     : ${tray_unfocused_fg_color:=${fg_color}}
     : ${tray_urgent_bg_color:=${titlebar_urgent_bg_color}}
     : ${tray_urgent_fg_color:=${titlebar_urgent_fg_color}}
+    : ${tray_separator_fg_color:=${selected_bg_color}}
 
     # background
     #~ unset wallpaper_image

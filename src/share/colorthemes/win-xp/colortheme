@@ -36,6 +36,7 @@ tray_urgent_bg_color=#FF7800
 tray_focused_bg_color=#0ED50E
 tray_unfocused_bg_color=#0054e3
 tray_unfocused_fg_color=#FFFFFF
+tray_separator_color=#0ED50E
 
 # notifications
 notification_border_color=#000000
