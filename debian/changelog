@@ -1,3 +1,9 @@
+gcs (0.8-1) testing; urgency=medium
+
+  * Add diff, todo, search, and constant to vim module
+
+ -- Livanh <livanh@protonmail.com>  Sun, 13 Feb 2022 13:34:38 +0100
+
 gcs (0.7-1) testing; urgency=medium
 
   * Add tray_separator_color
