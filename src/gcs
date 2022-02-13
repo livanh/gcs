@@ -435,6 +435,7 @@ function load_color_theme() {
     : ${editor_comment:=${base03}}
     : ${editor_white_space:=${editor_comment}}
     : ${editor_number:=${base09}}
+    : ${editor_constant:=${editor_number}} 
     : ${editor_string:=${base0B}}
     : ${editor_brace_good:=${editor_string}}
     : ${editor_keyword:=${base0E}}

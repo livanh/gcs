@@ -54,6 +54,7 @@ function derive_colors() {
     : ${vim_type:=${editor_class}}
     : ${vim_character:=${editor_character}}
     : ${vim_number:=${editor_number}}
+    : ${vim_constant:=${editor_constant}}
     : ${vim_folded_fg:=${editor_selected_fg}}
     : ${vim_folded_bg:=${editor_selected_bg}}
     : ${vim_completion_fg:=${editor_frame_fg}}
@@ -69,6 +70,10 @@ function derive_colors() {
     : ${vim_diff_removed:=${editor_diff_removed}}
     : ${vim_diff_text_bg:=${editor_selected_bg}}
     : ${vim_diff_text_fg:=${editor_selected_fg}}
+    : ${vim_todo_fg:=${editor_selected_fg}}
+    : ${vim_todo_bg:=${editor_selected_bg}}
+    : ${vim_search_fg:=${editor_selected_fg}}
+    : ${vim_search_bg:=${editor_selected_bg}}
 }
 
 
@@ -150,6 +155,7 @@ function apply_theme() {
         echo ":hi Special guifg=${vim_keyword}"                                           >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Character guifg=${vim_character}"                                       >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Number guifg=${vim_number}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Constant guifg=${vim_constant}"                                         >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Folded guifg=${vim_folded_fg}"                                          >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Folded guibg=${vim_folded_bg}"                                          >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi Pmenu guifg=${vim_completion_fg}"                                       >> "${VIM_COLORSCHEME_FILE}"
@@ -164,6 +170,8 @@ function apply_theme() {
         echo ":hi DiffChange guibg=${vim_diff_changed}"                                   >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi DiffDelete guibg=${vim_diff_removed}"                                   >> "${VIM_COLORSCHEME_FILE}"
         echo ":hi DiffText guifg=${vim_diff_text_fg} guibg=${vim_diff_text_bg}"           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Todo guifg=${vim_todo_fg} guibg=${vim_todo_bg}"                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Search guifg=${vim_search_fg} guibg=${vim_search_bg}"                   >> "${VIM_COLORSCHEME_FILE}"
 
         local VIM_THEME_SYMLINK="${HOME}/.vim/colors/gcs-theme.vim"
         [ -e "${VIM_THEME_SYMLINK}" ] && rm "${VIM_THEME_SYMLINK}"
