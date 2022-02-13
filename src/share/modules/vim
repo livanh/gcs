@@ -54,6 +54,7 @@ function derive_colors() {
     : ${vim_type:=${editor_class}}
     : ${vim_character:=${editor_character}}
     : ${vim_number:=${editor_number}}
+    : ${vim_constant:=${editor_constant}}
     : ${vim_folded_fg:=${editor_selected_fg}}
     : ${vim_folded_bg:=${editor_selected_bg}}
     : ${vim_completion_fg:=${editor_frame_fg}}
@@ -64,6 +65,15 @@ function derive_colors() {
     : ${vim_completion_scrollbar_bg:=${editor_frame_bg}}
     : ${vim_completion_thumb_fg:=${editor_selected_fg}}
     : ${vim_completion_thumb_bg:=${editor_selected_bg}}
+    : ${vim_diff_added:=${editor_diff_added}}
+    : ${vim_diff_changed:=${editor_diff_changed}}
+    : ${vim_diff_removed:=${editor_diff_removed}}
+    : ${vim_diff_text_bg:=${editor_selected_bg}}
+    : ${vim_diff_text_fg:=${editor_selected_fg}}
+    : ${vim_todo_fg:=${editor_selected_fg}}
+    : ${vim_todo_bg:=${editor_selected_bg}}
+    : ${vim_search_fg:=${editor_selected_fg}}
+    : ${vim_search_bg:=${editor_selected_bg}}
 }
 
 
@@ -127,34 +137,41 @@ function apply_theme() {
         echo "endif" >> "${VIM_COLORSCHEME_FILE}"
         echo "let colors_name = \"${FULL_COLOR_THEME_NAME}\"" >> "${VIM_COLORSCHEME_FILE}"
 
-        echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"             >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi cursorLineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi NonText guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"            >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi SpecialKey guifg=${vim_white_space_color}"                                    >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi CursorLine guifg=NONE guibg=${vim_current_line_bg}"                           >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Cursor guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Visual guifg=${vim_selected_fg} guibg=${vim_selected_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Comment guifg=${vim_comment}"                                                 >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi String guifg=${vim_string}"                                                   >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Operator guifg=${vim_operator}"                                               >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Statement guifg=${vim_keyword}"                                               >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PreProc guifg=${vim_preprocessor}"                                            >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Identifier guifg=${vim_identifier}"                                           >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Type guifg=${vim_type}"                                                       >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Special guifg=${vim_keyword}"                                                 >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Character guifg=${vim_character}"                                             >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Number guifg=${vim_number}"                                                   >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Folded guifg=${vim_folded_fg}"                                                >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Folded guibg=${vim_folded_bg}"                                                >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Pmenu guifg=${vim_completion_fg}"                                             >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi Pmenu guibg=${vim_completion_bg}"                                             >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuSel guifg=${vim_completion_selected_fg}"                                 >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuSel guibg=${vim_completion_selected_bg}"                                 >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuSbar guifg=${vim_completion_scrollbar_fg}"                               >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuSbar guibg=${vim_completion_scrollbar_bg}"                               >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuThumb guifg=${vim_completion_thumb_fg}"                                  >> "${VIM_COLORSCHEME_FILE}"
-        echo ":hi PmenuThumb guibg=${vim_completion_thumb_bg}"                                  >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi normal guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi lineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}"       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi cursorLineNr guifg=${vim_linenr_fg_color} guibg=${vim_linenr_bg_color}" >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi NonText guifg=${vim_normal_fg_color} guibg=${vim_normal_bg_color}"      >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi SpecialKey guifg=${vim_white_space_color}"                              >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi CursorLine guifg=NONE guibg=${vim_current_line_bg}"                     >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Cursor guifg=${vim_selected_fg} guibg=${vim_selected_bg}"               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Visual guifg=${vim_selected_fg} guibg=${vim_selected_bg}"               >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Comment guifg=${vim_comment}"                                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi String guifg=${vim_string}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Operator guifg=${vim_operator}"                                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Statement guifg=${vim_keyword}"                                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PreProc guifg=${vim_preprocessor}"                                      >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Identifier guifg=${vim_identifier}"                                     >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Type guifg=${vim_type}"                                                 >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Special guifg=${vim_keyword}"                                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Character guifg=${vim_character}"                                       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Number guifg=${vim_number}"                                             >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Constant guifg=${vim_constant}"                                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guifg=${vim_folded_fg}"                                          >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Folded guibg=${vim_folded_bg}"                                          >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guifg=${vim_completion_fg}"                                       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Pmenu guibg=${vim_completion_bg}"                                       >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guifg=${vim_completion_selected_fg}"                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSel guibg=${vim_completion_selected_bg}"                           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guifg=${vim_completion_scrollbar_fg}"                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuSbar guibg=${vim_completion_scrollbar_bg}"                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guifg=${vim_completion_thumb_fg}"                            >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi PmenuThumb guibg=${vim_completion_thumb_bg}"                            >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi DiffAdd guibg=${vim_diff_added}"                                        >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi DiffChange guibg=${vim_diff_changed}"                                   >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi DiffDelete guibg=${vim_diff_removed}"                                   >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi DiffText guifg=${vim_diff_text_fg} guibg=${vim_diff_text_bg}"           >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Todo guifg=${vim_todo_fg} guibg=${vim_todo_bg}"                         >> "${VIM_COLORSCHEME_FILE}"
+        echo ":hi Search guifg=${vim_search_fg} guibg=${vim_search_bg}"                   >> "${VIM_COLORSCHEME_FILE}"
 
         local VIM_THEME_SYMLINK="${HOME}/.vim/colors/gcs-theme.vim"
         [ -e "${VIM_THEME_SYMLINK}" ] && rm "${VIM_THEME_SYMLINK}"
