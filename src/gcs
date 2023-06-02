@@ -271,9 +271,9 @@ function load_color_theme() {
     fi
 
     # clear environment
-    unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH' | /usr/bin/cut -d= -f1 );
-    local pid=$(ps -o ppid= -p $$)
-    eval export $(cat /proc/${pid## }/environ | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
+    unset $(/usr/bin/env | egrep '^(\w+)=(.*)$' | egrep -vw 'PWD|USER|HOME|LANG|PATH|DISPLAY' | /usr/bin/cut -d= -f1 );
+    local pid="$(ps -o ppid= -p $$ | tr -d ' ')"
+    eval export $(cat "/proc/${pid}/environ" | tr "\0" "\n" | grep -v \; | grep -v "\[" | sed "s/=/=\"/" | sed "s/$/\"\n/")
 
     # read color theme file
     for color_theme_file in ${COLOR_THEME_FILES[@]}; do
@@ -719,7 +719,7 @@ function set_value() {
     local VALUE=$3
     local FILE=$4
     if grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*" "${FILE}" >/dev/null; then
-        sed -r -i "s/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
+        sed -r -i "0,/^([[:space:]]*|(.*[[:space:]]+))*${KEY}${SEPARATOR}.*/s//$(grep -E "^([[:space:]]*|(.*[[:space:]]+))*${KEY}" "${FILE}" | head -1 | sed "s/${KEY}.*//")${KEY}${SEPARATOR}${VALUE}/" "${FILE}"
     else
         echo "${KEY}${SEPARATOR}${VALUE}" >>"${FILE}"
     fi
@@ -738,7 +738,7 @@ function set_value_section() {
     local SEPARATOR=$3
     local VALUE=$4
     local FILE=$5
-    local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?\[" "${FILE}" | tr -d \\0)"
+    local old_section="$(grep -Pzo "\[${SECTION}\](.|\n)*?(\[|$)" "${FILE}" | tr -d \\0)"
     local tmp_file="${GCS_TMP_DIR}/set_value_temp"
     echo "${old_section}" >"${tmp_file}"
     set_value "${KEY}" "${SEPARATOR}" "${VALUE}" "${tmp_file}"

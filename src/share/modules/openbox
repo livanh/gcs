@@ -92,7 +92,7 @@ function print_module_help() {
 
 
 function apply_theme() {
-    if ! pgrep openbox &>/dev/null; then
+    if ! pgrep "^\<openbox\>" &>/dev/null; then
         printf "* Not setting colors for openbox (not active).\n"
 
     else

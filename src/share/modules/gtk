@@ -74,7 +74,6 @@ function create_backup() {
         printf " done.\n"
 
     elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
-        gsettings get "${GTK_GSETTINGS_PATH}" gtk-theme  > ""
         gsettings get "${GTK_GSETTINGS_PATH}" gtk-theme  > "${GTK_BACKUP_DIR}/ThemeName"
         gsettings get "${GTK_GSETTINGS_PATH}" icon-theme > "${GTK_BACKUP_DIR}/IconThemeName"
         printf " done.\n"

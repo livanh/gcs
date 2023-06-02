@@ -3,7 +3,7 @@
 function init_module() {
     TELEGRAM_ENABLE_DEFAULT="true"
     TELEGRAM_CONFIG_DIR_DEFAULT="${HOME}/.TelegramDesktop"
-    TELEGRAM_BINARY_DEFAULT="/opt/telegram/telegram"
+    TELEGRAM_BINARY_DEFAULT="/usr/bin/telegram-desktop"
     TELEGRAM_RESTART_COMMAND_DEFAULT=""
 
     TELEGRAM_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} telegram enable          2>/dev/null || echo "${TELEGRAM_ENABLE_DEFAULT}")"

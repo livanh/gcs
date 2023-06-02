@@ -8,6 +8,14 @@ function init_module() {
     DUNST_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} dunst enable          2>/dev/null || echo "${DUNST_ENABLE_DEFAULT}")"
     DUNST_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} dunst config_file     2>/dev/null || echo "${DUNST_CONFIG_FILE_DEFAULT}")"
     DUNST_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} dunst restart_command 2>/dev/null || echo "${DUNST_RESTART_COMMAND_DEFAULT}")"
+
+    DUNST_URGENCY_LOW_SECTION_NAME_DEFAULT="urgency_low"
+    DUNST_URGENCY_NORMAL_SECTION_NAME_DEFAULT="urgency_normal"
+    DUNST_URGENCY_CRITICAL_SECTION_NAME_DEFAULT="urgency_critical"
+
+    DUNST_URGENCY_LOW_SECTION_NAME="$(crudini      --get ${GCS_CONFIG_FILE} dunst urgency_low_section_name      2>/dev/null || echo "${DUNST_URGENCY_LOW_SECTION_NAME_DEFAULT}")"
+    DUNST_URGENCY_NORMAL_SECTION_NAME="$(crudini   --get ${GCS_CONFIG_FILE} dunst urgency_normal_section_name   2>/dev/null || echo "${DUNST_URGENCY_NORMAL_SECTION_NAME_DEFAULT}")"
+    DUNST_URGENCY_CRITICAL_SECTION_NAME="$(crudini --get ${GCS_CONFIG_FILE} dunst urgency_critical_section_name 2>/dev/null || echo "${DUNST_URGENCY_CRITICAL_SECTION_NAME_DEFAULT}")"
 }
 
 
@@ -33,13 +41,20 @@ function check_dependencies() {
 
 
 function derive_colors() {
-    : ${dunst_frame:=${selected_bg_color}}
     : ${dunst_urgency_low_bg:=${notification_bg_color}}
     : ${dunst_urgency_low_fg:=${notification_fg_color}}
+    : ${dunst_urgency_low_frame:=${selected_bg_color}}
+    : ${dunst_urgency_low_highlight:=${selected_bg_color}}
+
     : ${dunst_urgency_normal_bg:=${selected_bg_color}}
     : ${dunst_urgency_normal_fg:=${selected_fg_color}}
+    : ${dunst_urgency_normal_frame:=${selected_fg_color}}
+    : ${dunst_urgency_normal_highlight:=${selected_fg_color}}
+
     : ${dunst_urgency_critical_bg:=${titlebar_urgent_bg_color}}
     : ${dunst_urgency_critical_fg:=${selected_fg_color}}
+    : ${dunst_urgency_critical_frame:=${selected_bg_color}}
+    : ${dunst_urgency_critical_highlight:=${selected_fg_color}}
 }
 
 
@@ -82,13 +97,20 @@ function apply_theme() {
     mkdir "${DUNST_TMP_DIR}"
     cp "${DUNST_CONFIG_FILE}" "${DUNST_TMP_CONFIG_FILE}"
 
-    set_value_section "frame"            "color"      " = " "\"${dunst_frame}\""               "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_low"      "background" " = " "\"${dunst_urgency_low_bg}\""      "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_low"      "foreground" " = " "\"${dunst_urgency_low_fg}\""      "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_normal"   "background" " = " "\"${dunst_urgency_normal_bg}\""   "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_normal"   "foreground" " = " "\"${dunst_urgency_normal_fg}\""   "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_critical" "background" " = " "\"${dunst_urgency_critical_bg}\"" "${DUNST_TMP_CONFIG_FILE}"
-    set_value_section "urgency_critical" "foreground" " = " "\"${dunst_urgency_critical_fg}\"" "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_LOW_SECTION_NAME}"      "background"  " = " "\"${dunst_urgency_low_bg}\""             "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_LOW_SECTION_NAME}"      "foreground"  " = " "\"${dunst_urgency_low_fg}\""             "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_LOW_SECTION_NAME}"      "frame_color" " = " "\"${dunst_urgency_low_frame}\""          "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_LOW_SECTION_NAME}"      "highlight"   " = " "\"${dunst_urgency_low_highlight}\""      "${DUNST_TMP_CONFIG_FILE}"
+
+    set_value_section "${DUNST_URGENCY_NORMAL_SECTION_NAME}"   "background"  " = " "\"${dunst_urgency_normal_bg}\""          "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_NORMAL_SECTION_NAME}"   "foreground"  " = " "\"${dunst_urgency_normal_fg}\""          "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_NORMAL_SECTION_NAME}"   "frame_color" " = " "\"${dunst_urgency_normal_frame}\""       "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_NORMAL_SECTION_NAME}"   "highlight"   " = " "\"${dunst_urgency_normal_highlight}\""   "${DUNST_TMP_CONFIG_FILE}"
+
+    set_value_section "${DUNST_URGENCY_CRITICAL_SECTION_NAME}" "background"  " = " "\"${dunst_urgency_critical_bg}\""        "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_CRITICAL_SECTION_NAME}" "foreground"  " = " "\"${dunst_urgency_critical_fg}\""        "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_CRITICAL_SECTION_NAME}" "frame_color" " = " "\"${dunst_urgency_critical_frame}\""     "${DUNST_TMP_CONFIG_FILE}"
+    set_value_section "${DUNST_URGENCY_CRITICAL_SECTION_NAME}" "highlight"   " = " "\"${dunst_urgency_critical_highlight}\"" "${DUNST_TMP_CONFIG_FILE}"
 
     mv "${DUNST_TMP_CONFIG_FILE}" "${DUNST_CONFIG_FILE}"
 

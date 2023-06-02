@@ -3,11 +3,13 @@
 
 function init_module() {
     I3_ENABLE_DEFAULT="true"
-    I3_CONFIG_FILE_DEFAULT="${HOME}/.config/i3/config"
+    I3WM_CONFIG_FILE_DEFAULT="${HOME}/.config/i3/config"
+    I3BAR_CONFIG_FILE_DEFAULT="${HOME}/.config/i3/config"
     I3_RESTART_COMMAND_DEFAULT="i3-msg restart"
 
     I3_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} i3wm enable          2>/dev/null || echo "${I3_ENABLE_DEFAULT}")"
-    I3_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3_CONFIG_FILE_DEFAULT}")"
+    I3WM_CONFIG_FILE="$(crudini   --get ${GCS_CONFIG_FILE} i3wm config_file     2>/dev/null || echo "${I3WM_CONFIG_FILE_DEFAULT}")"
+    I3BAR_CONFIG_FILE="$(crudini  --get ${GCS_CONFIG_FILE} i3wm bar_config_file 2>/dev/null || echo "${I3BAR_CONFIG_FILE_DEFAULT}")"
     I3_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} i3wm restart_command 2>/dev/null || echo "${I3_RESTART_COMMAND_DEFAULT}")"
 }
 
@@ -21,8 +23,12 @@ function check_dependencies() {
         printf "* Ignoring i3 window manager (disabled from configuration).\n"
         return 1
 
-    elif ! [ -f "${I3_CONFIG_FILE}" ]; then
-        printf "* Ignoring i3 window manager (configuration file \"${I3_CONFIG_FILE}\" not found).\n"
+    elif ! [ -f "${I3WM_CONFIG_FILE}" ]; then
+        printf "* Ignoring i3 window manager (configuration file \"${I3WM_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    elif ! [ -f "${I3BAR_CONFIG_FILE}" ]; then
+        printf "* Ignoring i3 window manager (configuration file \"${I3BAR_CONFIG_FILE}\" not found).\n"
         return 1
 
     else
@@ -59,7 +65,7 @@ function derive_colors() {
     : ${i3_client_placeholder_fg:=${fg_color}}
     : ${i3_client_placeholder_indicator:=${bg_color}}
 
-    : ${i3_bar_separator:=${tray_separator_color}}
+    : ${i3_bar_separator:=${tray_separator_fg_color}}
     : ${i3_bar_background:=${tray_bg_color}}
     : ${i3_bar_statusline:=${tray_fg_color}}
 
@@ -83,20 +89,35 @@ function derive_colors() {
 
 
 function create_backup() {
-    gcs_backup_file "i3 window manager" "i3wm" "${I3_CONFIG_FILE}"
+    gcs_backup_file "i3 window manager" "i3wm" "${I3WM_CONFIG_FILE}"
+
+    if [ "${I3BAR_CONFIG_FILE}" != "${I3WM_CONFIG_FILE}" ]; then
+        gcs_backup_file "i3 window manager" "i3wm" "${I3BAR_CONFIG_FILE}"
+    fi
 }
 
 
 
 function restore_backup() {
-    gcs_restore_file "i3 window manager" "i3wm" "${I3_CONFIG_FILE}"
+    gcs_restore_file "i3 window manager" "i3wm" "${I3WM_CONFIG_FILE}"
+
+    if [ "${I3BAR_CONFIG_FILE}" != "${I3WM_CONFIG_FILE}" ]; then
+        gcs_restore_file "i3 window manager" "i3wm" "${I3BAR_CONFIG_FILE}"
+    fi
+
     ${I3_RESTART_COMMAND} &>/dev/null
 }
 
 
 
 function dry_run() {
-    printf "* i3wm: set window decoration colors in \"${I3_CONFIG_FILE}\".\n"
+    printf "* i3wm: set window decoration colors in \"${I3WM_CONFIG_FILE}\""
+
+    if [ "${I3BAR_CONFIG_FILE}" != "${I3WM_CONFIG_FILE}" ]; then
+        printf " and \"${I3BAR_CONFIG_FILE}\""
+    fi
+
+    printf ".\n"
 }
 
 
@@ -121,26 +142,32 @@ function apply_theme() {
         printf "* Setting colors for i3 window manager..."
 
         local I3_TMP_DIR="${GCS_TMP_DIR}/i3wm"
-        local I3_TMP_CONFIG_FILE="${I3_TMP_DIR}/config"
+        local I3WM_TMP_CONFIG_FILE="${I3_TMP_DIR}/i3wm_config"
+        local I3BAR_TMP_CONFIG_FILE="${I3_TMP_DIR}/i3bar_config"
         mkdir "${I3_TMP_DIR}"
-        cp "${I3_CONFIG_FILE}" "${I3_TMP_CONFIG_FILE}"
 
-        set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3_TMP_CONFIG_FILE}"
-        set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3_TMP_CONFIG_FILE}"
-        set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3_TMP_CONFIG_FILE}"
-        set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3_TMP_CONFIG_FILE}"
-        set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3_TMP_CONFIG_FILE}"
+        cp "${I3WM_CONFIG_FILE}" "${I3WM_TMP_CONFIG_FILE}"
 
-        set_value "separator"  " " " ${i3_bar_separator}"  "${I3_TMP_CONFIG_FILE}"
-        set_value "background" " " " ${i3_bar_background}" "${I3_TMP_CONFIG_FILE}"
-        set_value "statusline" " " " ${i3_bar_statusline}" "${I3_TMP_CONFIG_FILE}"
+        set_value "client\.focused"          " " "${i3_client_focused_border}          ${i3_client_focused_bg}          ${i3_client_focused_fg}          ${i3_client_focused_indicator}"          "${I3WM_TMP_CONFIG_FILE}"
+        set_value "client\.focused_inactive" " " "${i3_client_focused_inactive_border} ${i3_client_focused_inactive_bg} ${i3_client_focused_inactive_fg} ${i3_client_focused_inactive_indicator}" "${I3WM_TMP_CONFIG_FILE}"
+        set_value "client\.unfocused"        " " "${i3_client_unfocused_border}        ${i3_client_unfocused_bg}        ${i3_client_unfocused_fg}        ${i3_client_unfocused_indicator}"        "${I3WM_TMP_CONFIG_FILE}"
+        set_value "client\.urgent"           " " "${i3_client_urgent_border}           ${i3_client_urgent_bg}           ${i3_client_urgent_fg}           ${i3_client_urgent_indicator}"           "${I3WM_TMP_CONFIG_FILE}"
+        set_value "client\.placeholder"      " " "${i3_client_placeholder_border}      ${i3_client_placeholder_bg}      ${i3_client_placeholder_fg}      ${i3_client_placeholder_indicator}"      "${I3WM_TMP_CONFIG_FILE}"
 
-        set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3_TMP_CONFIG_FILE}"
-        set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
-        set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3_TMP_CONFIG_FILE}"
-        set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3_TMP_CONFIG_FILE}"
+        mv "${I3WM_TMP_CONFIG_FILE}" "${I3WM_CONFIG_FILE}"
 
-        mv "${I3_TMP_CONFIG_FILE}" "${I3_CONFIG_FILE}"
+        cp "${I3BAR_CONFIG_FILE}" "${I3BAR_TMP_CONFIG_FILE}"
+
+        set_value "separator"  " " " ${i3_bar_separator}"  "${I3BAR_TMP_CONFIG_FILE}"
+        set_value "background" " " " ${i3_bar_background}" "${I3BAR_TMP_CONFIG_FILE}"
+        set_value "statusline" " " " ${i3_bar_statusline}" "${I3BAR_TMP_CONFIG_FILE}"
+
+        set_value "focused_workspace"  " " "${i3_bar_focused_workspace_border}  ${i3_bar_focused_workspace_bg}  ${i3_bar_focused_workspace_fg}"  "${I3BAR_TMP_CONFIG_FILE}"
+        set_value "active_workspace"   " " "${i3_bar_active_workspace_border}   ${i3_bar_active_workspace_bg}   ${i3_bar_active_workspace_fg}"   "${I3BAR_TMP_CONFIG_FILE}"
+        set_value "inactive_workspace" " " "${i3_bar_inactive_workspace_border} ${i3_bar_inactive_workspace_bg} ${i3_bar_inactive_workspace_fg}" "${I3BAR_TMP_CONFIG_FILE}"
+        set_value "urgent_workspace"   " " "${i3_bar_urgent_workspace_border}   ${i3_bar_urgent_workspace_bg}   ${i3_bar_urgent_workspace_fg}"   "${I3BAR_TMP_CONFIG_FILE}"
+
+        mv "${I3BAR_TMP_CONFIG_FILE}" "${I3BAR_CONFIG_FILE}"
 
         ${I3_RESTART_COMMAND} &>/dev/null
 
