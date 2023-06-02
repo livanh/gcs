@@ -1,3 +1,13 @@
+gcs (0.9-1) testing; urgency=medium
+
+  * conky: add support for changing default_color, default_share_color,
+    own_window_colour from GCS configuration file
+  * dunst: updated for dunst version 1.9.0
+  * i3wm: colors for i2wm and i3bar can be in different files
+  * other small changes and fixes
+
+ -- Livanh <livanh@protonmail.com>  Fri, 02 Jun 2023 22:32:45 +0200
+
 gcs (0.8-1) testing; urgency=medium
 
   * Add diff, todo, search, and constant to vim module
