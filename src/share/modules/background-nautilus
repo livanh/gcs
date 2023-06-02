@@ -115,7 +115,7 @@ function apply_theme() {
     if ! [ -f "${wallpaper_file}" ]; then
         printf "* Not setting wallpaper with Nautilus (image file not found: \"${wallpaper_image}\").\n"
 
-    elif ! pgrep "nautilus" >/dev/null; then
+    elif ! pgrep "^\<nautilus\>" >/dev/null; then
         printf "* Not setting wallpaper with Nautilus (desktop manager is not active).\n"
 
     else

@@ -31,15 +31,19 @@ function check_dependencies() {
 
 function derive_colors() {
     : ${conky_default_color:=${tray_fg_color}}
-    : ${conky_shade_color:=${tray_bg_color}}
+    : ${conky_default_shade_color:=${tray_bg_color}}
     : ${conky_own_window_colour:=${tray_bg_color}}
 
     #
-    # color0 through color9 can be set in the theme or in the configuration file.
-    # The configuration file takes precedence. In both cases, other variables can be referenced (e.g. $text_color).
-    # By default, no default color is assumed/modified, since the meaning of the colors depends on the specific
-    # conky configuration
+    # default_color, default_shade_color, and own_window_colour, as well as color0 through color9, can be set
+    # in the theme or in the configuration file. The configuration file takes precedence. In both cases, theme
+    # variables can be referenced (e.g. $text_color). By default, no default color is assumed/modified, for
+    # color0 through color9, since the meaning of the colors depends on the specific conky configuration.
     #
+    eval conky_default_color="$(crudini       --get ${GCS_CONFIG_FILE} conky default_color       2>/dev/null || echo "${conky_default_color}"       )"
+    eval conky_default_shade_color="$(crudini --get ${GCS_CONFIG_FILE} conky default_shade_color 2>/dev/null || echo "${conky_default_shade_color}" )"
+    eval conky_own_window_colour="$(crudini   --get ${GCS_CONFIG_FILE} conky own_window_colour   2>/dev/null || echo "${conky_own_window_colour}"   )"
+
     eval conky_color0="$(crudini --get ${GCS_CONFIG_FILE} conky color0 2>/dev/null || echo "${conky_color0}" )"
     eval conky_color1="$(crudini --get ${GCS_CONFIG_FILE} conky color1 2>/dev/null || echo "${conky_color1}" )"
     eval conky_color2="$(crudini --get ${GCS_CONFIG_FILE} conky color2 2>/dev/null || echo "${conky_color2}" )"
@@ -118,7 +122,9 @@ function print_module_help() {
     echo "    config_files=\"/home/user/.conkyrc1\" \"/home/user/.conkyrc2\""
     echo "    ..."
     echo
-    echo "Background and text colors are set automatically according to the theme. Instead, the mapping for color0 through color9 should be set by the user in the GCS configuration file. For example, to assign the value of \$selected_bg_color to color0, write the following in \"${GCS_CONFIG_FILE}\":"
+    echo "Background and text colors are set automatically according to the theme, and they can also be overridden in the GCS configuration file."
+    echo
+    echo "The mapping for color0 through color9 can be set by the user in the GCS configuration file. For example, to assign the value of \$selected_bg_color to color0, write the following in \"${GCS_CONFIG_FILE}\":"
     echo
     echo "    ..."
     echo "    [conky]"
@@ -146,9 +152,9 @@ function apply_theme() {
 
             cp "${conky_config_file}" "${CONKY_TMP_FILE}"
 
-            set_value "default_color"       " = "  "'${conky_default_color}',"     "${CONKY_TMP_FILE}"
-            set_value "default_shade_color" " = "  "'${conky_shade_color}',"       "${CONKY_TMP_FILE}"
-            set_value "own_window_colour"   " = "  "'${conky_own_window_colour}'," "${CONKY_TMP_FILE}"
+            set_value "default_color"       " = "  "'${conky_default_color}',"       "${CONKY_TMP_FILE}"
+            set_value "default_shade_color" " = "  "'${conky_default_shade_color}'," "${CONKY_TMP_FILE}"
+            set_value "own_window_colour"   " = "  "'${conky_own_window_colour}',"   "${CONKY_TMP_FILE}"
 
             [ -z "${conky_color0}" ] || set_value "color0" " = " "'${conky_color0}'," "${CONKY_TMP_FILE}"
             [ -z "${conky_color1}" ] || set_value "color1" " = " "'${conky_color1}'," "${CONKY_TMP_FILE}"
