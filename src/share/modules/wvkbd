@@ -1,0 +1,96 @@
+#!/bin/bash
+
+function init_module() {
+    WVKBD_ENABLE_DEFAULT="true"
+    WVKBD_BINARY_DEFAULT="wvkbd-mobintl"
+    WVKBD_CONFIG_FILE_DEFAULT="${HOME}/.config/wvkbd/colors"
+
+    WVKBD_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} wvkbd enable      2>/dev/null || echo "${WVKBD_ENABLE_DEFAULT}")"
+    WVKBD_BINARY="$(crudini      --get ${GCS_CONFIG_FILE} wvkbd binary      2>/dev/null || echo "${WVKBD_BINARY_DEFAULT}")"
+    WVKBD_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} wvkbd config_file 2>/dev/null || echo "${WVKBD_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which "${WVKBD_BINARY}" >/dev/null; then
+        return 1
+
+    elif ! [ "${WVKBD_ENABLE}" == "true" ]; then
+        printf "* Ignoring wvkbd (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${wvkbd_bg_color:=${base_color}}
+    : ${wvkbd_fg_color:=${bg_color}}
+    : ${wvkbd_fg_sp_color:=${titlebar_unfocused_bg_color}}
+    : ${wvkbd_press_color:=${selected_bg_color}}
+    : ${wvkbd_press_sp_color:=${selected_bg_color}}
+    : ${wvkbd_text_color:=${fg_color}}
+    : ${wvkbd_text_sp_color:=${fg_color}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "wvkbd" "wvkbd" "${WVKBD_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "wvkbd" "wvkbd" "${WVKBD_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* wvkbd: set colors in \"${WVKBD_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors and background image for the wvkbd on-screen keyboard."
+    echo
+    echo "Since wvkbd does not have any configuration file, colors are written as key=value pairs in a plain text file. This file should be sourced by a wrapper script that passes them to wvkbd on the command line. See the wvkbd help for the exact syntax."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    [ -f "${WVKBD_CONFIG_FILE}" ] || touch "${WVKBD_CONFIG_FILE}"
+
+    printf "* Setting wvkbd colors..."
+
+    local WVKBD_TMP_DIR="${GCS_TMP_DIR}/wvkbd"
+    local WVKBD_TMP_CONFIG_FILE="${WVKBD_TMP_DIR}/config"
+    mkdir "${WVKBD_TMP_DIR}"
+    cp "${WVKBD_CONFIG_FILE}" "${WVKBD_TMP_CONFIG_FILE}"
+
+    set_value "bg"       "=" "${wvkbd_bg_color:1}"       "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "fg"       "=" "${wvkbd_fg_color:1}"       "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "fg_sp"    "=" "${wvkbd_fg_sp_color:1}"    "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "press"    "=" "${wvkbd_press_color:1}"    "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "press_sp" "=" "${wvkbd_press_sp_color:1}" "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "text"     "=" "${wvkbd_text_color:1}"     "${WVKBD_TMP_CONFIG_FILE}"
+    set_value "text_sp"  "=" "${wvkbd_text_sp_color:1}"  "${WVKBD_TMP_CONFIG_FILE}"
+
+    mv "${WVKBD_TMP_CONFIG_FILE}" "${WVKBD_CONFIG_FILE}"
+
+    printf " done.\n"
+}
+
