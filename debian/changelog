@@ -1,3 +1,11 @@
+gcs (0.10-1) testing; urgency=medium
+
+  * Upstream version 0.10
+  * Added modules for sway, swaylock, waybar, wvkbd
+  * Added wayland compatibility to gtk module
+
+ -- Livanh <livanh@protonmail.com>  Sat, 16 Nov 2024 20:17:33 +0100
+
 gcs (0.9-1) testing; urgency=medium
 
   * conky: add support for changing default_color, default_share_color,
