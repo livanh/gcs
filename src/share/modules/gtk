@@ -68,12 +68,12 @@ function create_backup() {
     local GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
     mkdir -p "${GTK_BACKUP_DIR}"
 
-    if ps -e | grep xsettingsd >/dev/null; then
+    if pgrep "^(xsettingsd)$" >/dev/null; then
         dump_xsettings | awk '/Net\/ThemeName/{print $2}'     > "${GTK_BACKUP_DIR}/ThemeName"
         dump_xsettings | awk '/Net\/IconThemeName/{print $2}' > "${GTK_BACKUP_DIR}/IconThemeName"
         printf " done.\n"
 
-    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
+    elif [[ -v WAYLAND_DISPLAY ]] || pgrep "^(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)$" >/dev/null; then
         gsettings get "${GTK_GSETTINGS_PATH}" gtk-theme  > "${GTK_BACKUP_DIR}/ThemeName"
         gsettings get "${GTK_GSETTINGS_PATH}" icon-theme > "${GTK_BACKUP_DIR}/IconThemeName"
         printf " done.\n"
@@ -91,7 +91,7 @@ function restore_backup() {
 
     local GTK_BACKUP_DIR="${GCS_BACKUPS_DIR}/${GCS_BACKUP_NAME}/gtk"
 
-    if ps -e | grep xsettingsd >/dev/null; then
+    if pgrep "^(xsettingsd)$" >/dev/null; then
 
         local GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
         local GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "${HOME}/.xsettingsd")
@@ -112,7 +112,7 @@ function restore_backup() {
             printf " not found!\n"
         fi
 
-    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
+    elif [[ -v WAYLAND_DISPLAY ]] || pgrep "^(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)$" >/dev/null; then
 
         printf "  colors..."
         if [ -f "${GTK_BACKUP_DIR}/ThemeName" ]; then
@@ -354,7 +354,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         done
     fi
 
-    if ps -e | grep xsettingsd >/dev/null; then
+    if pgrep "^(xsettingsd)$" >/dev/null; then
 
         local GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
         local GTK_XSETTINGSD_CONFIG_FILE=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_config_file 2>/dev/null || echo "${HOME}/.xsettingsd")
@@ -376,7 +376,7 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         ${GTK_XSETTINGSD_RESTART_COMMAND} &>/dev/null
 
 
-    elif ps ax | grep -E "(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)" >/dev/null; then
+    elif [[ -v WAYLAND_DISPLAY ]] || pgrep "^(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)$" >/dev/null; then
 
         printf "  colors..."
         gsettings set "${GTK_GSETTINGS_PATH}" gtk-theme ""
@@ -393,8 +393,6 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
                 printf " not found!\n"
             fi
         fi
-
-        printf " done.\n"
 
     else
         printf " no supported XSettings manager found!\n"

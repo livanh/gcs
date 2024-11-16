@@ -1,0 +1,155 @@
+#!/bin/bash
+
+function init_module() {
+    SWAYLOCK_ENABLE_DEFAULT="true"
+    SWAYLOCK_CONFIG_FILE_DEFAULT="${HOME}/.config/swaylock/config"
+
+    SWAYLOCK_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} swaylock enable      2>/dev/null || echo "${SWAYLOCK_ENABLE_DEFAULT}")"
+    SWAYLOCK_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} swaylock config_file 2>/dev/null || echo "${SWAYLOCK_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which swaylock >/dev/null; then
+        return 1
+
+    elif ! [ "${SWAYLOCK_ENABLE}" == "true" ]; then
+        printf "* Ignoring swaylock (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            swaylock_wallpaper_file="${color_theme_dir}/${wallpaper_image}"
+        fi
+    done
+
+    case "${wallpaper_mode}" in
+        centered)  swaylock_wallpaper_mode="center";;
+        tiled)     swaylock_wallpaper_mode="tile";;
+        stretched) swaylock_wallpaper_mode="stretch";;
+        zoom-fit)  swaylock_wallpaper_mode="fit";;
+        zoom-fill) swaylock_wallpaper_mode="fill";;
+        #TODO: add support for solid_color
+    esac
+
+    : ${swaylock_inside_color:=${bg_color}}
+    : ${swaylock_ring_color:=${base_color}}
+    : ${swaylock_separator_color:=${bg_color}}
+    : ${swaylock_key_hl_color:=${selected_bg_color}}
+    : ${swaylock_bs_hl_color:=${titlebar_unfocused_bg_color}}
+    : ${swaylock_text_color:=${fg_color}}
+
+    : ${swaylock_inside_caps_lock_color:=${bg_color}}
+    : ${swaylock_ring_caps_lock_color:=${titlebar_urgent_bg_color}}
+    : ${swaylock_caps_lock_key_hl_color:=${selected_bg_color}}
+    : ${swaylock_caps_lock_bs_hl_color:=${titlebar_unfocused_bg_color}}
+    : ${swaylock_text_caps_lock_color:=${fg_color}}
+
+    : ${swaylock_inside_clear_color:=${bg_color}}
+    : ${swaylock_ring_clear_color:=${titlebar_unfocused_bg_color}}
+    : ${swaylock_text_clear_color:=${fg_color}}
+
+    : ${swaylock_inside_ver_color:=${bg_color}}
+    : ${swaylock_ring_ver_color:=${selected_bg_color}}
+    : ${swaylock_text_ver_color:=${fg_color}}
+
+    : ${swaylock_inside_wrong_color:=${bg_color}}
+    : ${swaylock_ring_wrong_color:=${titlebar_urgent_bg_color}}
+    : ${swaylock_text_wrong_color:=${fg_color}}
+
+    : ${swaylock_layout_bg_color:=${bg_color}}
+    : ${swaylock_layout_border_color:=${bg_color}}
+    : ${swaylock_layout_text_color:=${fg_color}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "swaylock" "swaylock" "${SWAYLOCK_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "swaylock" "swaylock" "${SWAYLOCK_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* swaylock: set colors in \"${SWAYLOCK_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors and background image for the swaylock screen locker by modifying its configuration file."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    [ -f "${SWAYLOCK_CONFIG_FILE}" ] || touch "${SWAYLOCK_CONFIG_FILE}"
+
+    printf "* Setting swaylock colors..."
+
+    local SWAYLOCK_TMP_DIR="${GCS_TMP_DIR}/swaylock"
+    local SWAYLOCK_TMP_CONFIG_FILE="${SWAYLOCK_TMP_DIR}/config"
+    mkdir "${SWAYLOCK_TMP_DIR}"
+    cp "${SWAYLOCK_CONFIG_FILE}" "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    #TODO: modify set_value to handle / in values
+    # set_value "image"                  "=" "${swaylock_wallpaper_file}"         "${SWAYLOCK_TMP_CONFIG_FILE}"
+    sed -i "s|image=.*|image=${swaylock_wallpaper_file}|" "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "scaling"                "=" "${swaylock_wallpaper_mode}"         "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "inside-color"           "=" "${swaylock_inside_color}"           "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "ring-color"             "=" "${swaylock_ring_color}"             "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "separator-color"        "=" "${swaylock_separator_color}"        "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "key-hl-color"           "=" "${swaylock_key_hl_color}"           "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "bs-hl-color"            "=" "${swaylock_bs_hl_color}"            "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "text-color"             "=" "${swaylock_text_color}"             "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "inside-caps-lock-color" "=" "${swaylock_inside_caps_lock_color}" "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "ring-caps-lock-color"   "=" "${swaylock_ring_caps_lock_color}"   "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "caps-lock-key-hl-color" "=" "${swaylock_caps_lock_key_hl_color}" "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "caps-lock-bs-hl-color"  "=" "${swaylock_caps_lock_bs_hl_color}"  "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "text-caps-lock-color"   "=" "${swaylock_text_caps_lock_color}"   "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "inside-clear-color"     "=" "${swaylock_inside_clear_color}"     "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "ring-clear-color"       "=" "${swaylock_ring_clear_color}"       "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "text-clear-color"       "=" "${swaylock_text_clear_color}"       "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "inside-ver-color"       "=" "${swaylock_inside_ver_color}"       "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "ring-ver-color"         "=" "${swaylock_ring_ver_color}"         "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "text-ver-color"         "=" "${swaylock_text_ver_color}"         "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "inside-wrong-color"     "=" "${swaylock_inside_wrong_color}"     "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "ring-wrong-color"       "=" "${swaylock_ring_wrong_color}"       "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "text-wrong-color"       "=" "${swaylock_text_wrong_color}"       "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    set_value "layout-bg-color"        "=" "${swaylock_layout_bg_color}"        "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "layout-border-color"    "=" "${swaylock_layout_border_color}"    "${SWAYLOCK_TMP_CONFIG_FILE}"
+    set_value "layout-text-color"      "=" "${swaylock_layout_text_color}"      "${SWAYLOCK_TMP_CONFIG_FILE}"
+
+    mv "${SWAYLOCK_TMP_CONFIG_FILE}" "${SWAYLOCK_CONFIG_FILE}"
+
+    printf " done.\n"
+}
+

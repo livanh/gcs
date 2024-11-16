@@ -1,0 +1,177 @@
+#!/bin/bash
+# FIXME: sed gives errors if the relevant lines have also commented copies
+
+function init_module() {
+    SWAY_ENABLE_DEFAULT="true"
+    SWAY_CONFIG_FILE_DEFAULT="${HOME}/.config/sway/config"
+    SWAYBAR_CONFIG_FILE_DEFAULT="${HOME}/.config/sway/config"
+    SWAY_RESTART_COMMAND_DEFAULT="swaymsg reload"
+
+    SWAY_ENABLE="$(crudini          --get ${GCS_CONFIG_FILE} sway enable          2>/dev/null || echo "${SWAY_ENABLE_DEFAULT}")"
+    SWAY_CONFIG_FILE="$(crudini     --get ${GCS_CONFIG_FILE} sway config_file     2>/dev/null || echo "${SWAY_CONFIG_FILE_DEFAULT}")"
+    SWAYBAR_CONFIG_FILE="$(crudini  --get ${GCS_CONFIG_FILE} sway bar_config_file 2>/dev/null || echo "${SWAYBAR_CONFIG_FILE_DEFAULT}")"
+    SWAY_RESTART_COMMAND="$(crudini --get ${GCS_CONFIG_FILE} sway restart_command 2>/dev/null || echo "${SWAY_RESTART_COMMAND_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which sway >/dev/null; then
+        return 1
+
+    elif ! [ "${SWAY_ENABLE}" == "true" ]; then
+        printf "* Ignoring sway (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${SWAY_CONFIG_FILE}" ]; then
+        printf "* Ignoring sway (configuration file \"${SWAY_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    elif ! [ -f "${SWAYBAR_CONFIG_FILE}" ]; then
+        printf "* Ignoring sway (configuration file \"${SWAYBAR_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${sway_client_focused_border:=${titlebar_focused_bg_color}}
+    : ${sway_client_focused_bg:=${titlebar_focused_bg_color}}
+    : ${sway_client_focused_fg:=${titlebar_focused_fg_color}}
+    : ${sway_client_focused_indicator:=${titlebar_focused_bg_color}}
+
+    : ${sway_client_focused_inactive_border:=${titlebar_unfocused_bg_color}}
+    : ${sway_client_focused_inactive_bg:=${titlebar_unfocused_bg_color}}
+    : ${sway_client_focused_inactive_fg:=${titlebar_unfocused_fg_color}}
+    : ${sway_client_focused_inactive_indicator:=${titlebar_unfocused_bg_color}}
+
+    : ${sway_client_unfocused_border:=${titlebar_unfocused_bg_color}}
+    : ${sway_client_unfocused_bg:=${titlebar_unfocused_bg_color}}
+    : ${sway_client_unfocused_fg:=${titlebar_unfocused_fg_color}}
+    : ${sway_client_unfocused_indicator:=${titlebar_unfocused_bg_color}}
+
+    : ${sway_client_urgent_border:=${titlebar_urgent_bg_color}}
+    : ${sway_client_urgent_bg:=${titlebar_urgent_bg_color}}
+    : ${sway_client_urgent_fg:=${titlebar_urgent_fg_color}}
+    : ${sway_client_urgent_indicator:=${titlebar_urgent_bg_color}}
+
+    : ${sway_client_placeholder_border:=${bg_color}}
+    : ${sway_client_placeholder_bg:=${bg_color}}
+    : ${sway_client_placeholder_fg:=${fg_color}}
+    : ${sway_client_placeholder_indicator:=${bg_color}}
+
+    : ${sway_bar_separator:=${tray_separator_fg_color}}
+    : ${sway_bar_background:=${tray_bg_color}}
+    : ${sway_bar_statusline:=${tray_fg_color}}
+
+    : ${sway_bar_focused_workspace_border:=${tray_focused_bg_color}}
+    : ${sway_bar_focused_workspace_bg:=${tray_focused_bg_color}}
+    : ${sway_bar_focused_workspace_fg:=${tray_focused_fg_color}}
+
+    : ${sway_bar_active_workspace_border:=${tray_unfocused_bg_color}}
+    : ${sway_bar_active_workspace_bg:=${tray_unfocused_bg_color}}
+    : ${sway_bar_active_workspace_fg:=${tray_unfocused_fg_color}}
+
+    : ${sway_bar_inactive_workspace_border:=${tray_unfocused_bg_color}}
+    : ${sway_bar_inactive_workspace_bg:=${tray_unfocused_bg_color}}
+    : ${sway_bar_inactive_workspace_fg:=${tray_unfocused_fg_color}}
+
+    : ${sway_bar_urgent_workspace_border:=${tray_urgent_bg_color}}
+    : ${sway_bar_urgent_workspace_bg:=${tray_urgent_bg_color}}
+    : ${sway_bar_urgent_workspace_fg:=${tray_urgent_fg_color}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "sway" "sway" "${SWAY_CONFIG_FILE}"
+
+    if [ "${SWAYBAR_CONFIG_FILE}" != "${SWAY_CONFIG_FILE}" ]; then
+        gcs_backup_file "sway" "sway" "${SWAYBAR_CONFIG_FILE}"
+    fi
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "sway" "sway" "${SWAY_CONFIG_FILE}"
+
+    if [ "${SWAYBAR_CONFIG_FILE}" != "${SWAY_CONFIG_FILE}" ]; then
+        gcs_restore_file "sway" "sway" "${SWAYBAR_CONFIG_FILE}"
+    fi
+
+    ${SWAY_RESTART_COMMAND} &>/dev/null
+}
+
+
+
+function dry_run() {
+    printf "* sway: set window decoration colors in \"${SWAY_CONFIG_FILE}\""
+
+    if [ "${SWAYBAR_CONFIG_FILE}" != "${SWAY_CONFIG_FILE}" ]; then
+        printf " and \"${SWAYBAR_CONFIG_FILE}\""
+    fi
+
+    printf ".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for the sway wayland compositor. This is accomplished by modifiying the configuration file, and sway is automatically reloaded to apply the new settings."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    if ! sway --get-socketpath &>/dev/null; then
+        printf "* Not setting colors for sway (not currently active).\n"
+
+    else
+
+        printf "* Setting colors for sway..."
+
+        local SWAY_TMP_DIR="${GCS_TMP_DIR}/sway"
+        local SWAY_TMP_CONFIG_FILE="${SWAY_TMP_DIR}/sway_config"
+        local SWAYBAR_TMP_CONFIG_FILE="${SWAY_TMP_DIR}/swaybar_config"
+        mkdir "${SWAY_TMP_DIR}"
+
+        cp "${SWAY_CONFIG_FILE}" "${SWAY_TMP_CONFIG_FILE}"
+
+        set_value "client\.focused"          " " "${sway_client_focused_border}          ${sway_client_focused_bg}          ${sway_client_focused_fg}          ${sway_client_focused_indicator}"          "${SWAY_TMP_CONFIG_FILE}"
+        set_value "client\.focused_inactive" " " "${sway_client_focused_inactive_border} ${sway_client_focused_inactive_bg} ${sway_client_focused_inactive_fg} ${sway_client_focused_inactive_indicator}" "${SWAY_TMP_CONFIG_FILE}"
+        set_value "client\.unfocused"        " " "${sway_client_unfocused_border}        ${sway_client_unfocused_bg}        ${sway_client_unfocused_fg}        ${sway_client_unfocused_indicator}"        "${SWAY_TMP_CONFIG_FILE}"
+        set_value "client\.urgent"           " " "${sway_client_urgent_border}           ${sway_client_urgent_bg}           ${sway_client_urgent_fg}           ${sway_client_urgent_indicator}"           "${SWAY_TMP_CONFIG_FILE}"
+        set_value "client\.placeholder"      " " "${sway_client_placeholder_border}      ${sway_client_placeholder_bg}      ${sway_client_placeholder_fg}      ${sway_client_placeholder_indicator}"      "${SWAY_TMP_CONFIG_FILE}"
+
+        mv "${SWAY_TMP_CONFIG_FILE}" "${SWAY_CONFIG_FILE}"
+
+        cp "${SWAYBAR_CONFIG_FILE}" "${SWAYBAR_TMP_CONFIG_FILE}"
+
+        set_value "separator"  " " " ${sway_bar_separator}"  "${SWAYBAR_TMP_CONFIG_FILE}"
+        set_value "background" " " " ${sway_bar_background}" "${SWAYBAR_TMP_CONFIG_FILE}"
+        set_value "statusline" " " " ${sway_bar_statusline}" "${SWAYBAR_TMP_CONFIG_FILE}"
+
+        set_value "focused_workspace"  " " "${sway_bar_focused_workspace_border}  ${sway_bar_focused_workspace_bg}  ${sway_bar_focused_workspace_fg}"  "${SWAYBAR_TMP_CONFIG_FILE}"
+        set_value "active_workspace"   " " "${sway_bar_active_workspace_border}   ${sway_bar_active_workspace_bg}   ${sway_bar_active_workspace_fg}"   "${SWAYBAR_TMP_CONFIG_FILE}"
+        set_value "inactive_workspace" " " "${sway_bar_inactive_workspace_border} ${sway_bar_inactive_workspace_bg} ${sway_bar_inactive_workspace_fg}" "${SWAYBAR_TMP_CONFIG_FILE}"
+        set_value "urgent_workspace"   " " "${sway_bar_urgent_workspace_border}   ${sway_bar_urgent_workspace_bg}   ${sway_bar_urgent_workspace_fg}"   "${SWAYBAR_TMP_CONFIG_FILE}"
+
+        mv "${SWAYBAR_TMP_CONFIG_FILE}" "${SWAYBAR_CONFIG_FILE}"
+
+        ${SWAY_RESTART_COMMAND} &>/dev/null
+
+        printf " done.\n"
+    fi
+}
+

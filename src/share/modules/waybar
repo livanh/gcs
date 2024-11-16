@@ -1,0 +1,101 @@
+#!/bin/bash
+
+function init_module() {
+    WAYBAR_ENABLE_DEFAULT="true"
+    WAYBAR_CONFIG_FILE_DEFAULT="${HOME}/.config/waybar/colors.css"
+
+    WAYBAR_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} waybar enable      2>/dev/null || echo "${WAYBAR_ENABLE_DEFAULT}")"
+    WAYBAR_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} waybar config_file 2>/dev/null || echo "${WAYBAR_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which waybar >/dev/null; then
+        return 1
+
+    elif ! [ "${WAYBAR_ENABLE}" == "true" ]; then
+        printf "* Ignoring waybar (disabled from configuration).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${waybar_bg_color:=${tray_bg_color}}
+    : ${waybar_fg_color:=${tray_fg_color}}
+    : ${waybar_selected_bg_color:=${tray_focused_bg_color}}
+    : ${waybar_selected_fg_color:=${tray_focused_fg_color}}
+    : ${waybar_urgent_bg_color:=${tray_urgent_bg_color}}
+    : ${waybar_urgent_fg_color:=${tray_urgent_fg_color}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "waybar" "waybar" "${WAYBAR_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "waybar" "waybar" "${WAYBAR_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* waybar: set colors in \"${WAYBAR_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors for waybar."
+    echo
+    echo "Since waybar does not have a proper method to set cange colors programmatically, this module creates a colors.css file in the configuration directory and defines some named colors in it using the GTK+ CSS syntax."
+    echo
+    echo "The CSS file can be imported in the style.css file used by waybar with:"
+    echo
+    echo "    @import url("colors.css");."
+    echo
+    echo "Then, the colors defined therein can by used in style.css as @bg-color, @fg-color, and so on."
+    echo
+    echo "This changes to style.css need to be done manually by the user, but only once."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    [ -f "${WAYBAR_CONFIG_FILE}" ] || touch "${WAYBAR_CONFIG_FILE}"
+
+    printf "* Setting waybar colors..."
+
+    local WAYBAR_TMP_DIR="${GCS_TMP_DIR}/waybar"
+    local WAYBAR_TMP_CONFIG_FILE="${WAYBAR_TMP_DIR}/config"
+    mkdir "${WAYBAR_TMP_DIR}"
+    cp "${WAYBAR_CONFIG_FILE}" "${WAYBAR_TMP_CONFIG_FILE}"
+
+    set_value "@define-color bg-color"          " " "${waybar_bg_color};"          "${WAYBAR_TMP_CONFIG_FILE}"
+    set_value "@define-color fg-color"          " " "${waybar_fg_color};"          "${WAYBAR_TMP_CONFIG_FILE}"
+    set_value "@define-color selected-bg-color" " " "${waybar_selected_bg_color};" "${WAYBAR_TMP_CONFIG_FILE}"
+    set_value "@define-color selected-fg-color" " " "${waybar_selected_fg_color};" "${WAYBAR_TMP_CONFIG_FILE}"
+    set_value "@define-color urgent-bg-color"   " " "${waybar_urgent_bg_color};"   "${WAYBAR_TMP_CONFIG_FILE}"
+
+    mv "${WAYBAR_TMP_CONFIG_FILE}" "${WAYBAR_CONFIG_FILE}"
+
+    killall -SIGUSR2 waybar
+
+    printf " done.\n"
+}
+

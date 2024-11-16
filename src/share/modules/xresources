@@ -9,7 +9,7 @@ function init_module() {
     XRESOURCES_ENABLE="$(crudini              --get ${GCS_CONFIG_FILE} xresources enable              2>/dev/null || echo "${XRESOURCES_ENABLE_DEFAULT}")"
     XRESOURCES_CONFIG_FILE="$(crudini         --get ${GCS_CONFIG_FILE} xresources config_file         2>/dev/null || echo "${XRESOURCES_CONFIG_FILE_DEFAULT}")"
     XRESOURCES_RESTART_COMMAND="$(crudini     --get ${GCS_CONFIG_FILE} xresources restart_command     2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
-    XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${GCS_CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_RESTART_COMMAND_DEFAULT}")"
+    XRESOURCES_ADDITIONAL_COMMANDS="$(crudini --get ${GCS_CONFIG_FILE} xresources additional_commands 2>/dev/null || echo "${XRESOURCES_ADDITIONAL_COMMANDS_DEFAULT}")"
 }
 
 
