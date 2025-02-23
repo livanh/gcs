@@ -306,12 +306,12 @@ function load_color_theme() {
     : ${warning_bg_color:=#FF8800}
 
     # window manager colors
-    : ${titlebar_urgent_bg_color:=${selected_bg_color}}
+    : ${titlebar_urgent_bg_color:=${error_color}}
     : ${titlebar_urgent_fg_color:=${selected_fg_color}}
     : ${titlebar_focused_bg_color:=${selected_bg_color}}
     : ${titlebar_focused_fg_color:=${selected_fg_color}}
-    : ${titlebar_unfocused_bg_color:=${bg_color}}
-    : ${titlebar_unfocused_fg_color:=$(mix_hex_colors ${fg_color} ${bg_color} 0.5)}
+    : ${titlebar_unfocused_bg_color:=$(mix_hex_colors ${selected_bg_color} ${bg_color} 0.3)}
+    : ${titlebar_unfocused_fg_color:=$(mix_hex_colors ${fg_color}          ${bg_color} 0.7)}
 
     # link colors
     : ${link_color:=${selected_bg_color}}
