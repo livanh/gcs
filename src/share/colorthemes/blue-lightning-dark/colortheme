@@ -1,0 +1,52 @@
+# base16 colors
+base00="#000000"
+base01="#111111"
+base02="#333333"
+base03="#555555"
+base04="#AAAAAA"
+base05="#BBBBBB"
+base06="#DDDDDD"
+base07="#FFFFFF"
+base08="#B50000"
+base09="#CA5A1C"
+base0A="#C7A41C"
+base0B="#007500"
+base0C="#259F86"
+base0D="#234CB3"
+base0E="#8140BB"
+base0F="#865E3C"
+
+# base color theme
+base_color="$base00"
+text_color="$base04"
+bg_color="$base02"
+fg_color="$base05"
+selected_bg_color="$base0D"
+selected_fg_color="$base07"
+
+# icon and cursor theme
+icon_theme_name="Humanity-Dark-Blue"
+cursor_theme_name="DMZ-White"
+
+# window manager colors
+titlebar_unfocused_bg_color="#001644"
+titlebar_unfocused_fg_color="$base04"
+
+# background
+wallpaper_image="wallpaper.jpg"
+wallpaper_mode="zoom-fill"
+wallpaper_bg_color="$base00"
+wallpaper_text_color="$base07"
+wallpaper_shadow_color="$base02"
+
+# text editors with syntax highlighting
+editor_keyword="$base0D"
+editor_number="$base0A"
+editor_string="$base09"
+editor_class="$base0B"
+editor_preprocessor="$base0C"
+editor_constant="$base08"
+editor_operator="$base0E"
+
+# terminal
+terminal_fg_color="$base05"

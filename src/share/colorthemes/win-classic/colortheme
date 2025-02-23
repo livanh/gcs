@@ -8,11 +8,11 @@ selected_fg_color=#FFFFFF
 tooltip_bg_color=#FFFFCC
 link_color=#0000FF
 
-# icon theme (download from https://github.com/grassmunk/Chicago95, in subfolder Icons/Chicago95)
-icon_theme_name=Chicago95
+# icon theme (download from https://www.opencode.net/linuxistsuper/classic95_reupload)
+icon_theme_name=Classic95
 
-# cursor theme (download from https://www.gnome-look.org/content/show.php/Cursor+XP?content=77833)
-cursor_theme_name=xp
+# cursor theme
+cursor_theme_name="DMZ-White"
 
 # window manager colors
 titlebar_urgent_bg_color=#808080
