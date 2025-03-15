@@ -16,7 +16,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which i3 >/dev/null; then
+    if ! which -s i3; then
         return 1
 
     elif ! [ "${I3_ENABLE}" == "true" ]; then

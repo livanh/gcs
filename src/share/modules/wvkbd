@@ -13,7 +13,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which "${WVKBD_BINARY}" >/dev/null; then
+    if ! which -s "${WVKBD_BINARY}"; then
         return 1
 
     elif ! [ "${WVKBD_ENABLE}" == "true" ]; then

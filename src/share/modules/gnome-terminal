@@ -15,13 +15,13 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which gnome-terminal >/dev/null; then
+    if ! which -s gnome-terminal; then
         return 1
 
-    elif ! which gsettings >/dev/null; then
+    elif ! which -s gsettings; then
         return 1
 
-    elif ! which uuid >/dev/null; then
+    elif ! which -s uuid; then
         printf "* Ignoring GNOME Terminal (uuid not installed).\n"
         return 1
 

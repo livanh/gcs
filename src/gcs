@@ -379,19 +379,19 @@ function load_color_theme() {
     : ${terminal_palette_purple:=${base0E}}
     if ! [[ -z "${base00}" || -z "${base03}" || -z "${base05}" || -z "${base07}" ]]; then
         if [ "$(is_brighter ${base00} ${base07})" == "1" ]; then
-            : ${terminal_palette_light_white:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
-            : ${terminal_palette_light_black:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base03} "#FFFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base05} "#FFFFFF" 0.5)}
         else
-            : ${terminal_palette_light_white:=$(mix_hex_colors ${base05} "#FFFFF" 0.5)}
-            : ${terminal_palette_light_black:=$(mix_hex_colors ${base03} "#FFFFF" 0.5)}
+            : ${terminal_palette_light_white:=$(mix_hex_colors ${base05} "#FFFFFF" 0.5)}
+            : ${terminal_palette_light_black:=$(mix_hex_colors ${base03} "#FFFFFF" 0.5)}
         fi
     fi
-    : ${terminal_palette_light_red:=$(mix_hex_colors ${base08} "#FFFFF" 0.5)}
-    : ${terminal_palette_light_yellow:=$(mix_hex_colors ${base0A} "#FFFFF" 0.5)}
-    : ${terminal_palette_light_green:=$(mix_hex_colors ${base0B} "#FFFFF" 0.5)}
-    : ${terminal_palette_light_cyan:=$(mix_hex_colors ${base0C} "#FFFFF" 0.5)}
-    : ${terminal_palette_light_blue:=$(mix_hex_colors ${base0D} "#FFFFF" 0.5)}
-    : ${terminal_palette_light_purple:=$(mix_hex_colors ${base0E} "#FFFFF" 0.5)}
+    : ${terminal_palette_light_red:=$(mix_hex_colors ${base08} "#FFFFFF" 0.5)}
+    : ${terminal_palette_light_yellow:=$(mix_hex_colors ${base0A} "#FFFFFF" 0.5)}
+    : ${terminal_palette_light_green:=$(mix_hex_colors ${base0B} "#FFFFFF" 0.5)}
+    : ${terminal_palette_light_cyan:=$(mix_hex_colors ${base0C} "#FFFFFF" 0.5)}
+    : ${terminal_palette_light_blue:=$(mix_hex_colors ${base0D} "#FFFFFF" 0.5)}
+    : ${terminal_palette_light_purple:=$(mix_hex_colors ${base0E} "#FFFFFF" 0.5)}
 
     : ${terminal_opacity:=1}
 

@@ -1,0 +1,190 @@
+#!/bin/bash
+
+function init_module() {
+    KONSOLE_ENABLE_DEFAULT="true"
+    KONSOLE_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} konsole enable 2>/dev/null || echo "${KONSOLE_ENABLE_DEFAULT}")"
+
+    KONSOLE_CONFIG_FILE="${HOME}/.config/konsolerc"
+    KONSOLE_TARGET_DIR="${HOME}/.local/share/konsole/"
+    PLASMA_CHANGEICONS="/usr/lib/$(cpp -dumpmachine)/libexec/plasma-changeicons"
+}
+
+
+
+function check_dependencies() {
+    if ! which -s konsole; then
+        return 1
+
+    elif ! [ "${KONSOLE_ENABLE}" == "true" ]; then
+        printf "* Ignoring konsole (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${KONSOLE_CONFIG_FILE}" ]; then
+        printf "* Ignoring konsole (configuration file \"${KONSOLE_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${konsole_base_color:=${base_color}}
+    : ${konsole_text_color:=${text_color}}
+    : ${konsole_terminal_opacity:=${terminal_opacity}}
+    : ${konsole_wallpaper_opacity:="$(echo 1 - ${konsole_terminal_opacity} | bc)"}
+
+    for color_theme_dir in ${COLOR_THEME_DIRS[@]}; do
+        if [ -f "${color_theme_dir}/${wallpaper_image}" ]; then
+            wallpaper_file="${color_theme_dir}/${wallpaper_image}"
+        fi
+    done
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "Konsole" "konsole" "${KONSOLE_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "Konsole" "konsole" "${KONSOLE_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* Konsole: set colors in \"${KONSOLE_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors and icon theme for KDE applications. A new color profile is created and applied on the fly, application restart is not needed."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    if [ -f "${KONSOLE_CONFIG_FILE}" ]; then
+
+        printf "* Setting colors for konsole..."
+
+        mkdir -p "${KONSOLE_TARGET_DIR}"
+
+        local KONSOLE_COLORSCHEME_NAME="${FULL_COLOR_THEME_NAME}"
+        local KONSOLE_COLORSCHEME_FILE="${KONSOLE_TARGET_DIR}/${KONSOLE_COLORSCHEME_NAME}.colorscheme"
+
+        echo "[General]"                                          > "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Description=${KONSOLE_COLORSCHEME_NAME}"           >> "${KONSOLE_COLORSCHEME_FILE}"
+        if [ -f "${wallpaper_file}" ]; then
+            echo "Opacity=1"                                     >> "${KONSOLE_COLORSCHEME_FILE}"
+            echo "FillStyle=Crop"                                >> "${KONSOLE_COLORSCHEME_FILE}"
+            echo "Wallpaper=${wallpaper_file}"                   >> "${KONSOLE_COLORSCHEME_FILE}"
+            echo "WallpaperOpacity=${konsole_wallpaper_opacity}" >> "${KONSOLE_COLORSCHEME_FILE}"
+        else
+            echo "Opacity=${konsole_terminal_opacity}"           >> "${KONSOLE_COLORSCHEME_FILE}"
+        fi
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Background]"                                      >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${konsole_base_color}"                       >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Foreground]"                                      >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${konsole_text_color}"                       >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color0]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_black}"                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color0Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_black}"             >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color1]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_red}"                     >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color1Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_red}"               >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color2]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_green}"                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color2Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_green}"             >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color3]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_yellow}"                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color3Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_yellow}"            >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color4]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_blue}"                    >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color4Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_blue}"              >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color5]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_purple}"                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color5Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_purple}"            >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color6]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_cyan}"                    >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color6Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_cyan}"              >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color7]"                                          >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_white}"                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "[Color7Intense]"                                   >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo "Color=${terminal_palette_light_white}"             >> "${KONSOLE_COLORSCHEME_FILE}"
+        echo ""                                                  >> "${KONSOLE_COLORSCHEME_FILE}"
+
+        local KONSOLE_PROFILE_NAME="${FULL_COLOR_THEME_NAME}"
+        local KONSOLE_PROFILE_FILE="${KONSOLE_TARGET_DIR}/${KONSOLE_PROFILE_NAME}.profile"
+
+        echo "[General]"                                > "${KONSOLE_PROFILE_FILE}"
+        echo "Name=${KONSOLE_PROFILE_NAME}"            >> "${KONSOLE_PROFILE_FILE}"
+        echo "ShowTerminalSizeHint=false"              >> "${KONSOLE_PROFILE_FILE}"
+        echo "LocalTabTitleFormat=%w"                  >> "${KONSOLE_PROFILE_FILE}"
+        echo ""                                        >> "${KONSOLE_PROFILE_FILE}"
+        echo "[Appearance]"                            >> "${KONSOLE_PROFILE_FILE}"
+        echo "ColorScheme=${KONSOLE_COLORSCHEME_NAME}" >> "${KONSOLE_PROFILE_FILE}"
+        echo ""                                        >> "${KONSOLE_PROFILE_FILE}"
+
+        for instance in $(qdbus6 | grep org.kde.konsole); do
+            for session in $(qdbus6 "${instance}" | grep -E '^/Sessions/'); do
+                qdbus6 "${instance}" "${session}" "org.kde.konsole.Session.setProfile" "${KONSOLE_PROFILE_NAME}"
+                if [[ "${session}" != "${KONSOLE_DBUS_SESSION}" || "${instance}" != "org.kde.konsole-$(ps -o ppid= -p $PPID | sed "s/ //g")" ]]; then
+                    qdbus6 "$instance" "$session" "org.kde.konsole.Session.runCommand" " konsoleprofile ColorScheme=Default"
+                    qdbus6 "$instance" "$session" "org.kde.konsole.Session.runCommand" " konsoleprofile ColorScheme=${KONSOLE_COLORSCHEME_NAME}"
+                fi
+            done
+        done
+        konsoleprofile "ColorScheme=Default"
+        sleep 0.05
+        konsoleprofile "ColorScheme=${KONSOLE_COLORSCHEME_NAME}"
+
+        for instance in $(qdbus6 | grep org.kde.konsole); do
+            for window in $(qdbus6 "$instance" | grep -E '^/Windows/'); do
+                qdbus6 "$instance" "$window" "org.kde.konsole.Window.setDefaultProfile" "${KONSOLE_PROFILE_NAME}.profile"
+            done
+        done
+
+        kwriteconfig6 --file "konsolerc" --group "Desktop Entry" --key "DefaultProfile" "${KONSOLE_PROFILE_NAME}.profile"
+
+        printf " done.\n"
+    fi
+}
+

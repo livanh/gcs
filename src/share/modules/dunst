@@ -21,7 +21,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which dunst >/dev/null; then
+    if ! which -s dunst; then
         return 1
 
     elif ! [ "${DUNST_ENABLE}" == "true" ]; then

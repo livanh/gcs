@@ -1,0 +1,119 @@
+#!/bin/bash
+
+function init_module() {
+    KDE_ENABLE_DEFAULT="true"
+    KDE_ENABLE="$(crudini --get ${GCS_CONFIG_FILE} kde enable 2>/dev/null || echo "${KDE_ENABLE_DEFAULT}")"
+
+    KDE_CONFIG_FILE="${HOME}/.config/kdeglobals"
+    KDE_TARGET_DIR="${HOME}/.local/share/color-schemes/"
+    PLASMA_CHANGEICONS="/usr/lib/$(cpp -dumpmachine)/libexec/plasma-changeicons"
+}
+
+
+
+function check_dependencies() {
+    if ! which -s plasma-apply-colorscheme; then
+        return 1
+
+    elif ! [ "${KDE_ENABLE}" == "true" ]; then
+        printf "* Ignoring KDE (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${KDE_CONFIG_FILE}" ]; then
+        printf "* Ignoring KDE (configuration file \"${KDE_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${kde_base_color:=${base_color}}
+    : ${kde_text_color:=${text_color}}
+    : ${kde_base_color_alternate:=$(mix_hex_colors "${kde_base_color}" "${kde_text_color}" 0.9)}
+    : ${kde_bg_color:=${bg_color}}
+    : ${kde_fg_color:=${fg_color}}
+    : ${kde_inactive_fg_color:=$(mix_hex_colors "${kde_fg_color}" "${kde_bg_color}" 0.5)}
+    : ${kde_link_color:=${link_color}}
+    : ${kde_selected_bg_color:=${selected_bg_color}}
+    : ${kde_selected_fg_color:=${selected_fg_color}}
+    : ${kde_tooltip_fg_color:=${tooltip_fg_color}}
+    : ${kde_tooltip_border_color:=${tooltip_border_color}}
+    : ${kde_tooltip_bg_color:=${tooltip_bg_color}}
+    : ${kde_icon_theme_name:=${icon_theme_name}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "Kde" "kde" "${KDE_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "Kde" "kde" "${KDE_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* KDE: set application colors in \"${KDE_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets colors and icon theme for KDE applications. A new color profile is created and applied on the fly, application restart is not needed."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    if [ -f "${KDE_CONFIG_FILE}" ]; then
+
+        printf "* Setting colors and icon theme for KDE..."
+
+        local KDE_TARGET_FILE="${KDE_TARGET_DIR}/${FULL_COLOR_THEME_NAME}.colors"
+        mkdir -p "${KDE_TARGET_DIR}"
+        cp "${KDE_CONFIG_FILE}" "${KDE_TARGET_FILE}"
+
+        set_value_section "Colors:Window"             "BackgroundNormal"    "=" "${kde_bg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Window"             "ForegroundNormal"    "=" "${kde_fg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Window"             "ForegroundLink"      "=" "${kde_link_color}"           "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Header"             "BackgroundNormal"    "=" "${kde_bg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Header"             "ForegroundNormal"    "=" "${kde_fg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Header\]\[Inactive" "BackgroundNormal"    "=" "${kde_bg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Header\]\[Inactive" "ForegroundNormal"    "=" "${kde_fg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Selection"          "BackgroundNormal"    "=" "${kde_selected_bg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Selection"          "ForegroundNormal"    "=" "${kde_selected_fg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Selection"          "ForegroundLink"      "=" "${kde_selected_fg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Tooltip"            "BackgroundNormal"    "=" "${kde_tooltip_bg_color}"     "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Tooltip"            "ForegroundNormal"    "=" "${kde_tooltip_fg_color}"     "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "BackgroundNormal"    "=" "${kde_base_color}"           "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "BackgroundAlternate" "=" "${kde_base_color_alternate}" "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "ForegroundNormal"    "=" "${kde_text_color}"           "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "DecorationFocus"     "=" "${kde_selected_bg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "DecorationHover"     "=" "${kde_selected_bg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "ForegroundLink"      "=" "${kde_link_color}"           "${KDE_TARGET_FILE}"
+        set_value_section "Colors:View"               "ForegroundInactive"  "=" "${kde_inactive_fg_color}"    "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Button"             "BackgroundNormal"    "=" "${kde_bg_color}"             "${KDE_TARGET_FILE}"
+        set_value_section "Colors:Button"             "ForegroundNormal"    "=" "${kde_fg_color}"             "${KDE_TARGET_FILE}"
+
+        plasma-apply-colorscheme "${FULL_COLOR_THEME_NAME}" 1>/dev/null 2>/dev/null
+
+        "${PLASMA_CHANGEICONS}" "${kde_icon_theme_name}" 1>/dev/null 2>/dev/null
+
+        printf " done.\n"
+    fi
+}
+

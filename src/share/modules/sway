@@ -16,7 +16,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which sway >/dev/null; then
+    if ! which -s sway; then
         return 1
 
     elif ! [ "${SWAY_ENABLE}" == "true" ]; then
@@ -84,6 +84,8 @@ function derive_colors() {
     : ${sway_bar_urgent_workspace_border:=${tray_urgent_bg_color}}
     : ${sway_bar_urgent_workspace_bg:=${tray_urgent_bg_color}}
     : ${sway_bar_urgent_workspace_fg:=${tray_urgent_fg_color}}
+
+    : ${sway_cursor_theme_name:=${cursor_theme_name}}
 }
 
 
@@ -153,6 +155,10 @@ function apply_theme() {
         set_value "client\.unfocused"        " " "${sway_client_unfocused_border}        ${sway_client_unfocused_bg}        ${sway_client_unfocused_fg}        ${sway_client_unfocused_indicator}"        "${SWAY_TMP_CONFIG_FILE}"
         set_value "client\.urgent"           " " "${sway_client_urgent_border}           ${sway_client_urgent_bg}           ${sway_client_urgent_fg}           ${sway_client_urgent_indicator}"           "${SWAY_TMP_CONFIG_FILE}"
         set_value "client\.placeholder"      " " "${sway_client_placeholder_border}      ${sway_client_placeholder_bg}      ${sway_client_placeholder_fg}      ${sway_client_placeholder_indicator}"      "${SWAY_TMP_CONFIG_FILE}"
+
+        if ! [ -z "${sway_cursor_theme_name}" ]; then
+            set_value "seat seat0 xcursor_theme" " " "${sway_cursor_theme_name}" "${SWAY_TMP_CONFIG_FILE}"
+        fi
 
         mv "${SWAY_TMP_CONFIG_FILE}" "${SWAY_CONFIG_FILE}"
 

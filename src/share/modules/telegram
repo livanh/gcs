@@ -15,10 +15,10 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which "${TELEGRAM_BINARY}" >/dev/null; then
+    if ! which -s "${TELEGRAM_BINARY}"; then
         return 1
 
-    elif ! which zip >/dev/null; then
+    elif ! which -s zip; then
         return 1
 
     elif ! [ "${TELEGRAM_ENABLE}" == "true" ]; then

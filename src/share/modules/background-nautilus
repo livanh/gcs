@@ -10,13 +10,13 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which nautilus >/dev/null; then
+    if ! which -s nautilus; then
         return 1
 
-    elif ! which gsettings >/dev/null; then
+    elif ! which -s gsettings; then
         return 1
 
-    elif ! which pgrep >/dev/null; then
+    elif ! which -s pgrep; then
         return 1
 
     elif ! [ "${BACKGROUND_NAUTILUS_ENABLE}" == "true" ]; then

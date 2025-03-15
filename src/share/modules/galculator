@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which galculator >/dev/null; then
+    if ! which -s galculator; then
         return 1
 
     elif ! [ "${GALCULATOR_ENABLE}" == "true" ]; then

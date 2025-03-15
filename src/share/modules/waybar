@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which waybar >/dev/null; then
+    if ! which -s waybar; then
         return 1
 
     elif ! [ "${WAYBAR_ENABLE}" == "true" ]; then

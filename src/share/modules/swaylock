@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which swaylock >/dev/null; then
+    if ! which -s swaylock; then
         return 1
 
     elif ! [ "${SWAYLOCK_ENABLE}" == "true" ]; then

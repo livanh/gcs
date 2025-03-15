@@ -21,7 +21,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which codeblocks >/dev/null; then
+    if ! which -s codeblocks; then
         return 1
 
     elif ! [ "${CODEBLOCKS_ENABLE}" == "true" ]; then

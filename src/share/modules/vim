@@ -17,7 +17,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which vim >/dev/null; then
+    if ! which -s vim; then
         return 1
 
     elif ! [ "${VIM_ENABLE}" == "true" ]; then
