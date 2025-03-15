@@ -10,7 +10,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which oomox-cli >/dev/null; then
+    if ! which -s oomox-cli; then
         printf "* Ignoring colors and icon theme for GTK+ (oomox not installed).\n"
         return 1
 
@@ -54,6 +54,7 @@ function derive_colors() {
     : ${unity_titlebar_button_pressed:=$(mix_hex_colors "${titlebar_focused_fg_color}" "${titlebar_focused_bg_color}" 0.25)}
 
     : ${gtk_icon_theme_name:=${icon_theme_name}}
+    : ${gtk_cursor_theme_name:=${cursor_theme_name}}
 
     gtk_roundness=$(crudini --get ${GCS_CONFIG_FILE} gtk roundness 2>/dev/null || echo 3)
     gtk_spacing=$(crudini   --get ${GCS_CONFIG_FILE} gtk spacing   2>/dev/null || echo 3)
@@ -69,13 +70,15 @@ function create_backup() {
     mkdir -p "${GTK_BACKUP_DIR}"
 
     if pgrep "^(xsettingsd)$" >/dev/null; then
-        dump_xsettings | awk '/Net\/ThemeName/{print $2}'     > "${GTK_BACKUP_DIR}/ThemeName"
-        dump_xsettings | awk '/Net\/IconThemeName/{print $2}' > "${GTK_BACKUP_DIR}/IconThemeName"
+        dump_xsettings | awk '/Net\/ThemeName/{print $2}'       > "${GTK_BACKUP_DIR}/ThemeName"
+        dump_xsettings | awk '/Net\/IconThemeName/{print $2}'   > "${GTK_BACKUP_DIR}/IconThemeName"
+        dump_xsettings | awk '/Gtk\/CursorThemeName/{print $2}' > "${GTK_BACKUP_DIR}/CursorThemeName"
         printf " done.\n"
 
     elif [[ -v WAYLAND_DISPLAY ]] || pgrep "^(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)$" >/dev/null; then
-        gsettings get "${GTK_GSETTINGS_PATH}" gtk-theme  > "${GTK_BACKUP_DIR}/ThemeName"
-        gsettings get "${GTK_GSETTINGS_PATH}" icon-theme > "${GTK_BACKUP_DIR}/IconThemeName"
+        gsettings get "${GTK_GSETTINGS_PATH}" gtk-theme    > "${GTK_BACKUP_DIR}/ThemeName"
+        gsettings get "${GTK_GSETTINGS_PATH}" icon-theme   > "${GTK_BACKUP_DIR}/IconThemeName"
+        gsettings get "${GTK_GSETTINGS_PATH}" cursor-theme > "${GTK_BACKUP_DIR}/CursorThemeName"
         printf " done.\n"
 
     else
@@ -112,6 +115,14 @@ function restore_backup() {
             printf " not found!\n"
         fi
 
+        printf "  cursor theme..."
+        if [ -f "${GTK_BACKUP_DIR}/CursorThemeName" ]; then
+            set_value "Gtk\/CursorThemeName" " " "$(cat "${GTK_BACKUP_DIR}/CursorThemeName")" "${GTK_XSETTINGSD_CONFIG_FILE}"
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
     elif [[ -v WAYLAND_DISPLAY ]] || pgrep "^(gnome-settings-daemon|gsd-xsettings|gnome-session-binary)$" >/dev/null; then
 
         printf "  colors..."
@@ -125,6 +136,14 @@ function restore_backup() {
         printf "  icon theme..."
         if [ -f "${GTK_BACKUP_DIR}/IconThemeName" ]; then
             gsettings set "${GTK_GSETTINGS_PATH}" icon-theme $(cat "${GTK_BACKUP_DIR}/IconThemeName")
+            printf " done.\n"
+        else
+            printf " not found!\n"
+        fi
+
+        printf "  cursor theme..."
+        if [ -f "${GTK_BACKUP_DIR}/CursorThemeName" ]; then
+            gsettings set "${GTK_GSETTINGS_PATH}" cursor-theme $(cat "${GTK_BACKUP_DIR}/CursorThemeName")
             printf " done.\n"
         else
             printf " not found!\n"
@@ -148,7 +167,7 @@ function print_module_help() {
     echo
     echo "Additional modifications are made to style titlebars and buttons in the Unity desktop environment."
     echo
-    echo "This module can also configure the GTK+ icon theme."
+    echo "This module can also configure the GTK+ icon and cursor theme."
     echo
     echo "Backup and restore are supported."
     echo
@@ -157,7 +176,7 @@ function print_module_help() {
 
 
 function apply_theme() {
-    printf "* Setting colors and icon theme for GTK+...\n"
+    printf "* Setting colors, icon theme, and cursor theme for GTK+...\n"
 
     local GTK_TMP_DIR="${GCS_TMP_DIR}/gtk"
     mkdir "${GTK_TMP_DIR}"
@@ -170,7 +189,7 @@ function apply_theme() {
             local GTK_OUTPUT_THEME_DIR="${HOME}/.themes/${FULL_COLOR_THEME_NAME}"
 
             if [ "${GTK_OOMOX_THEME_STYLE}" == "oomox" ]; then
-                /opt/oomox/plugins/theme_oomox/gtk-theme/change_color.sh -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+                /opt/oomox/plugins/theme_oomox/change_color.sh -m gtk320 -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
 
             elif [ "${GTK_OOMOX_THEME_STYLE}" == "materia" ]; then
                 /opt/oomox/plugins/theme_materia/materia-theme/change_color.sh -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
@@ -213,7 +232,7 @@ function apply_theme() {
         echo "SPACING=${gtk_spacing}"                     >> "${GTK_OOMOX_THEME_FILE}"
         echo "GRADIENT=${gtk_gradient}"                   >> "${GTK_OOMOX_THEME_FILE}"
 
-        oomox-cli -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
+        oomox-cli -m gtk320 -o "${FULL_COLOR_THEME_NAME}" "${GTK_OOMOX_THEME_FILE}" >/dev/null 2>/dev/null
 
     fi
 
@@ -242,7 +261,6 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
   background-color: ${unity_titlebar_unfocused_bg_color};
 }
 " > "${GTK_UNITY_DECORATION_SNIPPET}"
-    cat "${GTK_UNITY_DECORATION_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
     cat "${GTK_UNITY_DECORATION_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.20/gtk.css"
 
     sed -i "s/${unity_titlebar_button_hover_original}/${unity_titlebar_button_hover}/" "${GTK_OUTPUT_THEME_DIR}/unity/close_focused_prelight.svg"
@@ -278,23 +296,6 @@ UnityDecoration.left:backdrop, UnityDecoration.right:backdrop, UnityDecoration.b
 
     sed -i "s/style \"clearlooks-notebook-bg\" {/style \"clearlooks-notebook-bg\" {\n\tbg[SELECTED] = \"${gtk_selected_tab_color}\"/" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
 
-    local GTK3_TABS_SNIPPET="${GTK_TMP_DIR}/gtk3-tabs-snippet"
-    echo "
-.notebook tab.top:active {
-  border-top-color: ${gtk_selected_tab_color};
-}
-.notebook tab.right:active {
-  border-right-color: ${gtk_selected_tab_color};
-}
-.notebook tab.bottom:active {
-  border-bottom-color: ${gtk_selected_tab_color};
-}
-.notebook tab.left:active {
-  border-left-color: ${gtk_selected_tab_color};
-}
-" > "${GTK3_TABS_SNIPPET}"
-    cat "${GTK3_TABS_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
-
     local GTK3_20_TABS_SNIPPET="${GTK_TMP_DIR}/gtk3.20-tabs-snippet"
     echo "
 notebook > header.top > tabs > tab:checked {
@@ -319,15 +320,6 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
 
     sed -i "s/tooltip_fg_color\:[^n]*n/tooltip_fg_color:${gtk_tooltip_fg_color}\\\n/g" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
     sed -i "s/tooltip_bg_color\:[^n]*n/tooltip_bg_color:${gtk_tooltip_bg_color}\\\n/g" "${GTK_OUTPUT_THEME_DIR}/gtk-2.0/gtkrc"
-
-    local GTK3_TOOLTIP_SNIPPET="${GTK_TMP_DIR}/gtk3-tooltip-snippet"
-    echo "
-.tooltip.background {
-  background-color: ${gtk_tooltip_bg_color};
-  background-image: none;
-  color: ${gtk_tooltip_fg_color}; }
-" > "${GTK3_TOOLTIP_SNIPPET}"
-    cat "${GTK3_TOOLTIP_SNIPPET}" >> "${GTK_OUTPUT_THEME_DIR}/gtk-3.0/gtk.css"
 
     local GTK3_20_TOOLTIP_SNIPPET="${GTK_TMP_DIR}/gtk3.20-tooltip-temp"
     echo "
@@ -354,6 +346,16 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
         done
     fi
 
+    local GTK_CURSOR_THEME_FOUND="false"
+    if ! [ -z "${gtk_cursor_theme_name}" ]; then
+        for icon_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
+            if [ -d "${icon_themes_directory}/${gtk_cursor_theme_name}" ]; then
+                GTK_CURSOR_THEME_FOUND="true"
+                break
+            fi
+        done
+    fi
+
     if pgrep "^(xsettingsd)$" >/dev/null; then
 
         local GTK_XSETTINGSD_RESTART_COMMAND=$(crudini --get ${GCS_CONFIG_FILE} gtk xsettingsd_restart_command 2>/dev/null || echo )
@@ -367,6 +369,16 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
             printf "  icon theme: ${gtk_icon_theme_name}..."
             if [ "${GTK_ICON_THEME_FOUND}" == "true" ]; then
                 set_value "Net\/IconThemeName" " " "\"${gtk_icon_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
+                printf " done.\n"
+            else
+                printf " not found!\n"
+            fi
+        fi
+
+        if ! [ -z "${gtk_cursor_theme_name}" ]; then
+            printf "  cursor theme: ${gtk_cursor_theme_name}..."
+            if [ "${GTK_CURSOR_THEME_FOUND}" == "true" ]; then
+                set_value "Gtk\/CursorThemeName" " " "\"${gtk_cursor_theme_name}\"" "${GTK_XSETTINGSD_CONFIG_FILE}"
                 printf " done.\n"
             else
                 printf " not found!\n"
@@ -388,6 +400,16 @@ notebook > header > tabs > tab button.flat:active, notebook > header > tabs > ta
             printf "  icon theme: ${gtk_icon_theme_name}..."
             if [ "${GTK_ICON_THEME_FOUND}" == "true" ]; then
                 gsettings set "${GTK_GSETTINGS_PATH}" icon-theme "${gtk_icon_theme_name}"
+                printf " done.\n"
+            else
+                printf " not found!\n"
+            fi
+        fi
+
+        if ! [ -z "${gtk_cursor_theme_name}" ]; then
+            printf "  cursor theme: ${gtk_cursor_theme_name}..."
+            if [ "${GTK_CURSOR_THEME_FOUND}" == "true" ]; then
+                gsettings set "${GTK_GSETTINGS_PATH}" cursor-theme "${gtk_cursor_theme_name}"
                 printf " done.\n"
             else
                 printf " not found!\n"

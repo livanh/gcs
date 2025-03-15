@@ -17,10 +17,10 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which openbox >/dev/null; then
+    if ! which -s openbox; then
         return 1
 
-    elif ! which pgrep >/dev/null; then
+    elif ! which -s pgrep; then
         return 1
 
     elif ! [ "${OPENBOX_ENABLE}" == "true" ]; then

@@ -1,0 +1,99 @@
+#!/bin/bash
+
+function init_module() {
+    QT6CT_ENABLE_DEFAULT="true"
+    QT6CT_CONFIG_DIR_DEFAULT="${HOME}/.config/qt6ct"
+    QT6CT_COLORS_DIR_DEFAULT="${QT6CT_CONFIG_DIR_DEFAULT}/colors"
+    QT6CT_CONFIG_FILE_DEFAULT="${QT6CT_CONFIG_DIR_DEFAULT}/qt6ct.conf"
+
+    QT6CT_ENABLE="$(crudini      --get ${GCS_CONFIG_FILE} qt6ct enable      2>/dev/null || echo "${QT6CT_ENABLE_DEFAULT}")"
+    QT6CT_CONFIG_DIR="$(crudini  --get ${GCS_CONFIG_FILE} qt6ct config_dir  2>/dev/null || echo "${QT6CT_CONFIG_DIR_DEFAULT}")"
+    QT6CT_COLORS_DIR="$(crudini  --get ${GCS_CONFIG_FILE} qt6ct colors_dir  2>/dev/null || echo "${QT6CT_COLORS_DIR_DEFAULT}")"
+    QT6CT_CONFIG_FILE="$(crudini --get ${GCS_CONFIG_FILE} qt6ct config_file 2>/dev/null || echo "${QT6CT_CONFIG_FILE_DEFAULT}")"
+}
+
+
+
+function check_dependencies() {
+    if ! which -s qt6ct; then
+        return 1
+
+    elif ! [ "${QT6CT_ENABLE}" == "true" ]; then
+        printf "* Ignoring qt6ct (disabled from configuration).\n"
+        return 1
+
+    elif ! [ -f "${QT6CT_CONFIG_FILE}" ]; then
+        printf "* Ignoring qt6ct (configuration file \"${QT6CT_CONFIG_FILE}\" not found).\n"
+        return 1
+
+    else
+        return 0
+
+    fi
+}
+
+
+
+function derive_colors() {
+    : ${qt6ct_icon_theme_name:=${icon_theme_name}}
+}
+
+
+
+function create_backup() {
+    gcs_backup_file "qt6ct" "qt6ct" "${QT6CT_CONFIG_FILE}"
+}
+
+
+
+function restore_backup() {
+    gcs_restore_file "qt6ct" "qt6ct" "${QT6CT_CONFIG_FILE}"
+}
+
+
+
+function dry_run() {
+    printf "* qt6ct: set icon theme in \"${QT6CT_CONFIG_FILE}\".\n"
+}
+
+
+
+function print_module_help() {
+    echo "Help for GCS ${BASH_SOURCE##*/} module"
+    echo
+    echo "This module sets the icon theme for QT6 applications using qt6ct. This is accomplished by modifiying the configuration file, so QT6 applications will pick up the changes when they are restarted."
+    echo
+    echo "Backup and restore are supported."
+    echo
+}
+
+
+
+function apply_theme() {
+    printf "* Setting icon theme for qt6..."
+
+
+    local QT6_ICON_THEME_FOUND="false"
+    if ! [ -z "${qt6ct_icon_theme_name}" ]; then
+        for icon_themes_directory in "/usr/share/icons" "/usr/local/share/icons" "${HOME}/.icons" "${HOME}/.local/share/icons"; do
+            if [ -d "${icon_themes_directory}/${qt6ct_icon_theme_name}" ]; then
+                QT6_ICON_THEME_FOUND="true"
+                break
+            fi
+        done
+    fi
+
+
+    local QT6CT_TMP_DIR="${GCS_TMP_DIR}/qt6ct"
+    local QT6CT_TMP_CONFIG_FILE="${QT6CT_TMP_DIR}/qt6ct.conf"
+    mkdir "${QT6CT_TMP_DIR}"
+    cp "${QT6CT_CONFIG_FILE}" "${QT6CT_TMP_CONFIG_FILE}"
+
+    crudini --set "${QT6CT_TMP_CONFIG_FILE}" "Appearance" "icon_theme" "${qt6ct_icon_theme_name}"
+    crudini --set "${QT6CT_TMP_CONFIG_FILE}" "Appearance" "color_scheme_path" "${QT6CT_COLORS_DIR}/${FULL_COLOR_THEME_NAME}.conf"
+
+    mv "${QT6CT_TMP_CONFIG_FILE}" "${QT6CT_CONFIG_FILE}"
+
+    printf " done.\n"
+}
+

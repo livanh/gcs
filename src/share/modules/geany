@@ -15,7 +15,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which geany >/dev/null; then
+    if ! which -s geany; then
         return 1
 
     elif ! [ "${GEANY_ENABLE}" == "true" ]; then

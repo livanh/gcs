@@ -48,7 +48,7 @@ As an example, the ```check_dependencies``` function for the ```gpicview``` modu
 
 ```
 function check_dependencies() {
-    if ! which gpicview >/dev/null; then
+    if ! which -s gpicview; then
         return 1
 
     elif ! [ "${GPICVIEW_ENABLE}" == "true" ]; then

@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which xfce4-terminal >/dev/null; then
+    if ! which -s xfce4-terminal; then
         return 1
 
     elif ! [ "${XFCE4TERMINAL_ENABLE}" == "true" ]; then

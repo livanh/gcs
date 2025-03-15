@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which mcomix >/dev/null; then
+    if ! which -s mcomix; then
         return 1
 
     elif ! [ "${MCOMIX_ENABLE}" == "true" ]; then

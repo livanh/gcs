@@ -14,7 +14,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which conky >/dev/null; then
+    if ! which -s conky; then
         return 1
 
     elif ! [ "${CONKY_ENABLE}" == "true" ]; then

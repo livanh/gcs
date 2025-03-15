@@ -17,7 +17,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which octave >/dev/null; then
+    if ! which -s octave; then
         return 1
 
     elif ! [ "${OCTAVE_ENABLE}" == "true" ]; then

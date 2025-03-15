@@ -15,7 +15,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which xrdb >/dev/null; then
+    if ! which -s xrdb; then
         return 1
 
     elif ! [ "${XRESOURCES_ENABLE}" == "true" ]; then

@@ -10,7 +10,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which cherrytree >/dev/null; then
+    if ! which -s cherrytree; then
         return 1
 
     elif ! [ "${CHERRYTREE_ENABLE}" == "true" ]; then

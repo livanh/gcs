@@ -11,7 +11,7 @@ function init_module() {
 
 
 function check_dependencies() {
-    if ! which gpicview >/dev/null; then
+    if ! which -s gpicview; then
         return 1
 
     elif ! [ "${GPICVIEW_ENABLE}" == "true" ]; then
