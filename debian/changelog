@@ -1,3 +1,16 @@
+gcs (0.12-1) testing; urgency=medium
+
+  * Upstream version 0.12
+  * Add modules for kde, konsole, and qt6ct
+  * Configure color scheme in qt5ct
+  * Add light terminal colors in most themes
+  * Fix a bug in auto-generation of light terminal colors
+  * use -s flag instead of /dev/null redirection for "which" commands
+  * Configure cursor theme in gtk and sway
+  * Do not export theme for GTK+ older than 3.20
+
+ -- Livanh <livanh@protonmail.com>  Sat, 15 Mar 2025 20:58:08 +0100
+
 gcs (0.11-1) testing; urgency=medium
 
   * Upstream version 0.11
